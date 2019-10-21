@@ -784,6 +784,10 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	size_t enCodeSize = 0;
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
 	*outSize = 8+treeByteSize+enCodeSize;
+	//jwang
+	printf("nodeCount=%d\n", nodeCount);
+	printf("encodeSize=%ld\n", enCodeSize);
+	printf("treeByteSize=%d\n", treeByteSize);
 }
 
 int encode_withTree_MSST19(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize)

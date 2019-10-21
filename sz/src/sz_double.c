@@ -256,6 +256,8 @@ unsigned int optimize_intervals_double_4D(double *oriData, size_t r1, size_t r2,
 TightDataPointStorageD* SZ_compress_double_1D_MDQ(double *oriData, 
 size_t dataLength, double realPrecision, double valueRangeSize, double medianValue_d)
 {
+	//jwang
+	FuncName;
 #ifdef HAVE_TIMECMPR
 	double* decData = NULL;	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -330,6 +332,14 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
 	double interval = 2*realPrecision;
 
+	//jwang
+	printf("checkradius=%lf\n", checkRadius);
+	printf("(max)intvCapacity=%d\n",exe_params->intvCapacity);
+	printf("optimized quant_intl=%d\n", quantization_intervals);
+
+	int count_hit = 0;
+	int count_missed = 2;
+
 	double recip_realPrecision = 1/realPrecision;
 	for(i=2;i<dataLength;i++)
 	{				
@@ -340,6 +350,8 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		predAbsErr = fabs(curData - pred);	
 		if(predAbsErr<checkRadius)
 		{
+			//jwang
+			count_hit += 1;
 			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
 			{
@@ -360,7 +372,11 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		}
 		
 		//unpredictable data processing
-		type[i] = 0;		
+		type[i] = 0;
+	
+		//jwang
+		count_missed += 1;
+
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 		memcpy(preDataBytes,vce->curBytes,8);
@@ -373,9 +389,15 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 			decData[i] = vce->data;
 #endif	
-		
+		//jwang
+		// print type[i] into stderr
+		fprintf(stderr, "%d\n", type[i]);
 	}//end of for
-		
+
+	//jwang
+	printf("count_hit=%d\n", count_hit);
+	printf("count_missed=%d\n", count_missed);	
+
 	size_t exactDataNum = exactLeadNumArray->size;
 	
 	TightDataPointStorageD* tdps;
