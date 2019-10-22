@@ -522,6 +522,7 @@ size_t SZ_decompress_args(int dataType, unsigned char *bytes, size_t byteLength,
 
 sz_metadata* SZ_getMetadata(unsigned char* bytes)
 {
+	FuncName;
 	int index = 0, i, isConstant, isLossless;
 	size_t dataSeriesLength = 0;
 	int versions[3] = {0,0,0};
@@ -534,8 +535,12 @@ sz_metadata* SZ_getMetadata(unsigned char* bytes)
 	
 	int isRegressionBased = (sameRByte >> 7) & 0x01;
 	
+	//jwang
+	//printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode); // exe_params is NULL here.	
 	if(exe_params==NULL)
 	{
+		//jwang
+		printf("exe_params == NULL\n");
 		exe_params = (sz_exedata *)malloc(sizeof(struct sz_exedata));
 		memset(exe_params, 0, sizeof(struct sz_exedata));
 	}
@@ -603,6 +608,7 @@ sz_metadata* SZ_getMetadata(unsigned char* bytes)
 
 void SZ_printMetadata(sz_metadata* metadata)
 {
+	FuncName;
 	printf("=================SZ Compression Meta Data=================\n");
 	printf("Version:                        \t %d.%d.%d\n", metadata->versionNumber[0], metadata->versionNumber[1], metadata->versionNumber[2]);
 	printf("Constant data?:                 \t %s\n", metadata->isConstant==1?"YES":"NO");
@@ -645,6 +651,8 @@ void SZ_printMetadata(sz_metadata* metadata)
 		printf("Data type:                      \t UINT64\n");
 		break;				
 	}
+	//jwang
+	printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode);	
 	
 	if(exe_params->optQuantMode==1)
 	{

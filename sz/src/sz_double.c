@@ -265,12 +265,14 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 #endif	
 	
 	unsigned int quantization_intervals;
+	//jwang
+	printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode);
 	if(exe_params->optQuantMode==1)
 		quantization_intervals = optimize_intervals_double_1D_opt(oriData, dataLength, realPrecision);
 	else
 		quantization_intervals = exe_params->intvCapacity;
 	updateQuantizationInfo(quantization_intervals);	
-
+	printf("quantization_intervals=%u\n",quantization_intervals);
 	size_t i;
 	int reqLength;
 	double medianValue = medianValue_d;
@@ -278,8 +280,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 	computeReqLength_double(realPrecision, radExpo, &reqLength, &medianValue);	
 
-	int* type = (int*) malloc(dataLength*sizeof(int));
-		
+	int* type = (int*) malloc(dataLength*sizeof(int));	
 	double* spaceFillingValue = oriData; //
 	
 	DynamicIntArray *exactLeadNumArray;
@@ -333,21 +334,28 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double interval = 2*realPrecision;
 
 	//jwang
+	printf("valueRangeSize=%lf\n",valueRangeSize);
 	printf("checkradius=%lf\n", checkRadius);
 	printf("(max)intvCapacity=%d\n",exe_params->intvCapacity);
 	printf("optimized quant_intl=%d\n", quantization_intervals);
-
+	printf("real precision=%lf\n", realPrecision);
 	int count_hit = 0;
 	int count_missed = 2;
 
 	double recip_realPrecision = 1/realPrecision;
 	for(i=2;i<dataLength;i++)
-	{				
+	{			
+		//printf("%ld\n",i);	
 		//printf("%.30G\n",last3CmprsData[0]);
 		curData = spaceFillingValue[i];
 		//pred = 2*last3CmprsData[0] - last3CmprsData[1];
 		//pred = last3CmprsData[0];
-		predAbsErr = fabs(curData - pred);	
+		
+		//jwang
+		//prediction error
+		predAbsErr = fabs(curData - pred);
+		//jwang
+		//error bound
 		if(predAbsErr<checkRadius)
 		{
 			//jwang
@@ -363,6 +371,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
+			fprintf(stderr,"%d\n", type[i]);
 			//listAdd_double(last3CmprsData, pred);
 #ifdef HAVE_TIMECMPR					
 			if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -373,9 +382,10 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		
 		//unpredictable data processing
 		type[i] = 0;
-	
+
 		//jwang
 		count_missed += 1;
+		fprintf(stderr, "%d\n", type[i]);
 
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
@@ -389,9 +399,6 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 			decData[i] = vce->data;
 #endif	
-		//jwang
-		// print type[i] into stderr
-		fprintf(stderr, "%d\n", type[i]);
 	}//end of for
 
 	//jwang
