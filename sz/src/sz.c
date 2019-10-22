@@ -541,7 +541,6 @@ sz_metadata* SZ_getMetadata(unsigned char* bytes)
 	{
 		//jwang
 		printf("exe_params == NULL\n");
-		printf("jwang - NOTE that in this case, exe_params->optQuantMode is always 0, which does not equals to the preset configuration.\n");
 		exe_params = (sz_exedata *)malloc(sizeof(struct sz_exedata));
 		memset(exe_params, 0, sizeof(struct sz_exedata));
 	}
@@ -654,7 +653,6 @@ void SZ_printMetadata(sz_metadata* metadata)
 	}
 	//jwang
 	printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode);	
-	//exe_params->optQuantMode=1;	
 	if(exe_params->optQuantMode==1)
 	{
 		printf("quantization_intervals:         \t 0\n");
