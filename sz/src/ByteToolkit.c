@@ -877,15 +877,15 @@ void convertSZParamsToBytes(sz_params* params, unsigned char* result)
 	//unsigned char* result = (unsigned char*)malloc(16);
 	unsigned char buf = 0;
 	//flag1: exe_params->optQuantMode(1bit), dataEndianType(1bit), sysEndianType(1bit), conf_params->szMode (1bit), conf_params->gzipMode (2bits), pwrType (2bits)
-	printf("%d\n",exe_params->optQuantMode);
-	printf("%d\n",dataEndianType);
-	printf("%d\n",sysEndianType);
-	printf("%d\n",params->szMode);
-	printf("%d\n",params->gzipMode);
+	//printf("%d\n",exe_params->optQuantMode);
+	//printf("%d\n",dataEndianType);
+	//printf("%d\n",sysEndianType);
+	//printf("%d\n",params->szMode);
+	//printf("%d\n",params->gzipMode);
 
 	buf = exe_params->optQuantMode;
 	//jwang
-	printf("exe_params converted into Bytes. The optQuantMode now is: %d.\n", buf);
+	//printf("exe_params converted into Bytes. The optQuantMode now is: %d.\n", buf);
 	buf = (buf << 1) | dataEndianType;
 	buf = (buf << 1) | sysEndianType;
 	buf = (buf << 2) | params->szMode;
@@ -908,9 +908,9 @@ void convertSZParamsToBytes(sz_params* params, unsigned char* result)
 	result[0] = buf;
 	
 	//jwang
-	for(int i=0; i<7; i++){
-		printf("%d\n",!!((buf << i) & 0x40));
-	}	
+	//for(int i=0; i<7; i++){
+	//printf("%d\n",!!((buf << i) & 0x40));
+	//}	
     //sampleDistance; //2 bytes
     int16ToBytes_bigEndian(&result[1], params->sampleDistance);
     
@@ -975,13 +975,13 @@ void convertBytesToSZParams(unsigned char* bytes, sz_params* params)
 	FuncName;
 	unsigned char flag1 = bytes[0];
 	//jwang
-	for(int i=0; i<7; i++){
-		printf("%d\n", !!((flag1 << i) & 0x40));
-	}
-	//jwang
+	//for(int i=0; i<7; i++){
+	//printf("%d\n", !!((flag1 << i) & 0x40));
+	//}
+	
 	exe_params->optQuantMode = (flag1 & 0x40) >> 6;
 	//jwang
-	printf("optQuantMode after converted from Bytes is %d.\n", exe_params->optQuantMode);
+	//printf("optQuantMode after converted from Bytes is %d.\n", exe_params->optQuantMode);
 	dataEndianType = (flag1 & 0x20) >> 5;
 	
 	params->szMode = (flag1 & 0x0c) >> 2;
