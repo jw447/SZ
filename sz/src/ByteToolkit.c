@@ -901,6 +901,7 @@ void convertSZParamsToBytes(sz_params* params, unsigned char* result)
 	//buf = (buf << 2) |  params->pwr_type; //deprecated
 	result[0] = buf;
 	
+	//	
     //sampleDistance; //2 bytes
     int16ToBytes_bigEndian(&result[1], params->sampleDistance);
     
@@ -964,9 +965,10 @@ void convertBytesToSZParams(unsigned char* bytes, sz_params* params)
 {
 	FuncName;
 	unsigned char flag1 = bytes[0];
-	//for(int i=0; i<8;i++){
-	//printf("%d\n", !!((flag1 << i) & 0x80));
-	//}
+	//jwang
+	for(int i=0; i<8;i++){
+		printf("%d\n", !!((flag1 << i) & 0x100));
+	}
 	//jwang
 	exe_params->optQuantMode = flag1 & 0x80 >> 7;
 	//jwang
