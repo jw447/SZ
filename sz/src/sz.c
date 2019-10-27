@@ -162,6 +162,7 @@ size_t computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 unsigned char* SZ_compress_args(int dataType, void *data, size_t *outSize, int errBoundMode, double absErrBound, 
 double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
+	FuncName;
 	if(confparams_cpr == NULL)
 		SZ_Init(NULL);
 	else if(exe_params == NULL)
@@ -169,6 +170,8 @@ double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, siz
 		exe_params = (sz_exedata*)malloc(sizeof(sz_exedata));
 		memset(exe_params, 0, sizeof(sz_exedata));
 	}
+	//jwang
+	printf("exe_params->intvCapacity = %d\n",exe_params->intvCapacity);
 	if(exe_params->intvCapacity == 0)
 	{
 		exe_params->intvCapacity = confparams_cpr->maxRangeRadius*2;
@@ -294,6 +297,7 @@ size_t e5, size_t e4, size_t e3, size_t e2, size_t e1)
 
 unsigned char *SZ_compress(int dataType, void *data, size_t *outSize, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {	
+	FuncName;
 	unsigned char *newByteData = SZ_compress_args(dataType, data, outSize, confparams_cpr->errorBoundMode, confparams_cpr->absErrBound, confparams_cpr->relBoundRatio, 
 	confparams_cpr->pw_relBoundRatio, r5, r4, r3, r2, r1);
 	return newByteData;
@@ -595,8 +599,7 @@ sz_metadata* SZ_getMetadata(unsigned char* bytes)
 				pwrErrBoundBytesL = 4;
 			}
 			
-			int offset_typearray = 3 + 1 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 4 + radExpoL + segmentL + pwrErrBoundBytesL + 4 + (4 + confparams_dec->dataType*4) + 1 + 8 
-					+ exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + 4;
+			int offset_typearray = 3 + 1 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 4 + radExpoL + segmentL + pwrErrBoundBytesL + 4 + (4 + confparams_dec->dataType*4) + 1 + 8 + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + 4;
 			defactoNBBins = bytesToInt_bigEndian(bytes+offset_typearray);			
 		}
 
@@ -652,7 +655,7 @@ void SZ_printMetadata(sz_metadata* metadata)
 		break;				
 	}
 	//jwang
-	printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode);	
+	//printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode);	
 	if(exe_params->optQuantMode==1)
 	{
 		printf("quantization_intervals:         \t 0\n");

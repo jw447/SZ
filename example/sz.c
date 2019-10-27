@@ -82,6 +82,7 @@ void usage()
 
 int main(int argc, char* argv[])
 {
+	FuncName;
 	int binaryOutput = 1;
 	int printCmpResults = 0;
 	int isCompression = -1000; //1 : compression ; 0: decompression

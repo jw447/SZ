@@ -39,6 +39,7 @@ unsigned char* SZ_skip_compress_double(double* data, size_t dataLength, size_t* 
 
 inline void computeReqLength_double(double realPrecision, short radExpo, int* reqLength, double* medianValue)
 {
+	FuncName;
 	short reqExpo = getPrecisionReqLength_double(realPrecision);
 	*reqLength = 12+radExpo - reqExpo; //radExpo-reqExpo == reqMantiLength
 	if(*reqLength<12)
@@ -256,7 +257,6 @@ unsigned int optimize_intervals_double_4D(double *oriData, size_t r1, size_t r2,
 TightDataPointStorageD* SZ_compress_double_1D_MDQ(double *oriData, 
 size_t dataLength, double realPrecision, double valueRangeSize, double medianValue_d)
 {
-	//jwang
 	FuncName;
 #ifdef HAVE_TIMECMPR
 	double* decData = NULL;	
@@ -265,14 +265,14 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 #endif	
 	
 	unsigned int quantization_intervals;
-	//jwang
-	printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode);
+
 	if(exe_params->optQuantMode==1)
 		quantization_intervals = optimize_intervals_double_1D_opt(oriData, dataLength, realPrecision);
 	else
 		quantization_intervals = exe_params->intvCapacity;
 	updateQuantizationInfo(quantization_intervals);	
-	printf("quantization_intervals=%u\n",quantization_intervals);
+	//jwang
+	printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
 	size_t i;
 	int reqLength;
 	double medianValue = medianValue_d;
@@ -301,9 +301,13 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 	DoubleValueCompressElement *vce = (DoubleValueCompressElement*)malloc(sizeof(DoubleValueCompressElement));
 	LossyCompressionElement *lce = (LossyCompressionElement*)malloc(sizeof(LossyCompressionElement));			
-				
 	//add the first data	
 	type[0] = 0;
+	
+	//jwang
+	//FILE *fptr = fopen("../logs/quant_intvls.txt", "w");
+	fprintf(stderr,"%d\n", type[0]);
+	
 	compressSingleDoubleValue(vce, spaceFillingValue[0], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
@@ -316,6 +320,10 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		
 	//add the second data
 	type[1] = 0;
+	
+	//jwang
+	fprintf(stderr,"%d\n", type[1]);
+
 	compressSingleDoubleValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
@@ -336,23 +344,22 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//jwang
 	printf("valueRangeSize=%lf\n",valueRangeSize);
 	printf("checkradius=%lf\n", checkRadius);
-	printf("(max)intvCapacity=%d\n",exe_params->intvCapacity);
-	printf("optimized quant_intl=%d\n", quantization_intervals);
-	printf("real precision=%lf\n", realPrecision);
+	printf("intvCapacity=%d\n",exe_params->intvCapacity);
+
 	int count_hit = 0;
 	int count_missed = 2;
 
 	double recip_realPrecision = 1/realPrecision;
 	for(i=2;i<dataLength;i++)
 	{			
-		//printf("%ld\n",i);	
 		//printf("%.30G\n",last3CmprsData[0]);
-		curData = spaceFillingValue[i];
+		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
 		//pred = 2*last3CmprsData[0] - last3CmprsData[1];
 		//pred = last3CmprsData[0];
 		
 		//jwang
 		//prediction error
+		//pred is the compressed value appended from last iteration.
 		predAbsErr = fabs(curData - pred);
 		//jwang
 		//error bound
@@ -360,7 +367,6 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		{
 			//jwang
 			count_hit += 1;
-			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
 			{
 				type[i] = exe_params->intvRadius+state;
@@ -402,6 +408,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	}//end of for
 
 	//jwang
+	//fclose(fptr);
 	printf("count_hit=%d\n", count_hit);
 	printf("count_missed=%d\n", count_missed);	
 
@@ -415,10 +422,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 			resiBitArray->array, resiBitArray->size, 
 			resiBitsLength, 
 			realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0);
-	
-//	printf("exactDataNum=%d, expSegmentsInBytes_size=%d, exactMidByteArray->size=%d\n", 
-//			exactDataNum, expSegmentsInBytes_size, exactMidByteArray->size);
-	
+
 	//free memory
 	free_DIA(exactLeadNumArray);
 	free_DIA(resiBitArray);
@@ -432,6 +436,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 void SZ_compress_args_double_StoreOriData(double* oriData, size_t dataLength, unsigned char** newByteData, size_t *outSize)
 {	
+	FuncName;
 	int doubleSize = sizeof(double);
 	size_t k = 0, i;
 	size_t totalByteLength = 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1 + doubleSize*dataLength;
@@ -469,6 +474,7 @@ void SZ_compress_args_double_StoreOriData(double* oriData, size_t dataLength, un
 char SZ_compress_args_double_NoCkRngeNoGzip_1D(int cmprType, unsigned char** newByteData, double *oriData, 
 size_t dataLength, double realPrecision, size_t *outSize, double valueRangeSize, double medianValue_d)
 {
+	FuncName;
 	char compressionType = 0;	
 	TightDataPointStorageD* tdps = NULL; 	
 #ifdef HAVE_TIMECMPR
@@ -517,6 +523,7 @@ size_t dataLength, double realPrecision, size_t *outSize, double valueRangeSize,
 
 TightDataPointStorageD* SZ_compress_double_2D_MDQ(double *oriData, size_t r1, size_t r2, double realPrecision, double valueRangeSize, double medianValue_d)
 {
+	FuncName;
 #ifdef HAVE_TIMECMPR	
 	double* decData = NULL;
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -2536,6 +2543,7 @@ int SZ_compress_args_double(int cmprType, unsigned char** newByteData, double *o
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t *outSize, 
 int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRatio)
 {
+	FuncName;
 	confparams_cpr->errorBoundMode = errBoundMode;
 	if(errBoundMode==PW_REL)
 	{
@@ -2580,6 +2588,8 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 	else
 	{
 		realPrecision = getRealPrecision_double(valueRangeSize, errBoundMode, absErr_Bound, relBoundRatio, &status);
+		//jwang
+		printf("realPrecision=%f\n",realPrecision); //<- 0
 		confparams_cpr->absErrBound = realPrecision;
 	}	
 	if(valueRangeSize <= realPrecision)
@@ -2594,7 +2604,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 		unsigned char* tmpByteData;
 		if (r2==0)
 		{
-			if(confparams_cpr->errorBoundMode>=PW_REL)
+			if(confparams_cpr->errorBoundMode>=PW_REL) // <-
 			{
 				if(confparams_cpr->accelerate_pw_rel_compression && confparams_cpr->maxRangeRadius <= 32768)
 					SZ_compress_args_double_NoCkRngeNoGzip_1D_pwr_pre_log_MSST19(&tmpByteData, oriData, pwRelBoundRatio, r1, &tmpOutSize, valueRangeSize, medianValue, signs, &positive, min, max, nearZero);
@@ -4727,7 +4737,8 @@ unsigned int optimize_intervals_double_2D_opt(double *oriData, size_t r1, size_t
 }
 
 unsigned int optimize_intervals_double_1D_opt(double *oriData, size_t dataLength, double realPrecision)
-{	
+{
+	FuncName;	
 	size_t i = 0, radiusIndex;
 	double pred_value = 0, pred_err;
 	size_t *intervals = (size_t*)malloc(confparams_cpr->maxRangeRadius*sizeof(size_t));

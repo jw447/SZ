@@ -284,6 +284,8 @@ float max_f(float a, float b)
 
 double getRealPrecision_double(double valueRangeSize, int errBoundMode, double absErrBound, double relBoundRatio, int *status)
 {
+	//jwang
+	FuncName;
 	int state = SZ_SCES;
 	double precision = 0;
 	if(errBoundMode==ABS||errBoundMode==ABS_OR_PW_REL||errBoundMode==ABS_AND_PW_REL)
@@ -531,6 +533,8 @@ void compressSingleDoubleValue(DoubleValueCompressElement *vce, double tgtValue,
 	if(ignBytesLength<0)
 		ignBytesLength = 0;
 
+	//jwang
+	//printf("lfBuf.lvalue=%ld\n",lfBuf.lvalue);
 	long tmp_long = lfBuf.lvalue;
 	longToBytes_bigEndian(vce->curBytes, tmp_long);
 				
@@ -538,8 +542,8 @@ void compressSingleDoubleValue(DoubleValueCompressElement *vce, double tgtValue,
 	
 	//double tmpValue = lfBuf.value;
 	
-	vce->data = lfBuf.value+medianValue;
-	vce->curValue = tmp_long;
+	vce->data = lfBuf.value+medianValue; //tgtValue
+	vce->curValue = tmp_long; 
 	vce->reqBytesLength = reqBytesLength;
 	vce->resiBitsLength = resiBitsLength;
 }

@@ -66,6 +66,8 @@ double computeABSErrBoundFromPSNR(double psnr, double threshold, double value_ra
  * @return the status of loading conf. file: 1 (success) or 0 (error code);
  * */
 int SZ_ReadConf(const char* sz_cfgFile) {
+    
+    FuncName;
     // Check access to SZ configuration file and load dictionary
     //record the setting in confparams_cpr
     confparams_cpr = (sz_params*)malloc(sizeof(sz_params));    

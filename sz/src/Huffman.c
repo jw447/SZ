@@ -772,7 +772,6 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 		if (huffmanTree->code[i]) nodeCount++; 
 	nodeCount = nodeCount*2-1;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
-	//printf("treeByteSize = %d\n", treeByteSize);
 
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
@@ -788,6 +787,7 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	printf("nodeCount=%d\n", nodeCount);
 	printf("encodeSize=%ld\n", enCodeSize);
 	printf("treeByteSize=%d\n", treeByteSize);
+	printf("outsize=%ld\n", *outSize);
 }
 
 int encode_withTree_MSST19(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize)

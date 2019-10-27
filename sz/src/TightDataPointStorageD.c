@@ -283,15 +283,24 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 		unsigned char resiBitLength, 
 		double realPrecision, double medianValue, char reqLength, unsigned int intervals,
 		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo) {
+	//jwang
+	FuncName;
 	//int i = 0;
 	*this = (TightDataPointStorageD *)malloc(sizeof(TightDataPointStorageD));
 	(*this)->allSameData = 0;
 	(*this)->realPrecision = realPrecision;
+	printf("realPrecision=%f\n", realPrecision);
+
 	(*this)->medianValue = medianValue;
+
 	(*this)->reqLength = reqLength;
+	printf("reqLength=%d\n",reqLength);
 
 	(*this)->dataSeriesLength = dataSeriesLength;
+	printf("dataSeriesLength=%lu\n", dataSeriesLength);
+
 	(*this)->exactDataNum = exactDataNum;
+	printf("exactDataNum=%lu\n", exactDataNum);
 
 	(*this)->rtypeArray = NULL;
 	(*this)->rtypeArray_size = 0;
@@ -303,13 +312,19 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	else
 		encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	SZ_ReleaseHuffman(huffmanTree);
-		
+	
+	printf("typeArray_size=%lu\n", (*this)->typeArray_size);
+
 	(*this)->exactMidBytes = exactMidBytes;
+
 	(*this)->exactMidBytes_size = exactMidBytes_size;
+	printf("exactMidBytes_size=%lu\n", exactMidBytes_size);
 
 	(*this)->leadNumArray_size = convertIntArray2ByteArray_fast_2b(leadNumIntArray, exactDataNum, &((*this)->leadNumArray));
+	printf("leadNumArray_size=%lu\n", (*this)->leadNumArray_size);
 
 	(*this)->residualMidBits_size = convertIntArray2ByteArray_fast_dynamic(resiMidBits, resiBitLength, exactDataNum, &((*this)->residualMidBits));
+	printf("residualMidBits_size=%lu\n", (*this)->residualMidBits_size);
 	
 	(*this)->intervals = intervals;
 	
@@ -323,6 +338,7 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->radExpo = radExpo;
 	
 	(*this)->pwrErrBoundBytes_size = pwrErrBoundBytes_size;
+	printf("pwrErrBoundBytes_size=%ld\n", pwrErrBoundBytes_size);
 }
 
 void new_TightDataPointStorageD2(TightDataPointStorageD **this, 
@@ -377,6 +393,7 @@ void new_TightDataPointStorageD2(TightDataPointStorageD **this,
 
 void convertTDPStoBytes_double(TightDataPointStorageD* tdps, unsigned char* bytes, unsigned char* dsLengthBytes, unsigned char sameByte)
 {
+	FuncName;
 	size_t i, k = 0;
 	unsigned char intervalsBytes[4];
 	unsigned char typeArrayLengthBytes[8];
@@ -473,6 +490,7 @@ void convertTDPStoBytes_double(TightDataPointStorageD* tdps, unsigned char* byte
 		memcpy(&(bytes[k]), tdps->residualMidBits, tdps->residualMidBits_size);
 		k += tdps->residualMidBits_size;
 	}		
+	printf("K:%ld\n", k);
 }
 
 void convertTDPStoBytes_double_reserve(TightDataPointStorageD* tdps, unsigned char* bytes, unsigned char* dsLengthBytes, unsigned char sameByte)
@@ -583,6 +601,7 @@ void convertTDPStoBytes_double_reserve(TightDataPointStorageD* tdps, unsigned ch
 //Convert TightDataPointStorageD to bytes...
 void convertTDPStoFlatBytes_double(TightDataPointStorageD *tdps, unsigned char** bytes, size_t *size) 
 {
+	FuncName;
 	size_t i, k = 0; 
 	unsigned char dsLengthBytes[8];
 	
@@ -636,11 +655,9 @@ void convertTDPStoFlatBytes_double(TightDataPointStorageD *tdps, unsigned char**
 			minLogValueSize = 8;
 		}
 
-		size_t totalByteLength = 3 + 1 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 4 + radExpoL + segmentL + pwrBoundArrayL + 4 + 8 + 1 + 8 
-				+ exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE 
-				+ minLogValueSize /*max absolute log value*/
-				+ tdps->typeArray_size + tdps->leadNumArray_size
-				+ tdps->exactMidBytes_size + residualMidBitsLength + tdps->pwrErrBoundBytes_size;
+		size_t totalByteLength = 3 + 1 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 4 + radExpoL + segmentL + pwrBoundArrayL + 4 + 8 + 1 + 8 + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + minLogValueSize + tdps->typeArray_size + tdps->leadNumArray_size + tdps->exactMidBytes_size + residualMidBitsLength + tdps->pwrErrBoundBytes_size;
+		//jwang
+		printf("totalsize=%lu\n",totalByteLength);
 		if(confparams_cpr->errorBoundMode == PW_REL && confparams_cpr->accelerate_pw_rel_compression)
 			totalByteLength += (1+1); // for MSST19
 			
