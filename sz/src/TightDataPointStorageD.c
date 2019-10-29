@@ -306,7 +306,14 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->rtypeArray_size = 0;
 
 	int stateNum = 2*intervals;
+	//jwang
+	printf("intervals=%d\n", intervals);
+	printf("stateNum=%d\n",stateNum);
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
+	//jwang
+	//for (int i = 0; i < huffmanTree->stateNum; i++){
+	//printf("%lu\n", huffmanTree->code[i]);
+	//} 
 	if(confparams_cpr->errorBoundMode == PW_REL && confparams_cpr->accelerate_pw_rel_compression)
 		(*this)->max_bits = encode_withTree_MSST19(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	else
@@ -629,7 +636,6 @@ void convertTDPStoFlatBytes_double(TightDataPointStorageD *tdps, unsigned char**
 		for (i = 0; i < 3; i++)//3
 			(*bytes)[k++] = versionNumber[i];
 		(*bytes)[k++] = sameByte;
-
 		convertSZParamsToBytes(confparams_cpr, &((*bytes)[k]));
 		k = k + MetaDataByteLength;
 

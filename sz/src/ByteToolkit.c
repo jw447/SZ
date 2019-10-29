@@ -169,6 +169,7 @@ inline long bytesToInt64_bigEndian(unsigned char* b) {
 
 inline int bytesToInt_bigEndian(unsigned char* bytes)
 {
+	FuncName;
 	int temp = 0;
 	int res = 0;
 	

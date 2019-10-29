@@ -367,6 +367,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		{
 			//jwang
 			count_hit += 1;
+			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
 			{
 				type[i] = exe_params->intvRadius+state;
@@ -2589,7 +2590,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 	{
 		realPrecision = getRealPrecision_double(valueRangeSize, errBoundMode, absErr_Bound, relBoundRatio, &status);
 		//jwang
-		printf("realPrecision=%f\n",realPrecision); //<- 0
+		//printf("realPrecision=%f\n",realPrecision); //<- 0
 		confparams_cpr->absErrBound = realPrecision;
 	}	
 	if(valueRangeSize <= realPrecision)

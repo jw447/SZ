@@ -544,7 +544,7 @@ sz_metadata* SZ_getMetadata(unsigned char* bytes)
 	if(exe_params==NULL)
 	{
 		//jwang
-		printf("exe_params == NULL\n");
+		//printf("exe_params == NULL\n");
 		exe_params = (sz_exedata *)malloc(sizeof(struct sz_exedata));
 		memset(exe_params, 0, sizeof(struct sz_exedata));
 	}
@@ -570,7 +570,7 @@ sz_metadata* SZ_getMetadata(unsigned char* bytes)
 	//index += 4; //max_quant_intervals
 
 	sz_metadata* metadata = (sz_metadata*)malloc(sizeof(struct sz_metadata));
-	
+
 	metadata->versionNumber[0] = versions[0];
 	metadata->versionNumber[1] = versions[1];
 	metadata->versionNumber[2] = versions[2];
@@ -606,6 +606,7 @@ sz_metadata* SZ_getMetadata(unsigned char* bytes)
 	}	
 	
 	metadata->defactoNBBins = defactoNBBins;
+	//printf("printing %d\n", metadata->defactoNBBins);
 	return metadata;
 }
 

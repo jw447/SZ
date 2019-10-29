@@ -15,7 +15,8 @@
 
 
 HuffmanTree* createHuffmanTree(int stateNum)
-{			
+{	
+	FuncName;
 	HuffmanTree *huffmanTree = (HuffmanTree*)malloc(sizeof(HuffmanTree));
 	memset(huffmanTree, 0, sizeof(HuffmanTree));
 	huffmanTree->stateNum = stateNum;
@@ -75,6 +76,7 @@ node new_node2(HuffmanTree *huffmanTree, unsigned int c, unsigned char t)
 /* priority queue */
 void qinsert(HuffmanTree *huffmanTree, node n)
 {
+	//FuncName;
 	int j, i = huffmanTree->qend++;
 	while ((j = (i>>1)))  //j=i/2
 	{
@@ -108,6 +110,7 @@ node qremove(HuffmanTree* huffmanTree)
  * */
 void build_code(HuffmanTree *huffmanTree, node n, int len, unsigned long out1, unsigned long out2)
 {
+	//FuncName;
 	if (n->t) {
 		huffmanTree->code[n->c] = (unsigned long*)malloc(2*sizeof(unsigned long));
 		if(len<=64)
@@ -151,6 +154,7 @@ void build_code(HuffmanTree *huffmanTree, node n, int len, unsigned long out1, u
  * */
 void init(HuffmanTree* huffmanTree, int *s, size_t length)
 {
+	FuncName;
 	size_t i, index;
 	size_t *freq = (size_t *)malloc(huffmanTree->allNodes*sizeof(size_t));
 	memset(freq, 0, huffmanTree->allNodes*sizeof(size_t));
@@ -488,6 +492,7 @@ void pad_tree_uint(HuffmanTree* huffmanTree, unsigned int* L, unsigned int* R, u
  
 unsigned int convert_HuffTree_to_bytes_anyStates(HuffmanTree* huffmanTree, int nodeCount, unsigned char** out) 
 {
+	FuncName;
 	if(nodeCount<=256)
 	{
 		unsigned char* L = (unsigned char*)malloc(nodeCount*sizeof(unsigned char));
@@ -763,16 +768,23 @@ node reconstruct_HuffTree_from_bytes_anyStates(HuffmanTree *huffmanTree, unsigne
 
 void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize)
 {
+	FuncName;
 	size_t i; 
 	int nodeCount = 0;
 	unsigned char *treeBytes, buffer[4];
 	
 	init(huffmanTree, s, length);
-	for (i = 0; i < huffmanTree->stateNum; i++)
-		if (huffmanTree->code[i]) nodeCount++; 
+	//jwang
+	for (i = 0; i < huffmanTree->stateNum; i++){
+		if (huffmanTree->code[i]) nodeCount++;
+		//printf("huffmanTree->code[i]=%lu\n",huffmanTree->code[i]);
+	}
+	//printf("This nodecount=%d\n",huffmanTree->allNodes);
+	//printf("This nodecount=%d\n",huffmanTree->n_nodes);
 	nodeCount = nodeCount*2-1;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
 
+	//printf("this nodecount = %d\n",nodeCount);
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
 	memcpy(*out, buffer, 4);

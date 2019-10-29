@@ -30,7 +30,7 @@ uname -v = #33~18.04.1-Ubuntu SMP Tue Oct 1 10:20:39 UTC 2019
 PATH: /home/jon/local_build/SZ/install/bin
 PATH: /home/jon/local_build/bazel-0.19.2/output
 PATH: /home/jon/local_build/adios-1.13.1/install/bin
-PATH: /home/jon/anaconda3/envs/tf-1.13/bin
+PATH: /home/jon/anaconda3/bin
 PATH: /home/jon/anaconda3/condabin
 PATH: /usr/local/sbin
 PATH: /usr/local/bin

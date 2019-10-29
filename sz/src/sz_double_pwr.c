@@ -1812,7 +1812,7 @@ void SZ_compress_args_double_NoCkRngeNoGzip_1D_pwr_pre_log(unsigned char** newBy
 	if(fabs(min_log_data) > max_abs_log_data) max_abs_log_data = fabs(min_log_data);
 	//jwang TO further read here.
 	double realPrecision = log2(1.0 + pwrErrRatio) - max_abs_log_data * 2.23e-16;
-	printf("The REAL realPrecision is=%f\n", realPrecision);
+	//printf("The REAL realPrecision is=%f\n", realPrecision);
 	for(size_t i=0; i<dataLength; i++){
 		if(oriData[i] == 0){
 			log_data[i] = min_log_data - 2.0001*realPrecision;
