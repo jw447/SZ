@@ -289,7 +289,7 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	*this = (TightDataPointStorageD *)malloc(sizeof(TightDataPointStorageD));
 	(*this)->allSameData = 0;
 	(*this)->realPrecision = realPrecision;
-	printf("realPrecision=%f\n", realPrecision);
+	//printf("realPrecision=%.20f\n", realPrecision);
 
 	(*this)->medianValue = medianValue;
 

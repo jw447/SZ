@@ -2461,6 +2461,9 @@ TightDataPointStorageD* SZ_compress_double_3D_MDQ_MSST19(double *oriData, size_t
 }
 void SZ_compress_args_double_withinRange(unsigned char** newByteData, double *oriData, size_t dataLength, size_t *outSize)
 {
+	//jwang
+	FuncName;
+
 	TightDataPointStorageD* tdps = (TightDataPointStorageD*) malloc(sizeof(TightDataPointStorageD));
 	tdps->rtypeArray = NULL;
 	tdps->typeArray = NULL;
@@ -2590,7 +2593,8 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 	{
 		realPrecision = getRealPrecision_double(valueRangeSize, errBoundMode, absErr_Bound, relBoundRatio, &status);
 		//jwang
-		//printf("realPrecision=%f\n",realPrecision); //<- 0
+		printf("realPrecision=%.10f\n",realPrecision); //<- 0
+		printf("valueRangeSize:%.10f\n",valueRangeSize);
 		confparams_cpr->absErrBound = realPrecision;
 	}	
 	if(valueRangeSize <= realPrecision)
@@ -2598,6 +2602,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 		if(confparams_cpr->errorBoundMode>=PW_REL && confparams_cpr->accelerate_pw_rel_compression == 1)
 			free(signs);		
 		SZ_compress_args_double_withinRange(newByteData, oriData, dataLength, outSize);
+		printf("newByteData:%hhn\n",*newByteData);
 	}
 	else
 	{

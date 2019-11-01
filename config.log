@@ -27,6 +27,7 @@ uname -v = #33~18.04.1-Ubuntu SMP Tue Oct 1 10:20:39 UTC 2019
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
 
+PATH: /home/jon/local_build/zfp/bin
 PATH: /home/jon/local_build/SZ/install/bin
 PATH: /home/jon/local_build/bazel-0.19.2/output
 PATH: /home/jon/local_build/adios-1.13.1/install/bin

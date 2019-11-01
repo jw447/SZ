@@ -703,7 +703,7 @@ void SZ_printMetadata(sz_metadata* metadata)
 		break;
 	case REL:
 		printf("errBoundMode:                   \t REL (based on value_range extent)\n");
-		printf("relBoundRatio:                  \t %f\n", params->relBoundRatio);
+		printf("relBoundRatio:                  \t %.20f\n", params->relBoundRatio);
 		break;
 	case ABS_AND_REL:
 		printf("errBoundMode:                   \t ABS_AND_REL\n");
