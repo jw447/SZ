@@ -735,13 +735,13 @@ int main(int argc, char* argv[])
 
 				double compressionRatio = 1.0*nbEle*sizeof(double)/byteLength;
 
-				printf ("Min = %.20G, Max = %.20G, range = %.20G\n", Min, Max, range);
-				printf ("Max absolute error = %.10f\n", diffMax);
-				printf ("Max relative error = %f\n", diffMax/(Max-Min));
-				printf ("Max pw relative error = %f\n", maxpw_relerr);
-				printf ("PSNR = %f, NRMSE = %.20G\n", psnr,nrmse);
-				printf ("acEff = %f\n", acEff);
-				printf ("compressionRatio = %f\n", compressionRatio);
+				printf("Min=%f, Max=%f, range=%f\n", Min, Max, range);
+				printf("Max absolute error = %.10f\n", diffMax);
+				printf("Max relative error = %f\n", diffMax/(Max-Min));
+				printf("Max pw relative error = %f\n", maxpw_relerr);
+				printf("PSNR = %f, NRMSE = %.20G\n", psnr,nrmse);
+				printf("acEff = %f\n", acEff);
+				printf("compressionRatio = %f\n", compressionRatio);
 				
 				free(ori_data);
 			}			
