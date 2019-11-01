@@ -739,7 +739,7 @@ int main(int argc, char* argv[])
 				printf("Max absolute error = %.20f\n", diffMax);
 				printf("Max relative error = %.20f\n", diffMax/(Max-Min));
 				printf("Max pw relative error = %.20f\n", maxpw_relerr);
-				printf("Mean-square-error = %.30f\n", mse);
+				printf("Mean-square-error = %.f\n", mse);
 				printf("PSNR = %.20f, NRMSE = %.20G\n", psnr,nrmse);
 				printf("acEff = %.20f\n", acEff);
 				printf("compressionRatio = %f\n", compressionRatio);
