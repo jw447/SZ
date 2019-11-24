@@ -339,7 +339,7 @@ int main(int argc, char* argv[])
 				printf("Error: data file %s cannot be written!\n", outputFilePath);
 				exit(0);
 			}
-			printf("compression time = %f\n", totalCost);
+			printf("compression time=%f\n", totalCost);
 			printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
@@ -417,7 +417,7 @@ int main(int argc, char* argv[])
 					printf("Error: data file %s cannot be written!\n", outputFilePath);
 					exit(0);
 				}		
-				printf("compression time = %f\n", totalCost);
+				printf("compression time=%f\n", totalCost);
 				printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
@@ -687,8 +687,9 @@ int main(int argc, char* argv[])
 				Max = ori_data[0];
 				Min = ori_data[0];
 				diffMax = data[0]>ori_data[0]?data[0]-ori_data[0]:ori_data[0]-data[0];
-
+				//printf("DiffMax=%f\n", diffMax);
 				//diffMax = fabs(data[0] - ori_data[0]);
+				//printf("DiffMax=%f\n", diffMax);
 				double sum1 = 0, sum2 = 0;
 
 				for (i = 0; i < nbEle; i++)
@@ -708,7 +709,7 @@ int main(int argc, char* argv[])
 					if (Max < ori_data[i]) Max = ori_data[i];
 					if (Min > ori_data[i]) Min = ori_data[i];
 
-					float err = fabs(data[i] - ori_data[i]);
+					double err = fabs(data[i] - ori_data[i]);
 					if(ori_data[i]!=0)
 					{
 						relerr = err/fabs(ori_data[i]);
@@ -721,8 +722,11 @@ int main(int argc, char* argv[])
 					prodSum += (ori_data[i]-mean1)*(data[i]-mean2);
 					sum3 += (ori_data[i] - mean1)*(ori_data[i]-mean1);
 					sum4 += (data[i] - mean2)*(data[i]-mean2);
-					sum += err*err;	
+					//jwang
+					//sum += err*err;	
+					sum += pow(err,2);
 				}
+				printf("diffMax=%f\n", diffMax);
 				double std1 = sqrt(sum3/nbEle);
 				double std2 = sqrt(sum4/nbEle);
 				double ee = prodSum/nbEle;
@@ -730,19 +734,20 @@ int main(int argc, char* argv[])
 
 				double mse = sum/nbEle;
 				double range = Max - Min;
+				//jwang
+				//printf("dmax=%.10f, dmin=%.10f, range=%.10f, sse=%.10f, Nelem=%d, rmse=%.10f, mse=%.10f\n", Max, Min, range, sum, nbEle, sqrt(mse), mse);
+
 				double psnr = 20*log10(range)-10*log10(mse);
 				double nrmse = sqrt(mse)/range;
 
 				double compressionRatio = 1.0*nbEle*sizeof(double)/byteLength;
 
-				printf("Min=%.10f, Max=%.10f, range=%.10f\n", Min, Max, range);
-				printf("Max absolute error = %.20f\n", diffMax);
-				printf("Max relative error = %.20f\n", diffMax/(Max-Min));
-				printf("Max pw relative error = %.20f\n", maxpw_relerr);
-				printf("Mean-square-error = %.f\n", mse);
-				printf("PSNR = %.20f, NRMSE = %.20G\n", psnr,nrmse);
-				printf("acEff = %.20f\n", acEff);
-				printf("compressionRatio = %f\n", compressionRatio);
+				printf("Max_absolute_error=%.10f\n", diffMax);
+				printf("Max_relative_error=%.10f\n", diffMax/(Max-Min));
+				printf("Max_pw_relative_error=%.10f\n", maxpw_relerr);
+				printf("PSNR=%.10f, NRMSE=%.10G\n", psnr,nrmse);
+				printf("acEff=%.10f\n", acEff);
+				printf("compressionRatio=%f\n", compressionRatio);
 				
 				free(ori_data);
 			}			

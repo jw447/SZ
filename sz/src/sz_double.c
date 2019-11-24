@@ -306,13 +306,16 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	
 	//jwang
 	//FILE *fptr = fopen("../logs/quant_intvls.txt", "w");
-	fprintf(stderr,"%d\n", type[0]);
+	//fprintf(stderr,"%d\n", type[0]);
 	
 	compressSingleDoubleValue(vce, spaceFillingValue[0], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 	listAdd_double(last3CmprsData, vce->data);
+	//
+	printf("%f, %f, %f\n",spaceFillingValue[0], vce->data, medianValue);
+
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 		decData[0] = vce->data;
@@ -322,13 +325,19 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	type[1] = 0;
 	
 	//jwang
-	fprintf(stderr,"%d\n", type[1]);
+	//fprintf(stderr,"%d\n", type[1]);
 
 	compressSingleDoubleValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 	listAdd_double(last3CmprsData, vce->data);
+	//
+	//printf("%f, %f, %f\n",spaceFillingValue[1], vce->data, medianValue);
+
+	//for(i=0;i<=2;i++)
+	//	printf("%f\n", last3CmprsData[i]);
+
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 		decData[1] = vce->data;
@@ -340,16 +349,17 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double predAbsErr;
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
 	double interval = 2*realPrecision;
-
+	printf("realPrecision=%f, interval=%f\n", realPrecision, interval);
 	//jwang
 	printf("valueRangeSize=%lf\n",valueRangeSize);
 	printf("checkradius=%lf\n", checkRadius);
 	printf("intvCapacity=%d\n",exe_params->intvCapacity);
-
+	printf("intvRadius=%d\n", exe_params->intvRadius);
 	int count_hit = 0;
 	int count_missed = 2;
 
 	double recip_realPrecision = 1/realPrecision;
+	fprintf(stderr, "curData,pred,predAbsErr,intvCapacity,realPrecision,checkRadius,tmp0,state,new_pred,type,comp_err\n");
 	for(i=2;i<dataLength;i++)
 	{			
 		//printf("%.30G\n",last3CmprsData[0]);
@@ -361,6 +371,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		//prediction error
 		//pred is the compressed value appended from last iteration.
 		predAbsErr = fabs(curData - pred);
+		fprintf(stderr, "%.15f,%.15f,%.15f,%d,%.10f,%.5f,", curData, pred, (curData - pred), exe_params->intvCapacity, realPrecision, checkRadius);
 		//jwang
 		//error bound
 		if(predAbsErr<checkRadius)
@@ -378,7 +389,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			fprintf(stderr,"%d\n", type[i]);
+			fprintf(stderr, "%.15f,%d,%.15f,%d,%.15f\n", (predAbsErr*recip_realPrecision+1)*0.5, state, pred, type[i], (curData - pred));
 			//listAdd_double(last3CmprsData, pred);
 #ifdef HAVE_TIMECMPR					
 			if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -392,7 +403,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 		//jwang
 		count_missed += 1;
-		fprintf(stderr, "%d\n", type[i]);
+		//fprintf(stderr, "%d\n", type[i]);
 
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
@@ -402,6 +413,9 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		//listAdd_double(last3CmprsData, vce->data);
 		pred = vce->data;
 		
+		//jwang
+		//fprintf(stderr,"%f,%d,%f,%d,%f\n", curData, state, interval, type[i], pred);
+		fprintf(stderr, "%d,%d,%.15f,%d,%.15f\n", -1, state, pred, type[i], (curData - pred));
 #ifdef HAVE_TIMECMPR
 		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 			decData[i] = vce->data;
@@ -2594,7 +2608,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 		realPrecision = getRealPrecision_double(valueRangeSize, errBoundMode, absErr_Bound, relBoundRatio, &status);
 		//jwang
 		printf("realPrecision=%.10f\n",realPrecision); //<- 0
-		printf("valueRangeSize:%.10f\n",valueRangeSize);
+		printf("valueRangeSize=%.10f\n",valueRangeSize);
 		confparams_cpr->absErrBound = realPrecision;
 	}	
 	if(valueRangeSize <= realPrecision)
@@ -2602,7 +2616,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 		if(confparams_cpr->errorBoundMode>=PW_REL && confparams_cpr->accelerate_pw_rel_compression == 1)
 			free(signs);		
 		SZ_compress_args_double_withinRange(newByteData, oriData, dataLength, outSize);
-		printf("newByteData:%hhn\n",*newByteData);
+		printf("newByteData=%hhn\n",*newByteData);
 	}
 	else
 	{

@@ -129,6 +129,8 @@ size_t cmpSize, int compressionType, double* hist_data)
 
 void decompressDataSeries_double_1D(double** data, size_t dataSeriesLength, double* hist_data, TightDataPointStorageD* tdps) 
 {
+	//jwang
+	FuncName;
 	updateQuantizationInfo(tdps->intervals);
 	size_t i, j, k = 0, p = 0, l = 0; // k is to track the location of residual_bit
 								// in resiMidBits, p is to track the
@@ -162,6 +164,7 @@ void decompressDataSeries_double_1D(double** data, size_t dataSeriesLength, doub
 	
 	int type_;
 	for (i = 0; i < dataSeriesLength; i++) {
+		
 		type_ = type[i];
 		switch (type_) {
 		case 0:
@@ -204,17 +207,20 @@ void decompressDataSeries_double_1D(double** data, size_t dataSeriesLength, doub
 			
 			exactData = bytesToDouble(curBytes);
 			(*data)[i] = exactData + medianValue;
+			//printf("%f\n", (*data)[i]);
 			memcpy(preBytes,curBytes,8);
 			break;
 		default:
 			//predValue = 2 * (*data)[i-1] - (*data)[i-2];
 			predValue = (*data)[i-1];
 			(*data)[i] = predValue + (type_-exe_params->intvRadius)*interval;
+			//printf("%f, %d, %d, %f, %f\n", predValue, type_, exe_params->intvRadius, interval, (*data)[i]);
 			break;
 		}
 		//printf("%.30G\n",(*data)[i]);
 	}
-	
+	printf("%d, %d\n", type[0], type[1]);
+	printf("%f, %f\n", (*data)[0], (*data)[1]);	
 #ifdef HAVE_TIMECMPR	
 	if(confparams_dec->szMode == SZ_TEMPORAL_COMPRESSION)
 		memcpy(hist_data, (*data), dataSeriesLength*sizeof(double));
