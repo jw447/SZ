@@ -285,6 +285,9 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo) {
 	//jwang
 	FuncName;
+	struct timeval costHuffS;
+	struct timeval costHuffE;
+	double costHuff = 0;
 	//int i = 0;
 	*this = (TightDataPointStorageD *)malloc(sizeof(TightDataPointStorageD));
 	(*this)->allSameData = 0;
@@ -294,21 +297,24 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->medianValue = medianValue;
 
 	(*this)->reqLength = reqLength;
-	printf("reqLength=%d\n",reqLength);
+	//printf("reqLength=%d\n",reqLength);
 
 	(*this)->dataSeriesLength = dataSeriesLength;
-	printf("dataSeriesLength=%lu\n", dataSeriesLength);
+	//printf("dataSeriesLength=%lu\n", dataSeriesLength);
 
 	(*this)->exactDataNum = exactDataNum;
-	printf("exactDataNum=%lu\n", exactDataNum);
+	//printf("exactDataNum=%lu\n", exactDataNum);
 
 	(*this)->rtypeArray = NULL;
 	(*this)->rtypeArray_size = 0;
 
 	int stateNum = 2*intervals;
 	//jwang
-	printf("intervals=%d\n", intervals);
-	printf("stateNum=%d\n",stateNum);
+	//printf("intervals=%d\n", intervals);
+	//printf("stateNum=%d\n",stateNum);
+	
+	//jwang
+	gettimeofday(&costHuffS, NULL); // starting point of Huffman Encoding.
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
 	//jwang
 	//for (int i = 0; i < huffmanTree->stateNum; i++){
@@ -320,18 +326,21 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 		encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	SZ_ReleaseHuffman(huffmanTree);
 	
-	printf("typeArray_size=%lu\n", (*this)->typeArray_size);
+	gettimeofday(&costHuffE, NULL); // end point of Huffman Encoding.
+	costHuff = ((costHuffE.tv_sec*1000000+costHuffE.tv_usec)-(costHuffS.tv_sec*1000000+costHuffS.tv_usec))/1000000.0;
+	printf("time for Huffman encoding=%f\n", costHuff);
+	//printf("typeArray_size=%lu\n", (*this)->typeArray_size);
 
 	(*this)->exactMidBytes = exactMidBytes;
 
 	(*this)->exactMidBytes_size = exactMidBytes_size;
-	printf("exactMidBytes_size=%lu\n", exactMidBytes_size);
+	//printf("exactMidBytes_size=%lu\n", exactMidBytes_size);
 
 	(*this)->leadNumArray_size = convertIntArray2ByteArray_fast_2b(leadNumIntArray, exactDataNum, &((*this)->leadNumArray));
-	printf("leadNumArray_size=%lu\n", (*this)->leadNumArray_size);
+	//printf("leadNumArray_size=%lu\n", (*this)->leadNumArray_size);
 
 	(*this)->residualMidBits_size = convertIntArray2ByteArray_fast_dynamic(resiMidBits, resiBitLength, exactDataNum, &((*this)->residualMidBits));
-	printf("residualMidBits_size=%lu\n", (*this)->residualMidBits_size);
+	//printf("residualMidBits_size=%lu\n", (*this)->residualMidBits_size);
 	
 	(*this)->intervals = intervals;
 	
@@ -345,7 +354,7 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->radExpo = radExpo;
 	
 	(*this)->pwrErrBoundBytes_size = pwrErrBoundBytes_size;
-	printf("pwrErrBoundBytes_size=%ld\n", pwrErrBoundBytes_size);
+	//printf("pwrErrBoundBytes_size=%ld\n", pwrErrBoundBytes_size);
 }
 
 void new_TightDataPointStorageD2(TightDataPointStorageD **this, 
@@ -497,7 +506,7 @@ void convertTDPStoBytes_double(TightDataPointStorageD* tdps, unsigned char* byte
 		memcpy(&(bytes[k]), tdps->residualMidBits, tdps->residualMidBits_size);
 		k += tdps->residualMidBits_size;
 	}		
-	printf("K:%ld\n", k);
+	//printf("K:%ld\n", k);
 }
 
 void convertTDPStoBytes_double_reserve(TightDataPointStorageD* tdps, unsigned char* bytes, unsigned char* dsLengthBytes, unsigned char sameByte)
@@ -663,7 +672,7 @@ void convertTDPStoFlatBytes_double(TightDataPointStorageD *tdps, unsigned char**
 
 		size_t totalByteLength = 3 + 1 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 4 + radExpoL + segmentL + pwrBoundArrayL + 4 + 8 + 1 + 8 + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + minLogValueSize + tdps->typeArray_size + tdps->leadNumArray_size + tdps->exactMidBytes_size + residualMidBitsLength + tdps->pwrErrBoundBytes_size;
 		//jwang
-		printf("totalsize=%lu\n",totalByteLength);
+		//printf("totalsize=%lu\n",totalByteLength);
 		if(confparams_cpr->errorBoundMode == PW_REL && confparams_cpr->accelerate_pw_rel_compression)
 			totalByteLength += (1+1); // for MSST19
 			

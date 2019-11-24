@@ -272,7 +272,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		quantization_intervals = exe_params->intvCapacity;
 	updateQuantizationInfo(quantization_intervals);	
 	//jwang
-	printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
+	//printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
 	size_t i;
 	int reqLength;
 	double medianValue = medianValue_d;
@@ -314,7 +314,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 	listAdd_double(last3CmprsData, vce->data);
 	//
-	printf("%f, %f, %f\n",spaceFillingValue[0], vce->data, medianValue);
+	//printf("%f, %f, %f\n",spaceFillingValue[0], vce->data, medianValue);
 
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -349,17 +349,30 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double predAbsErr;
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
 	double interval = 2*realPrecision;
-	printf("realPrecision=%f, interval=%f\n", realPrecision, interval);
+	//printf("realPrecision=%f, interval=%f\n", realPrecision, interval);
 	//jwang
-	printf("valueRangeSize=%lf\n",valueRangeSize);
-	printf("checkradius=%lf\n", checkRadius);
-	printf("intvCapacity=%d\n",exe_params->intvCapacity);
-	printf("intvRadius=%d\n", exe_params->intvRadius);
+	//printf("valueRangeSize=%lf\n",valueRangeSize);
+	//printf("checkradius=%lf\n", checkRadius);
+	//printf("intvCapacity=%d\n",exe_params->intvCapacity);
+	//printf("intvRadius=%d\n", exe_params->intvRadius);
 	int count_hit = 0;
 	int count_missed = 2;
 
 	double recip_realPrecision = 1/realPrecision;
-	fprintf(stderr, "curData,pred,predAbsErr,intvCapacity,realPrecision,checkRadius,tmp0,state,new_pred,type,comp_err\n");
+	//jwang
+	//fprintf(stderr, "curData,pred,predAbsErr,intvCapacity,realPrecision,checkRadius,tmp0,state,new_pred,type,comp_err\n");
+	
+	struct timeval totalCostS; 
+	struct timeval totalCostE;
+	struct timeval costHitS;
+	struct timeval costHitE;
+	struct timeval costMisS;
+        struct timeval costMisE;
+	double costHit = 0;
+	double costMis = 0;
+
+	gettimeofday(&totalCostS, NULL); // starting point of curve hitting;
+
 	for(i=2;i<dataLength;i++)
 	{			
 		//printf("%.30G\n",last3CmprsData[0]);
@@ -371,12 +384,13 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		//prediction error
 		//pred is the compressed value appended from last iteration.
 		predAbsErr = fabs(curData - pred);
-		fprintf(stderr, "%.15f,%.15f,%.15f,%d,%.10f,%.5f,", curData, pred, (curData - pred), exe_params->intvCapacity, realPrecision, checkRadius);
+		//fprintf(stderr, "%.15f,%.15f,%.15f,%d,%.10f,%.5f,", curData, pred, (curData - pred), exe_params->intvCapacity, realPrecision, checkRadius);
 		//jwang
 		//error bound
 		if(predAbsErr<checkRadius)
 		{
 			//jwang
+			gettimeofday(&costHitS, NULL);
 			count_hit += 1;
 			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
@@ -389,15 +403,20 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			fprintf(stderr, "%.15f,%d,%.15f,%d,%.15f\n", (predAbsErr*recip_realPrecision+1)*0.5, state, pred, type[i], (curData - pred));
+			//fprintf(stderr, "%.15f,%d,%.15f,%d,%.15f\n", (predAbsErr*recip_realPrecision+1)*0.5, state, pred, type[i], (curData - pred));
 			//listAdd_double(last3CmprsData, pred);
+			
+			//jwang
+			gettimeofday(&costHitE, NULL);
+			costHit += ((costHitE.tv_sec*1000000+costHitE.tv_usec)-(costHitS.tv_sec*1000000+costHitS.tv_usec))/1000000.0;
+			
 #ifdef HAVE_TIMECMPR					
 			if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 				decData[i] = pred;			
 #endif	
 			continue;
 		}
-		
+		gettimeofday(&costMisS, NULL);	
 		//unpredictable data processing
 		type[i] = 0;
 
@@ -413,19 +432,27 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		//listAdd_double(last3CmprsData, vce->data);
 		pred = vce->data;
 		
+		gettimeofday(&costMisE, NULL);
+		costMis += ((costMisE.tv_sec*1000000+costMisE.tv_usec)-(costMisS.tv_sec*1000000+costMisS.tv_usec))/1000000.0;
 		//jwang
 		//fprintf(stderr,"%f,%d,%f,%d,%f\n", curData, state, interval, type[i], pred);
-		fprintf(stderr, "%d,%d,%.15f,%d,%.15f\n", -1, state, pred, type[i], (curData - pred));
+		//fprintf(stderr, "%d,%d,%.15f,%d,%.15f\n", -1, state, pred, type[i], (curData - pred));
 #ifdef HAVE_TIMECMPR
 		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 			decData[i] = vce->data;
 #endif	
 	}//end of for
-
+	
+	//jwang
+	gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
+        double elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+        printf("total time of curve-fitting=%f\n", elapsed);
+	printf("time for hit points=%f, for missed points=%f\n", costHit, costMis);
+	printf("------------\n");
 	//jwang
 	//fclose(fptr);
-	printf("count_hit=%d\n", count_hit);
-	printf("count_missed=%d\n", count_missed);	
+	//printf("count_hit=%d\n", count_hit);
+	//printf("count_missed=%d\n", count_missed);	
 
 	size_t exactDataNum = exactLeadNumArray->size;
 	
@@ -2607,8 +2634,8 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 	{
 		realPrecision = getRealPrecision_double(valueRangeSize, errBoundMode, absErr_Bound, relBoundRatio, &status);
 		//jwang
-		printf("realPrecision=%.10f\n",realPrecision); //<- 0
-		printf("valueRangeSize=%.10f\n",valueRangeSize);
+		//printf("realPrecision=%.10f\n",realPrecision); //<- 0
+		//printf("valueRangeSize=%.10f\n",valueRangeSize);
 		confparams_cpr->absErrBound = realPrecision;
 	}	
 	if(valueRangeSize <= realPrecision)
@@ -2616,7 +2643,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 		if(confparams_cpr->errorBoundMode>=PW_REL && confparams_cpr->accelerate_pw_rel_compression == 1)
 			free(signs);		
 		SZ_compress_args_double_withinRange(newByteData, oriData, dataLength, outSize);
-		printf("newByteData=%hhn\n",*newByteData);
+		//printf("newByteData=%hhn\n",*newByteData);
 	}
 	else
 	{

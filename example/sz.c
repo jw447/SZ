@@ -397,6 +397,8 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
+				//jwang
+				//compression of double data.
 				double *data = readDoubleData(inPath, &nbEle, &status);	
 				if(status!=SZ_SCES)
 				{
@@ -406,18 +408,29 @@ int main(int argc, char* argv[])
 				cost_start();
 				bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
 				cost_end();
+				printf("compression time=%f\n", totalCost);
 				if(cmpPath == NULL)
 					sprintf(outputFilePath, "%s.sz", inPath);
 				else
 					strcpy(outputFilePath, cmpPath);
+				//jwang
+				cost_start();
 				writeByteData(bytes, outSize, outputFilePath, &status);		
-				free(data);
+				cost_end();
+				printf("writeByteData time=%f\n", totalCost);
+				
+				cost_start();
+                                free(data);
+                                cost_end();
+                                printf("free data time=%f\n", totalCost);
+
 				if(status != SZ_SCES)
 				{
 					printf("Error: data file %s cannot be written!\n", outputFilePath);
 					exit(0);
 				}		
-				printf("compression time=%f\n", totalCost);
+				//jwang
+				//printf("compression time=%f\n", totalCost);
 				printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
