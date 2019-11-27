@@ -201,6 +201,10 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 	unsigned char *p = out;
 	int lackBits = 0;
 	//long totalBitSize = 0, maxBitSize = 0, bitSize21 = 0, bitSize32 = 0;
+	struct timeval tmpS;
+        struct timeval tmpE;
+        double tmp=0;
+	gettimeofday(&tmpS, NULL);
 	for (i = 0;i<length;i++) 
 	{
 		state = s[i];
@@ -290,6 +294,9 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 			}
 		}
 	}
+	gettimeofday(&tmpE, NULL);
+	tmp = ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
+	printf("encoding time=%lf\n", tmp);
 //	for(i=0;i<stateNum;i++)
 //		if(code[i]!=NULL) free(code[i]);
 	/*printf("max bitsize = %d\n", maxBitSize);
