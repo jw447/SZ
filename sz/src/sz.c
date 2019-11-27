@@ -170,8 +170,6 @@ double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, siz
 		exe_params = (sz_exedata*)malloc(sizeof(sz_exedata));
 		memset(exe_params, 0, sizeof(sz_exedata));
 	}
-	//jwang
-	//printf("exe_params->intvCapacity=%d\n",exe_params->intvCapacity);
 	if(exe_params->intvCapacity == 0)
 	{
 		exe_params->intvCapacity = confparams_cpr->maxRangeRadius*2;
@@ -655,8 +653,6 @@ void SZ_printMetadata(sz_metadata* metadata)
 		printf("Data type:                      \t UINT64\n");
 		break;				
 	}
-	//jwang
-	//printf("exe_params->optQuantMode=%d\n",exe_params->optQuantMode);	
 	if(exe_params->optQuantMode==1)
 	{
 		printf("quantization_intervals:         \t 0\n");

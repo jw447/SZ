@@ -96,7 +96,6 @@ unsigned int optimize_intervals_double_1D(double *oriData, size_t dataLength, do
 		powerOf2 = 32;
 
 	free(intervals);
-	//printf("accIntervals=%d, powerOf2=%d\n", accIntervals, powerOf2);
 	return powerOf2;
 }
 
@@ -137,7 +136,6 @@ unsigned int optimize_intervals_double_2D(double *oriData, size_t r1, size_t r2,
 		i = confparams_cpr->maxRangeRadius-1;	
 	unsigned int accIntervals = 2*(i+1);
 	unsigned int powerOf2 = roundUpToPowerOf2(accIntervals);
-	//printf("confparams_cpr->maxRangeRadius = %d, accIntervals=%d, powerOf2=%d\n", confparams_cpr->maxRangeRadius, accIntervals, powerOf2);
 
 	if(powerOf2<32)
 		powerOf2 = 32;
@@ -271,8 +269,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	else
 		quantization_intervals = exe_params->intvCapacity;
 	updateQuantizationInfo(quantization_intervals);	
-	//jwang
-	//printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
+
 	size_t i;
 	int reqLength;
 	double medianValue = medianValue_d;
@@ -304,17 +301,11 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//add the first data	
 	type[0] = 0;
 	
-	//jwang
-	//FILE *fptr = fopen("../logs/quant_intvls.txt", "w");
-	//fprintf(stderr,"%d\n", type[0]);
-	
 	compressSingleDoubleValue(vce, spaceFillingValue[0], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 	listAdd_double(last3CmprsData, vce->data);
-	//
-	//printf("%f, %f, %f\n",spaceFillingValue[0], vce->data, medianValue);
 
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -324,19 +315,11 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//add the second data
 	type[1] = 0;
 	
-	//jwang
-	//fprintf(stderr,"%d\n", type[1]);
-
 	compressSingleDoubleValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 	listAdd_double(last3CmprsData, vce->data);
-	//
-	//printf("%f, %f, %f\n",spaceFillingValue[1], vce->data, medianValue);
-
-	//for(i=0;i<=2;i++)
-	//	printf("%f\n", last3CmprsData[i]);
 
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -349,48 +332,25 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double predAbsErr;
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
 	double interval = 2*realPrecision;
-	//printf("realPrecision=%f, interval=%f\n", realPrecision, interval);
-	//jwang
-	//printf("valueRangeSize=%lf\n",valueRangeSize);
-	//printf("checkradius=%lf\n", checkRadius);
-	//printf("intvCapacity=%d\n",exe_params->intvCapacity);
-	//printf("intvRadius=%d\n", exe_params->intvRadius);
+
 	int count_hit = 0;
 	int count_missed = 2;
 
 	double recip_realPrecision = 1/realPrecision;
-	//jwang
-	//fprintf(stderr, "curData,pred,predAbsErr,intvCapacity,realPrecision,checkRadius,tmp0,state,new_pred,type,comp_err\n");
-	
-	struct timeval totalCostS; 
-	struct timeval totalCostE;
-	struct timeval costHitS;
-	struct timeval costHitE;
-	struct timeval costMisS;
-        struct timeval costMisE;
-	double costHit = 0;
-	double costMis = 0;
 
+	//struct timeval tmpS;
+        //struct timeval tmpE;
+        //double tmp=0;
 	gettimeofday(&totalCostS, NULL); // starting point of curve hitting;
-
 	for(i=2;i<dataLength;i++)
-	{			
-		//printf("%.30G\n",last3CmprsData[0]);
+	{
+		//gettimeofday(&tmpS, NULL);	
 		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
-		//pred = 2*last3CmprsData[0] - last3CmprsData[1];
-		//pred = last3CmprsData[0];
-		
-		//jwang
-		//prediction error
-		//pred is the compressed value appended from last iteration.
 		predAbsErr = fabs(curData - pred);
-		//fprintf(stderr, "%.15f,%.15f,%.15f,%d,%.10f,%.5f,", curData, pred, (curData - pred), exe_params->intvCapacity, realPrecision, checkRadius);
-		//jwang
-		//error bound
+		
+		//gettimeofday(&tmpS, NULL);
 		if(predAbsErr<checkRadius)
 		{
-			//jwang
-			gettimeofday(&costHitS, NULL);
 			count_hit += 1;
 			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
@@ -403,56 +363,48 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			//fprintf(stderr, "%.15f,%d,%.15f,%d,%.15f\n", (predAbsErr*recip_realPrecision+1)*0.5, state, pred, type[i], (curData - pred));
-			//listAdd_double(last3CmprsData, pred);
 			
-			//jwang
-			gettimeofday(&costHitE, NULL);
-			costHit += ((costHitE.tv_sec*1000000+costHitE.tv_usec)-(costHitS.tv_sec*1000000+costHitS.tv_usec))/1000000.0;
-			
-#ifdef HAVE_TIMECMPR					
-			if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
-				decData[i] = pred;			
-#endif	
-			continue;
+			//continue;
 		}
-		gettimeofday(&costMisS, NULL);	
-		//unpredictable data processing
+		else{
+		//gettimeofday(&costMisS, NULL);	//[
+		//gettimeofday(&cost0S, NULL);      //[ cost0
+
 		type[i] = 0;
-
-		//jwang
 		count_missed += 1;
-		//fprintf(stderr, "%d\n", type[i]);
 
-		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
-		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
+		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
+		//gettimeofday(&cost0E, NULL);      // cost0
+		//cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+
+		//gettimeofday(&cost1S, NULL);     //cost1
+		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
 		memcpy(preDataBytes,vce->curBytes,8);
-		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
-							
-		//listAdd_double(last3CmprsData, vce->data);
-		pred = vce->data;
-		
-		gettimeofday(&costMisE, NULL);
-		costMis += ((costMisE.tv_sec*1000000+costMisE.tv_usec)-(costMisS.tv_sec*1000000+costMisS.tv_usec))/1000000.0;
-		//jwang
-		//fprintf(stderr,"%f,%d,%f,%d,%f\n", curData, state, interval, type[i], pred);
-		//fprintf(stderr, "%d,%d,%.15f,%d,%.15f\n", -1, state, pred, type[i], (curData - pred));
-#ifdef HAVE_TIMECMPR
-		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
-			decData[i] = vce->data;
-#endif	
+		//gettimeofday(&cost1E, NULL);    //cost1
+		//cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+
+		//gettimeofday(&cost2S, NULL);    //cost2
+		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
+		//gettimeofday(&cost2E, NULL);   //cost2
+		//cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+
+		//gettimeofday(&cost3S, NULL); // cost3
+		pred = vce->data; //
+		//gettimeofday(&cost3E, NULL); // cost3
+		//cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
+
+		//gettimeofday(&costMisE, NULL);   // ]
+		//costMis += ((costMisE.tv_sec*1000000+costMisE.tv_usec)-(costMisS.tv_sec*1000000+costMisS.tv_usec))/1000000.0;
+		}
 	}//end of for
 	
 	//jwang
 	gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
-        double elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
-        printf("total time of curve-fitting=%f\n", elapsed);
-	printf("time for hit points=%f, for missed points=%f\n", costHit, costMis);
-	printf("------------\n");
-	//jwang
-	//fclose(fptr);
-	//printf("count_hit=%d\n", count_hit);
-	//printf("count_missed=%d\n", count_missed);	
+        elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+	
+	hit_ratio = (double)count_hit/(count_hit + count_missed);
+	qf = quantization_intervals;
+	Nelements = dataLength;	
 
 	size_t exactDataNum = exactLeadNumArray->size;
 	

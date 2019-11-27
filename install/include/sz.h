@@ -69,8 +69,8 @@
 extern "C" {
 #endif
 
-#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
-
+//#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
+#define FuncName 
 //typedef char int8_t;
 //typedef unsigned char uint8_t;
 //typedef short int16_t;
@@ -325,3 +325,48 @@ void* SZ_decompress_customize(const char* appName, void* userPara, int dataType,
 #endif
 
 #endif /* ----- #ifndef _SZ_H  ----- */
+
+// jwang
+// curve fitting
+struct timeval totalCostS; // time for the for-loop
+struct timeval totalCostE;
+double elapsed;
+
+struct timeval costHitS;   // time for hitted points
+struct timeval costHitE;
+double costHit;
+
+struct timeval costMisS;   // time for missed points
+struct timeval costMisE;
+double costMis;
+
+struct timeval cost0S;     // time for compressing single double value
+struct timeval cost0E;
+double cost0;
+
+struct timeval cost1S; 
+struct timeval cost1E;
+double cost1;
+
+struct timeval cost2S;
+struct timeval cost2E;
+double cost2;
+
+struct timeval cost3S;
+struct timeval cost3E;
+double cost3;
+
+// huffman tree
+struct timeval costTreeS;
+struct timeval costTreeE;
+double costTree;
+
+struct timeval costEncodeS;
+struct timeval costEncodeE;
+double costEncode;
+
+double hit_ratio;
+int node_count;
+int Nelements;
+int qf;
+

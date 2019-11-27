@@ -285,62 +285,53 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo) {
 	//jwang
 	FuncName;
-	struct timeval costHuffS;
-	struct timeval costHuffE;
-	double costHuff = 0;
-	//int i = 0;
 	*this = (TightDataPointStorageD *)malloc(sizeof(TightDataPointStorageD));
 	(*this)->allSameData = 0;
 	(*this)->realPrecision = realPrecision;
-	//printf("realPrecision=%.20f\n", realPrecision);
 
 	(*this)->medianValue = medianValue;
 
 	(*this)->reqLength = reqLength;
-	//printf("reqLength=%d\n",reqLength);
 
 	(*this)->dataSeriesLength = dataSeriesLength;
-	//printf("dataSeriesLength=%lu\n", dataSeriesLength);
 
 	(*this)->exactDataNum = exactDataNum;
-	//printf("exactDataNum=%lu\n", exactDataNum);
 
 	(*this)->rtypeArray = NULL;
 	(*this)->rtypeArray_size = 0;
 
 	int stateNum = 2*intervals;
-	//jwang
-	//printf("intervals=%d\n", intervals);
-	//printf("stateNum=%d\n",stateNum);
+	
+	// =============
+        //int type0[15] = { 1,2,1,1,1,2,2,1,4,5,4,2,3,4,1 };
+        //HuffmanTree* huffmanTree0 = createHuffmanTree(5);
+        //encode_withTree(huffmanTree0, type0, 15, &(*this)->typeArray, &(*this)->typeArray_size);
+	
+	struct timeval start;
+	struct timeval end;
+	double duration = 0;
 	
 	//jwang
-	gettimeofday(&costHuffS, NULL); // starting point of Huffman Encoding.
+	gettimeofday(&start, NULL);
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
-	//jwang
-	//for (int i = 0; i < huffmanTree->stateNum; i++){
-	//printf("%lu\n", huffmanTree->code[i]);
-	//} 
+
 	if(confparams_cpr->errorBoundMode == PW_REL && confparams_cpr->accelerate_pw_rel_compression)
 		(*this)->max_bits = encode_withTree_MSST19(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	else
 		encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
+	gettimeofday(&end, NULL);
+	duration = ((end.tv_sec*1000000+end.tv_usec)-(start.tv_sec*1000000+start.tv_usec))/1000000.0;
+	printf("Huffman duration=%lf\n", duration);
+	//
 	SZ_ReleaseHuffman(huffmanTree);
 	
-	gettimeofday(&costHuffE, NULL); // end point of Huffman Encoding.
-	costHuff = ((costHuffE.tv_sec*1000000+costHuffE.tv_usec)-(costHuffS.tv_sec*1000000+costHuffS.tv_usec))/1000000.0;
-	printf("time for Huffman encoding=%f\n", costHuff);
-	//printf("typeArray_size=%lu\n", (*this)->typeArray_size);
-
 	(*this)->exactMidBytes = exactMidBytes;
 
 	(*this)->exactMidBytes_size = exactMidBytes_size;
-	//printf("exactMidBytes_size=%lu\n", exactMidBytes_size);
 
 	(*this)->leadNumArray_size = convertIntArray2ByteArray_fast_2b(leadNumIntArray, exactDataNum, &((*this)->leadNumArray));
-	//printf("leadNumArray_size=%lu\n", (*this)->leadNumArray_size);
 
 	(*this)->residualMidBits_size = convertIntArray2ByteArray_fast_dynamic(resiMidBits, resiBitLength, exactDataNum, &((*this)->residualMidBits));
-	//printf("residualMidBits_size=%lu\n", (*this)->residualMidBits_size);
 	
 	(*this)->intervals = intervals;
 	
@@ -354,7 +345,6 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->radExpo = radExpo;
 	
 	(*this)->pwrErrBoundBytes_size = pwrErrBoundBytes_size;
-	//printf("pwrErrBoundBytes_size=%ld\n", pwrErrBoundBytes_size);
 }
 
 void new_TightDataPointStorageD2(TightDataPointStorageD **this, 
@@ -382,7 +372,7 @@ void new_TightDataPointStorageD2(TightDataPointStorageD **this,
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
 	encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	SZ_ReleaseHuffman(huffmanTree);
-	
+
 	(*this)->exactMidBytes = exactMidBytes;
 	(*this)->exactMidBytes_size = exactMidBytes_size;
 
