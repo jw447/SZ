@@ -321,7 +321,7 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 		encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	gettimeofday(&end, NULL);
 	duration = ((end.tv_sec*1000000+end.tv_usec)-(start.tv_sec*1000000+start.tv_usec))/1000000.0;
-	printf("Huffman duration=%lf\n", duration);
+	printf("Huffman total=%lf\n", duration);
 	//
 	SZ_ReleaseHuffman(huffmanTree);
 	

@@ -297,12 +297,6 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 	gettimeofday(&tmpE, NULL);
 	tmp = ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
 	printf("encoding time=%lf\n", tmp);
-//	for(i=0;i<stateNum;i++)
-//		if(code[i]!=NULL) free(code[i]);
-	/*printf("max bitsize = %d\n", maxBitSize);
-	printf("bitSize21 ratio = %f\n", ((float)bitSize21)/length);
-	printf("bitSize32 ratio = %f\n", ((float)bitSize32)/length);
-	printf("avg bit size = %f\n", ((float)totalBitSize)/length);*/
 }
  
 void decode(unsigned char *s, size_t targetLength, node t, int *out)
@@ -780,18 +774,18 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	int nodeCount = 0;
 	unsigned char *treeBytes, buffer[4];
 	
+	gettimeofday(&costTreeS, NULL);
 	init(huffmanTree, s, length);
 	//jwang
 	for (i = 0; i < huffmanTree->stateNum; i++){
 		if (huffmanTree->code[i]) nodeCount++;
-		//printf("huffmanTree->code[i]=%lu\n",huffmanTree->code[i]);
 	}
-	//printf("This nodecount=%d\n",huffmanTree->allNodes);
-	//printf("This nodecount=%d\n",huffmanTree->n_nodes);
 	nodeCount = nodeCount*2-1;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
+	gettimeofday(&costTreeE, NULL);
+	costTree = ((costTreeE.tv_sec*1000000+costTreeE.tv_usec)-(costTreeS.tv_sec*1000000+costTreeS.tv_usec))/1000000.0;
 
-	//printf("this nodecount = %d\n",nodeCount);
+	gettimeofday(&costEncodeS, NULL);	
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
 	memcpy(*out, buffer, 4);
@@ -802,11 +796,10 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	size_t enCodeSize = 0;
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
 	*outSize = 8+treeByteSize+enCodeSize;
-	//jwang
-	//printf("nodeCount=%d\n", nodeCount);
-	//printf("encodeSize=%ld\n", enCodeSize);
-	//printf("treeByteSize=%d\n", treeByteSize);
-	//printf("outsize=%ld\n", *outSize);
+	gettimeofday(&costEncodeE, NULL);
+	costEncode = ((costEncodeE.tv_sec*1000000+costEncodeE.tv_usec)-(costEncodeS.tv_sec*1000000+costEncodeS.tv_usec))/1000000.0;
+	
+	node_count=nodeCount;
 }
 
 int encode_withTree_MSST19(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize)
