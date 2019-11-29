@@ -1,0 +1,16 @@
+deprecated/libzstd_la-zbuff_common.lo: deprecated/zbuff_common.c \
+ /usr/include/stdc-predef.h common/error_private.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h common/zstd_errors.h \
+ deprecated/zbuff.h zstd.h
+
+/usr/include/stdc-predef.h:
+
+common/error_private.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
+
+common/zstd_errors.h:
+
+deprecated/zbuff.h:
+
+zstd.h:
