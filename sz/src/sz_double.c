@@ -300,11 +300,23 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	LossyCompressionElement *lce = (LossyCompressionElement*)malloc(sizeof(LossyCompressionElement));			
 	//add the first data	
 	type[0] = 0;
-	
+
+	gettimeofday(&cost0S, NULL);	
 	compressSingleDoubleValue(vce, spaceFillingValue[0], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
+	gettimeofday(&cost0E, NULL);
+	cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+
+	gettimeofday(&cost1S, NULL);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
+	gettimeofday(&cost1E, NULL);    //cost1
+        cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+	
+	gettimeofday(&cost2S, NULL);
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
+	gettimeofday(&cost2E, NULL);   //cost2
+        cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+
 	listAdd_double(last3CmprsData, vce->data);
 
 #ifdef HAVE_TIMECMPR	
@@ -315,11 +327,23 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//add the second data
 	type[1] = 0;
 	
-	compressSingleDoubleValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
-	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
-	memcpy(preDataBytes,vce->curBytes,8);
-	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
-	listAdd_double(last3CmprsData, vce->data);
+	gettimeofday(&cost0S, NULL);
+        compressSingleDoubleValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
+        gettimeofday(&cost0E, NULL);
+        cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+
+        gettimeofday(&cost1S, NULL);
+        updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
+        memcpy(preDataBytes,vce->curBytes,8);
+        gettimeofday(&cost1E, NULL);    //cost1
+        cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+
+        gettimeofday(&cost2S, NULL);
+        addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
+        gettimeofday(&cost2E, NULL);   //cost2
+        cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+
+        listAdd_double(last3CmprsData, vce->data);
 
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -333,22 +357,19 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
 	double interval = 2*realPrecision;
 
-	int count_hit = 0;
-	int count_missed = 2;
+	count_hit = 0;
+	count_missed = 2;
 
 	double recip_realPrecision = 1/realPrecision;
 
-	//struct timeval tmpS;
-        //struct timeval tmpE;
-        //double tmp=0;
+        tmp=0;
 	gettimeofday(&totalCostS, NULL); // starting point of curve hitting;
 	for(i=2;i<dataLength;i++)
 	{
-		//gettimeofday(&tmpS, NULL);	
+		gettimeofday(&tmpS, NULL);
 		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
-		predAbsErr = fabs(curData - pred);
-		
-		//gettimeofday(&tmpS, NULL);
+		predAbsErr = fabs(curData - pred);	
+
 		if(predAbsErr<checkRadius)
 		{
 			count_hit += 1;
@@ -363,39 +384,37 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			
+		
+			gettimeofday(&tmpE, NULL);	
+			tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
 			//continue;
 		}
 		else{
-		//gettimeofday(&costMisS, NULL);	//[
-		//gettimeofday(&cost0S, NULL);      //[ cost0
-
 		type[i] = 0;
 		count_missed += 1;
 
+		gettimeofday(&cost0S, NULL);
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
-		//gettimeofday(&cost0E, NULL);      // cost0
-		//cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+		gettimeofday(&cost0E, NULL);      // cost0
+		cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
 
-		//gettimeofday(&cost1S, NULL);     //cost1
+		gettimeofday(&cost1S, NULL);     //cost1
 		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
 		memcpy(preDataBytes,vce->curBytes,8);
-		//gettimeofday(&cost1E, NULL);    //cost1
-		//cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+		gettimeofday(&cost1E, NULL);    //cost1
+		cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
 
-		//gettimeofday(&cost2S, NULL);    //cost2
+		gettimeofday(&cost2S, NULL);    //cost2
 		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
-		//gettimeofday(&cost2E, NULL);   //cost2
-		//cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+		gettimeofday(&cost2E, NULL);   //cost2
+		cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
 
-		//gettimeofday(&cost3S, NULL); // cost3
+		gettimeofday(&cost3S, NULL); // cost3
 		pred = vce->data; //
-		//gettimeofday(&cost3E, NULL); // cost3
-		//cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
-
-		//gettimeofday(&costMisE, NULL);   // ]
-		//costMis += ((costMisE.tv_sec*1000000+costMisE.tv_usec)-(costMisS.tv_sec*1000000+costMisS.tv_usec))/1000000.0;
+		gettimeofday(&cost3E, NULL); // cost3
+		cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
 		}
+		
 	}//end of for
 	
 	//jwang
@@ -409,7 +428,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	size_t exactDataNum = exactLeadNumArray->size;
 	
 	TightDataPointStorageD* tdps;
-			
+		
 	new_TightDataPointStorageD(&tdps, dataLength, exactDataNum, 
 			type, exactMidByteArray->array, exactMidByteArray->size,  
 			exactLeadNumArray->array,  

@@ -200,26 +200,13 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 	int state;
 	unsigned char *p = out;
 	int lackBits = 0;
-	//long totalBitSize = 0, maxBitSize = 0, bitSize21 = 0, bitSize32 = 0;
-	struct timeval tmpS;
-        struct timeval tmpE;
-        double tmp=0;
-	gettimeofday(&tmpS, NULL);
+
 	for (i = 0;i<length;i++) 
 	{
-		state = s[i];
-		bitSize = huffmanTree->cout[state];	
-		
-		//printf("%d %d : %d %u\n",i, state, bitSize, (code[state])[0] >> (64-cout[state])); 
-		//debug: compute the average bitSize and the count that is over 32... 	
-		/*if(bitSize>=21)
-			bitSize21++;
-		if(bitSize>=32)
-			bitSize32++;
-		if(maxBitSize<bitSize)
-			maxBitSize = bitSize;
-		totalBitSize+=bitSize;*/
 
+		state = s[i];
+		bitSize = huffmanTree->cout[state]; // number of bits in the code; number of levels of current node	
+		
 		if(lackBits==0)
 		{
 			byteSize = bitSize%8==0 ? bitSize/8 : bitSize/8+1; //it's equal to the number of bytes involved (for *outSize)
@@ -293,10 +280,7 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 					p++;
 			}
 		}
-	}
-	gettimeofday(&tmpE, NULL);
-	tmp = ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
-	printf("encoding time=%lf\n", tmp);
+	} // end of for
 }
  
 void decode(unsigned char *s, size_t targetLength, node t, int *out)

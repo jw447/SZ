@@ -307,21 +307,21 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
         //HuffmanTree* huffmanTree0 = createHuffmanTree(5);
         //encode_withTree(huffmanTree0, type0, 15, &(*this)->typeArray, &(*this)->typeArray_size);
 	
-	struct timeval start;
-	struct timeval end;
-	double duration = 0;
+	//struct timeval start;
+	//struct timeval end;
+	//double duration = 0;
 	
 	//jwang
-	gettimeofday(&start, NULL);
+	//gettimeofday(&start, NULL);
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
 
 	if(confparams_cpr->errorBoundMode == PW_REL && confparams_cpr->accelerate_pw_rel_compression)
 		(*this)->max_bits = encode_withTree_MSST19(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	else
 		encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
-	gettimeofday(&end, NULL);
-	duration = ((end.tv_sec*1000000+end.tv_usec)-(start.tv_sec*1000000+start.tv_usec))/1000000.0;
-	printf("Huffman total=%lf\n", duration);
+	//gettimeofday(&end, NULL);
+	//duration = ((end.tv_sec*1000000+end.tv_usec)-(start.tv_sec*1000000+start.tv_usec))/1000000.0;
+	//printf("Huffman total=%lf\n", duration);
 	//
 	SZ_ReleaseHuffman(huffmanTree);
 	

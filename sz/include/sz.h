@@ -327,7 +327,7 @@ void* SZ_decompress_customize(const char* appName, void* userPara, int dataType,
 #endif /* ----- #ifndef _SZ_H  ----- */
 
 // jwang
-// curve fitting
+
 struct timeval totalCostS; // time for the for-loop
 struct timeval totalCostE;
 double elapsed;
@@ -336,10 +336,7 @@ struct timeval costHitS;   // time for hitted points
 struct timeval costHitE;
 double costHit;
 
-struct timeval costMisS;   // time for missed points
-struct timeval costMisE;
-double costMis;
-
+// curve missed time
 struct timeval cost0S;     // time for compressing single double value
 struct timeval cost0E;
 double cost0;
@@ -356,15 +353,23 @@ struct timeval cost3S;
 struct timeval cost3E;
 double cost3;
 
+// curve fitting time
+struct timeval tmpS;
+struct timeval tmpE;
+double tmp;
+
 // huffman tree
 struct timeval costTreeS;
 struct timeval costTreeE;
 double costTree;
 
+// huffman encoding time
 struct timeval costEncodeS;
 struct timeval costEncodeE;
 double costEncode;
 
+int count_hit;
+int count_missed;
 double hit_ratio;
 int node_count;
 int Nelements;

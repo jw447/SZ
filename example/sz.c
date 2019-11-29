@@ -430,17 +430,18 @@ int main(int argc, char* argv[])
 				}		
 				//jwang
 				printf("Nelements=%d\n", Nelements);
-				printf("qf=%d\n", qf);
-				printf("hit_ratio=%lf\n", hit_ratio);
+                                printf("qf=%d\n", qf);
 				printf("node_count=%d\n", node_count);
-				printf("total time of curve-fitting=%lf\n", elapsed);
-                                printf("time for hit points=%lf, for missed points=%lf\n", costHit, costMis);
-                                printf("time for cost0=%lf,cost1=%lf,cost2=%lf,cost3=%lf\n", cost0, cost1, cost2, cost3);
-				printf("time for huffman tree=%lf\n", costTree);
-				printf("time for encoding=%lf\n", costEncode);
-                                printf("compression time=%lf\n", totalCost);
-				printf("write time=%lf\n", write);
-				//printf("compressed data file: %s\n", outputFilePath);
+				printf("count_hit=%d\n", count_hit);
+        			printf("count_missed=%d\n", count_missed);
+				printf("hit_ratio=%lf\n", hit_ratio);
+				printf("---------\n");
+				printf("curve-fitting+binary=%lf\n", elapsed);
+				printf("curve-fitting=%lf\n", tmp);
+                                printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
+				printf("costTree=%lf\n", costTree);
+				printf("costEncode=%lf\n", costEncode);
+                                printf("totalCost=%lf\n", totalCost);
 			}	
 		}
 
