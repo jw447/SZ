@@ -438,10 +438,10 @@ int main(int argc, char* argv[])
 				struct timeval writeS;
 				struct timeval writeE;  /* Start and end times */
 				double write = 0;
-				gettimeofday(&writeS, NULL);
+				//gettimeofday(&writeS, NULL);
 				writeByteData(bytes, outSize, outputFilePath, &status);		
-				gettimeofday(&writeE, NULL);
-				write = ((writeE.tv_sec*1000000+writeE.tv_usec)-(writeS.tv_sec*1000000+writeS.tv_usec))/1000000.0;
+				//gettimeofday(&writeE, NULL);
+				//write = ((writeE.tv_sec*1000000+writeE.tv_usec)-(writeS.tv_sec*1000000+writeS.tv_usec))/1000000.0;
 
                                 free(data);
 
