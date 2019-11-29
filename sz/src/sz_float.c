@@ -543,9 +543,9 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	}//end of for
 	//gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
         //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
-	hit_ratio = (double)count_hit/(count_hit + count_missed);
-        qf = quantization_intervals;
-        Nelements = dataLength;
+	//hit_ratio = (double)count_hit/(count_hit + count_missed);
+        //qf = quantization_intervals;
+        //Nelements = dataLength;
 //	char* expSegmentsInBytes;
 //	int expSegmentsInBytes_size = convertESCToBytes(esc, &expSegmentsInBytes);
 	size_t exactDataNum = exactLeadNumArray->size;
