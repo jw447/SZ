@@ -69,7 +69,7 @@
 extern "C" {
 #endif
 
-#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
+//#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
 #define FuncName 
 //typedef char int8_t;
 //typedef unsigned char uint8_t;

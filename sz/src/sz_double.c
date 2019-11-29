@@ -301,21 +301,21 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//add the first data	
 	type[0] = 0;
 
-	gettimeofday(&cost0S, NULL);	
+	//gettimeofday(&cost0S, NULL);	
 	compressSingleDoubleValue(vce, spaceFillingValue[0], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
-	gettimeofday(&cost0E, NULL);
-	cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+	//gettimeofday(&cost0E, NULL);
+	//cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
 
-	gettimeofday(&cost1S, NULL);
+	//gettimeofday(&cost1S, NULL);
 	updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,8);
-	gettimeofday(&cost1E, NULL);    //cost1
-        cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+	//gettimeofday(&cost1E, NULL);    //cost1
+        //cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
 	
-	gettimeofday(&cost2S, NULL);
+	//gettimeofday(&cost2S, NULL);
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
-	gettimeofday(&cost2E, NULL);   //cost2
-        cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+	//gettimeofday(&cost2E, NULL);   //cost2
+        //cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
 
 	listAdd_double(last3CmprsData, vce->data);
 
@@ -327,21 +327,21 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//add the second data
 	type[1] = 0;
 	
-	gettimeofday(&cost0S, NULL);
+	//gettimeofday(&cost0S, NULL);
         compressSingleDoubleValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
-        gettimeofday(&cost0E, NULL);
-        cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+        //gettimeofday(&cost0E, NULL);
+        //cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
 
-        gettimeofday(&cost1S, NULL);
+        //gettimeofday(&cost1S, NULL);
         updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
         memcpy(preDataBytes,vce->curBytes,8);
-        gettimeofday(&cost1E, NULL);    //cost1
-        cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+        //gettimeofday(&cost1E, NULL);    //cost1
+        //cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
 
-        gettimeofday(&cost2S, NULL);
+        //gettimeofday(&cost2S, NULL);
         addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
-        gettimeofday(&cost2E, NULL);   //cost2
-        cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+        //gettimeofday(&cost2E, NULL);   //cost2
+        //cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
 
         listAdd_double(last3CmprsData, vce->data);
 
@@ -363,10 +363,10 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double recip_realPrecision = 1/realPrecision;
 
         tmp=0;
-	gettimeofday(&totalCostS, NULL); // starting point of curve hitting;
+	//gettimeofday(&totalCostS, NULL); // starting point of curve hitting;
 	for(i=2;i<dataLength;i++)
 	{
-		gettimeofday(&tmpS, NULL);
+		//gettimeofday(&tmpS, NULL);
 		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
 		predAbsErr = fabs(curData - pred);	
 
@@ -385,41 +385,41 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				pred = pred - state*interval;
 			}
 		
-			gettimeofday(&tmpE, NULL);	
-			tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
+			//gettimeofday(&tmpE, NULL);	
+			//tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
 			//continue;
 		}
 		else{
 		type[i] = 0;
 		count_missed += 1;
 
-		gettimeofday(&cost0S, NULL);
+		//gettimeofday(&cost0S, NULL);
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
-		gettimeofday(&cost0E, NULL);      // cost0
-		cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+		//gettimeofday(&cost0E, NULL);      // cost0
+		//cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
 
-		gettimeofday(&cost1S, NULL);     //cost1
-		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
+		//gettimeofday(&cost1S, NULL);     //cost1
+		//updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
 		memcpy(preDataBytes,vce->curBytes,8);
-		gettimeofday(&cost1E, NULL);    //cost1
-		cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+		//gettimeofday(&cost1E, NULL);    //cost1
+		//cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
 
-		gettimeofday(&cost2S, NULL);    //cost2
+		//gettimeofday(&cost2S, NULL);    //cost2
 		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
-		gettimeofday(&cost2E, NULL);   //cost2
-		cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+		//gettimeofday(&cost2E, NULL);   //cost2
+		//cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
 
-		gettimeofday(&cost3S, NULL); // cost3
+		//gettimeofday(&cost3S, NULL); // cost3
 		pred = vce->data; //
-		gettimeofday(&cost3E, NULL); // cost3
-		cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
+		//gettimeofday(&cost3E, NULL); // cost3
+		//cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
 		}
 		
 	}//end of for
 	
 	//jwang
-	gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
-        elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+	//gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
+        //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
 	
 	hit_ratio = (double)count_hit/(count_hit + count_missed);
 	qf = quantization_intervals;
