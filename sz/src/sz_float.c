@@ -394,11 +394,25 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 				
 	//add the first data	
 	type[0] = 0;
+
+	gettimeofday(&cost0S, NULL);
 	compressSingleFloatValue(vce, spaceFillingValue[0], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
+	gettimeofday(&cost0E, NULL);
+	cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+
+	gettimeofday(&cost1S, NULL);
 	updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 	memcpy(preDataBytes,vce->curBytes,4);
+	gettimeofday(&cost1E, NULL);
+	cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+
+	gettimeofday(&cost2S, NULL);
 	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
+	gettimeofday(&cost2E, NULL);
+	cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
+
 	listAdd_float(last3CmprsData, vce->data);
+
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 		decData[0] = vce->data;
@@ -406,11 +420,25 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		
 	//add the second data
 	type[1] = 0;
-	compressSingleFloatValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
-	updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
-	memcpy(preDataBytes,vce->curBytes,4);
-	addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
+	
+	gettimeofday(&cost0S, NULL);
+        compressSingleFloatValue(vce, spaceFillingValue[1], realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
+        gettimeofday(&cost0E, NULL);
+        cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+
+        gettimeofday(&cost1S, NULL);
+        updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
+        memcpy(preDataBytes,vce->curBytes,4);
+        gettimeofday(&cost1E, NULL);
+        cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+
+        gettimeofday(&cost2S, NULL);
+        addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
+        gettimeofday(&cost2E, NULL);
+        cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;	
+	
 	listAdd_float(last3CmprsData, vce->data);
+
 #ifdef HAVE_TIMECMPR	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 		decData[1] = vce->data;
@@ -424,15 +452,22 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	float interval = 2*realPrecision;
 	
 	float recip_precision = 1/realPrecision;
-	
+
+	count_hit = 0;
+        count_missed = 2;
+	tmp=0;
+
+	gettimeofday(&totalCostS, NULL);
 	for(i=2;i<dataLength;i++)
-	{	
+	{
+		gettimeofday(&tmpS, NULL);	
 		curData = spaceFillingValue[i];
 		//pred = 2*last3CmprsData[0] - last3CmprsData[1];
 		//pred = last3CmprsData[0];
 		predAbsErr = fabsf(curData - pred);	
 		if(predAbsErr<checkRadius)
 		{
+			count_hit += 1;
 			state = ((int)(predAbsErr*recip_precision+1))>>1;
 			if(curData>=pred)
 			{
@@ -468,26 +503,49 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 				if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 					decData[i] = pred;			
 #endif	
-			}	
-			continue;
+			}
+			gettimeofday(&tmpE, NULL);
+                        tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;	
+			//continue;
 		}
-		
+		else{	
 		//unpredictable data processing		
-		type[i] = 0;		
+		type[i] = 0;
+		count_missed += 1;
+
+		gettimeofday(&cost0S, NULL);
 		compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
+		gettimeofday(&cost0E, NULL);
+		cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec))/1000000.0;
+
+		gettimeofday(&cost1S, NULL);
 		updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 		memcpy(preDataBytes,vce->curBytes,4);
+		gettimeofday(&cost1E, NULL);
+		cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec))/1000000.0;
+
+		gettimeofday(&cost2S, NULL);
 		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
+		gettimeofday(&cost2E, NULL);
+		cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
 
 		//listAdd_float(last3CmprsData, vce->data);
+		//
+		gettimeofday(&cost3S, NULL);
 		pred = vce->data;
+		gettimeofday(&cost3E, NULL);
+		cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
 #ifdef HAVE_TIMECMPR
 		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 			decData[i] = vce->data;
 #endif	
-		
+		}
 	}//end of for
-		
+	gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
+        elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+	hit_ratio = (double)count_hit/(count_hit + count_missed);
+        qf = quantization_intervals;
+        Nelements = dataLength;
 //	char* expSegmentsInBytes;
 //	int expSegmentsInBytes_size = convertESCToBytes(esc, &expSegmentsInBytes);
 	size_t exactDataNum = exactLeadNumArray->size;
