@@ -31,7 +31,7 @@ PATH: /home/jon/local_build/zfp/bin
 PATH: /home/jon/local_build/SZ/install/bin
 PATH: /home/jon/local_build/bazel-0.19.2/output
 PATH: /home/jon/local_build/adios-1.13.1/install/bin
-PATH: /home/jon/anaconda3/bin
+PATH: /home/jon/anaconda3/envs/tf-1.13/bin
 PATH: /home/jon/anaconda3/condabin
 PATH: /usr/local/sbin
 PATH: /usr/local/bin
@@ -743,6 +743,7 @@ config.status:1187: creating zlib/Makefile
 config.status:1187: creating zstd/Makefile
 config.status:1187: creating example/Makefile
 config.status:1187: creating config.h
+config.status:1368: config.h is unchanged
 config.status:1416: executing depfiles commands
 config.status:1416: executing libtool commands
 
