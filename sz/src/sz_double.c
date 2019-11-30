@@ -366,7 +366,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//gettimeofday(&totalCostS, NULL); // starting point of curve hitting;
 	for(i=2;i<dataLength;i++)
 	{
-		//gettimeofday(&tmpS, NULL);
+		gettimeofday(&tmpS, NULL);
 		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
 		predAbsErr = fabs(curData - pred);	
 
@@ -385,8 +385,8 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				pred = pred - state*interval;
 			}
 		
-			//gettimeofday(&tmpE, NULL);	
-			//tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
+			gettimeofday(&tmpE, NULL);	
+			tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
 			//continue;
 		}
 		else{

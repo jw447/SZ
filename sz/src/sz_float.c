@@ -460,7 +460,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	//gettimeofday(&totalCostS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
-		//gettimeofday(&tmpS, NULL);	
+		gettimeofday(&tmpS, NULL);	
 		curData = spaceFillingValue[i];
 		//pred = 2*last3CmprsData[0] - last3CmprsData[1];
 		//pred = last3CmprsData[0];
@@ -504,8 +504,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 					decData[i] = pred;			
 #endif	
 			}
-			//gettimeofday(&tmpE, NULL);
-                        //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;	
+			gettimeofday(&tmpE, NULL);
+                        tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;	
 			//continue;
 		}
 		else{	
@@ -543,6 +543,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	}//end of for
 	//gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
         //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+	
 	hit_ratio = (double)count_hit/(count_hit + count_missed);
         qf = quantization_intervals;
         Nelements = dataLength;

@@ -338,14 +338,14 @@ int main(int argc, char* argv[])
 				printf("Error: data file %s cannot be written!\n", outputFilePath);
 				exit(0);
 			}
-			printf("compression time = %f\n", totalCost);
-			printf("compressed data file: %s\n", outputFilePath);
-			printf("count_hit=%d\n", count_hit);
-			printf("count_missed=%d\n", count_missed);
-			printf("hit_ratio=%lf\n", hit_ratio);
-			printf("-----------------------------\n");
-			//printf("curve-fitting+binary=%lf\n", elapsed);
-			//printf("curve-fitting=%lf\n", tmp);
+			//printf("compression time = %f\n", totalCost);
+			//printf("compressed data file: %s\n", outputFilePath);
+			//printf("count_hit=%d\n", count_hit);
+			//printf("count_missed=%d\n", count_missed);
+			//printf("hit_ratio=%lf\n", hit_ratio);
+			//printf("-----------------------------\n");
+			//printf("for-loop=%lf\n", elapsed);
+			printf("curve-fitting=%lf\n", tmp);
 			//printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
 			//printf("costTree=%lf\n", costTree);
 			//printf("costEncode=%lf\n", costEncode);
@@ -404,7 +404,7 @@ int main(int argc, char* argv[])
 				system("mkdir -p ./compressed");
 				system("${TUCKERMPI_PATH}/serial/drivers/bin/Tucker_sthosvd --parameter-file parameter-raw.txt");
 			}
-			else
+			else // double precision compression
 			{
 				double *data = readDoubleData(inPath, &nbEle, &status);	
 				if(status!=SZ_SCES)
@@ -426,8 +426,18 @@ int main(int argc, char* argv[])
 					printf("Error: data file %s cannot be written!\n", outputFilePath);
 					exit(0);
 				}		
-				printf("compression time = %f\n", totalCost);
-				printf("compressed data file: %s\n", outputFilePath);
+				//printf("compression time = %f\n", totalCost);
+				//printf("compressed data file: %s\n", outputFilePath);
+				//printf("count_hit=%d\n", count_hit);
+				//printf("count_missed=%d\n", count_missed);
+				//printf("hit_ratio=%lf\n", hit_ratio);
+				//printf("-----------------------------\n");
+				//printf("for-loop=%lf\n", elapsed);
+				printf("curve-fitting=%lf\n", tmp);
+				//printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
+				//printf("costTree=%lf\n", costTree);
+				//printf("costEncode=%lf\n", costEncode);
+				//printf("totalCost=%lf\n", totalCost);
 			}	
 		}
 
