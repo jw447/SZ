@@ -9,6 +9,7 @@ struct timeval endTime;  /* Start and end times */
 struct timeval costStart; /*only used for recording the cost*/
 double totalCost = 0;
 
+
 void cost_start()
 {
 	totalCost = 0;
@@ -81,7 +82,6 @@ void usage()
 
 int main(int argc, char* argv[])
 {
-	FuncName;
 	int binaryOutput = 1;
 	int printCmpResults = 0;
 	int isCompression = -1000; //1 : compression ; 0: decompression
@@ -338,29 +338,8 @@ int main(int argc, char* argv[])
 				printf("Error: data file %s cannot be written!\n", outputFilePath);
 				exit(0);
 			}
-			cost_end();
-			//jwang
-                        //printf("Nelements=%d\n", Nelements);
-                        //printf("qf=%d\n", qf);
-                        //printf("node_count=%d\n", node_count);
-                        //printf("count_hit=%d\n", count_hit);
-                        //printf("count_missed=%d\n", count_missed);
-                        //printf("hit_ratio=%lf\n", hit_ratio);
-                        //printf("---------\n");
-                        //printf("curve-fitting+binary=%lf\n", elapsed);
-                        //printf("curve-fitting=%lf\n", tmp);
-                        //printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
-                        //printf("costTree=%lf\n", costTree);
-                        //printf("costEncode=%lf\n", costEncode);
-                        printf("totalCost=%lf\n", totalCost);
-			printf("---------\n");
-			printf("Nelements=%d\n", Nelements);
-                        printf("qf=%d\n", qf);
-                        printf("node_count=%d\n", node_count);
-                        printf("count_hit=%d\n", count_hit);
-                        printf("count_missed=%d\n", count_missed);
-                        printf("hit_ratio=%lf\n", hit_ratio);
-
+			printf("compression time = %f\n", totalCost);
+			printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
 		{
@@ -414,12 +393,9 @@ int main(int argc, char* argv[])
 				
 				system("mkdir -p ./compressed");
 				system("${TUCKERMPI_PATH}/serial/drivers/bin/Tucker_sthosvd --parameter-file parameter-raw.txt");
-				cost_end();
 			}
 			else
 			{
-				//jwang
-				//compression of double data.
 				double *data = readDoubleData(inPath, &nbEle, &status);	
 				if(status!=SZ_SCES)
 				{
@@ -429,48 +405,19 @@ int main(int argc, char* argv[])
 				cost_start();
 				bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
 				cost_end();
-				
 				if(cmpPath == NULL)
 					sprintf(outputFilePath, "%s.sz", inPath);
 				else
 					strcpy(outputFilePath, cmpPath);
-							
-				struct timeval writeS;
-				struct timeval writeE;  /* Start and end times */
-				double write = 0;
-				//gettimeofday(&writeS, NULL);
 				writeByteData(bytes, outSize, outputFilePath, &status);		
-				//gettimeofday(&writeE, NULL);
-				//write = ((writeE.tv_sec*1000000+writeE.tv_usec)-(writeS.tv_sec*1000000+writeS.tv_usec))/1000000.0;
-
-                                free(data);
-
+				free(data);
 				if(status != SZ_SCES)
 				{
 					printf("Error: data file %s cannot be written!\n", outputFilePath);
 					exit(0);
 				}		
-				//jwang
-				//printf("Nelements=%d\n", Nelements);
-                                //printf("qf=%d\n", qf);
-				//printf("node_count=%d\n", node_count);
-				//printf("count_hit=%d\n", count_hit);
-        			//printf("count_missed=%d\n", count_missed);
-				//printf("hit_ratio=%lf\n", hit_ratio);
-				//printf("---------\n");
-				//printf("curve-fitting+binary=%lf\n", elapsed);
-				//printf("curve-fitting=%lf\n", tmp);
-                                //printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
-				//printf("costTree=%lf\n", costTree);
-				//printf("costEncode=%lf\n", costEncode);
-                                printf("totalCost=%lf\n", totalCost);
-				printf("---------\n");
-				printf("Nelements=%d\n", Nelements);
-                                printf("qf=%d\n", qf);
-                                printf("node_count=%d\n", node_count);
-                                printf("count_hit=%d\n", count_hit);
-                                printf("count_missed=%d\n", count_missed);
-                                printf("hit_ratio=%lf\n", hit_ratio);
+				printf("compression time = %f\n", totalCost);
+				printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
 
@@ -608,10 +555,21 @@ int main(int argc, char* argv[])
 				double psnr = 20*log10(range)-10*log10(mse);
 				double nrmse = sqrt(mse)/range;
 				double compressionRatio = 1.0*nbEle*sizeof(float)/byteLength;
+
+				printf ("Min=%.20G, Max=%.20G, range=%.20G\n", Min, Max, range);
+				printf ("Max absolute error = %.10f\n", diffMax);
+				printf ("Max relative error = %f\n", diffMax/(Max-Min));
+				printf ("Max pw relative error = %f\n", maxpw_relerr);
+				printf ("PSNR = %f, NRMSE= %.20G\n", psnr,nrmse);
+				printf ("acEff=%f\n", acEff);	
+				printf ("compressionRatio=%f\n", compressionRatio);
+				
 				free(ori_data);
 			}
 			free(data);	
 			
+			printf("decompression time = %f seconds.\n", totalCost);
+			printf("decompressed data file: %s\n", outputFilePath);							
 		}
 		else //double-data
 		{
@@ -728,6 +686,7 @@ int main(int argc, char* argv[])
 				Min = ori_data[0];
 				diffMax = data[0]>ori_data[0]?data[0]-ori_data[0]:ori_data[0]-data[0];
 
+				//diffMax = fabs(data[0] - ori_data[0]);
 				double sum1 = 0, sum2 = 0;
 
 				for (i = 0; i < nbEle; i++)
@@ -747,7 +706,7 @@ int main(int argc, char* argv[])
 					if (Max < ori_data[i]) Max = ori_data[i];
 					if (Min > ori_data[i]) Min = ori_data[i];
 
-					double err = fabs(data[i] - ori_data[i]);
+					float err = fabs(data[i] - ori_data[i]);
 					if(ori_data[i]!=0)
 					{
 						relerr = err/fabs(ori_data[i]);
@@ -760,7 +719,7 @@ int main(int argc, char* argv[])
 					prodSum += (ori_data[i]-mean1)*(data[i]-mean2);
 					sum3 += (ori_data[i] - mean1)*(ori_data[i]-mean1);
 					sum4 += (data[i] - mean2)*(data[i]-mean2);
-					sum += pow(err,2);
+					sum += err*err;	
 				}
 				double std1 = sqrt(sum3/nbEle);
 				double std2 = sqrt(sum4/nbEle);
@@ -769,17 +728,25 @@ int main(int argc, char* argv[])
 
 				double mse = sum/nbEle;
 				double range = Max - Min;
-
 				double psnr = 20*log10(range)-10*log10(mse);
 				double nrmse = sqrt(mse)/range;
 
 				double compressionRatio = 1.0*nbEle*sizeof(double)/byteLength;
 
+				printf ("Min = %.20G, Max = %.20G, range = %.20G\n", Min, Max, range);
+				printf ("Max absolute error = %.10f\n", diffMax);
+				printf ("Max relative error = %f\n", diffMax/(Max-Min));
+				printf ("Max pw relative error = %f\n", maxpw_relerr);
+				printf ("PSNR = %f, NRMSE = %.20G\n", psnr,nrmse);
+				printf ("acEff = %f\n", acEff);
+				printf ("compressionRatio = %f\n", compressionRatio);
+				
 				free(ori_data);
 			}			
 			free(data);								
 		}	
 	}
+	
 	if(printMeta==1) //==-1 for printing metadata
 	{
 		int status;

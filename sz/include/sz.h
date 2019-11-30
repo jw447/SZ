@@ -69,8 +69,6 @@
 extern "C" {
 #endif
 
-//#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
-#define FuncName 
 //typedef char int8_t;
 //typedef unsigned char uint8_t;
 //typedef short int16_t;
@@ -326,7 +324,9 @@ void* SZ_decompress_customize(const char* appName, void* userPara, int dataType,
 
 #endif /* ----- #ifndef _SZ_H  ----- */
 
-// jwang
+//jwang
+//#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
+#define FuncName 
 
 struct timeval totalCostS; // time for the for-loop
 struct timeval totalCostE;
@@ -367,11 +367,10 @@ double costTree;
 struct timeval costEncodeS;
 struct timeval costEncodeE;
 double costEncode;
-
+//
 int count_hit;
 int count_missed;
 double hit_ratio;
 int node_count;
 int Nelements;
 int qf;
-
