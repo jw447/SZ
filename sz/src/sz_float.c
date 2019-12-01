@@ -530,11 +530,12 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec))/1000000.0;
 
 		//listAdd_float(last3CmprsData, vce->data);
-		//
+		
 		gettimeofday(&cost3S, NULL);
 		pred = vce->data;
 		gettimeofday(&cost3E, NULL);
-		//cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
+		cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
+
 #ifdef HAVE_TIMECMPR
 		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
 			decData[i] = vce->data;
