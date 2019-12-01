@@ -758,7 +758,7 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	int nodeCount = 0;
 	unsigned char *treeBytes, buffer[4];
 	
-	//gettimeofday(&costTreeS, NULL);
+	gettimeofday(&costTreeS, NULL);
 	init(huffmanTree, s, length);
 	//jwang
 	for (i = 0; i < huffmanTree->stateNum; i++){
@@ -766,10 +766,10 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	}
 	nodeCount = nodeCount*2-1;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
-	//gettimeofday(&costTreeE, NULL);
-	//costTree = ((costTreeE.tv_sec*1000000+costTreeE.tv_usec)-(costTreeS.tv_sec*1000000+costTreeS.tv_usec))/1000000.0;
+	gettimeofday(&costTreeE, NULL);
+	costTree = ((costTreeE.tv_sec*1000000+costTreeE.tv_usec)-(costTreeS.tv_sec*1000000+costTreeS.tv_usec))/1000000.0;
 
-	//gettimeofday(&costEncodeS, NULL);	
+	gettimeofday(&costEncodeS, NULL);	
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
 	memcpy(*out, buffer, 4);
@@ -780,8 +780,8 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	size_t enCodeSize = 0;
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
 	*outSize = 8+treeByteSize+enCodeSize;
-	//gettimeofday(&costEncodeE, NULL);
-	//costEncode = ((costEncodeE.tv_sec*1000000+costEncodeE.tv_usec)-(costEncodeS.tv_sec*1000000+costEncodeS.tv_usec))/1000000.0;
+	gettimeofday(&costEncodeE, NULL);
+	costEncode = ((costEncodeE.tv_sec*1000000+costEncodeE.tv_usec)-(costEncodeS.tv_sec*1000000+costEncodeS.tv_usec))/1000000.0;
 	
 	node_count=nodeCount;
 }

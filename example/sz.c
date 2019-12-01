@@ -346,9 +346,9 @@ int main(int argc, char* argv[])
 			//printf("-----------------------------\n");
 			//printf("for-loop=%lf\n", elapsed);
 			//printf("curve-fitting=%lf\n", tmp);
-			printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
-			//printf("costTree=%lf\n", costTree);
-			//printf("costEncode=%lf\n", costEncode);
+			//printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
+			printf("costTree=%lf\n", costTree);
+			printf("costEncode=%lf\n", costEncode);
 			//printf("totalCost=%lf\n", totalCost);
 		}
 		else //dataType == 1: double precision
@@ -434,9 +434,9 @@ int main(int argc, char* argv[])
 				//printf("-----------------------------\n");
 				//printf("for-loop=%lf\n", elapsed);
 				//printf("curve-fitting=%lf\n", tmp);
-				printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
-				//printf("costTree=%lf\n", costTree);
-				//printf("costEncode=%lf\n", costEncode);
+				//printf("time for cost0=%.10f,cost1=%.10f,cost2=%.10f,cost3=%.10f\n", cost0, cost1, cost2, cost3);
+				printf("costTree=%lf\n", costTree);
+				printf("costEncode=%lf\n", costEncode);
 				//printf("totalCost=%lf\n", totalCost);
 			}	
 		}
