@@ -467,6 +467,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		predAbsErr = fabsf(curData - pred);	
 		if(predAbsErr<checkRadius)
 		{
+			gettimeofday(&tmpS, NULL);
 			count_hit += 1;
 			state = ((int)(predAbsErr*recip_precision+1))>>1;
 			if(curData>=pred)
@@ -504,8 +505,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 					decData[i] = pred;			
 #endif	
 			}
-			//gettimeofday(&tmpE, NULL);
-                        //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;	
+			gettimeofday(&tmpE, NULL);
+                        tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;	
 			//continue;
 		}
 		else{	
