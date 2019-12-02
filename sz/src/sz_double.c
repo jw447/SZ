@@ -346,7 +346,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 		if(predAbsErr<checkRadius)
 		{
-			//count_hit += 1;
+			count_hit += 1;
 			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
 			{
@@ -362,23 +362,23 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		}
 		else{
 		type[i] = 0;
-		//count_missed += 1;
+		count_missed += 1;
 
-		gettimeofday(&cost0S, NULL);
+		//gettimeofday(&cost0S, NULL);
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
-		gettimeofday(&cost0E, NULL);      // cost0
-		cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec));
+		//gettimeofday(&cost0E, NULL);      // cost0
+		//cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec));
 
-		gettimeofday(&cost1S, NULL);     //cost1
+		//gettimeofday(&cost1S, NULL);     //cost1
 		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
 		memcpy(preDataBytes,vce->curBytes,8);
-		gettimeofday(&cost1E, NULL);    //cost1
-		cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec));
+		//gettimeofday(&cost1E, NULL);    //cost1
+		//cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec));
 
-		gettimeofday(&cost2S, NULL);    //cost2
+		//gettimeofday(&cost2S, NULL);    //cost2
 		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
-		gettimeofday(&cost2E, NULL);   //cost2
-		cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec));
+		//gettimeofday(&cost2E, NULL);   //cost2
+		//cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec));
 
 		//gettimeofday(&cost3S, NULL); // cost3*/
 		pred = vce->data; //
@@ -398,19 +398,19 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
         //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
 	//printf("curve-fitting=%f\n", tmp);
 
-	printf("time for cost0=%f\n", cost0);
-	printf("time for cost1=%f\n", cost1);
-	printf("time for cost2=%f\n", cost2);
+	//printf("time for cost0=%f\n", cost0);
+	//printf("time for cost1=%f\n", cost1);
+	//printf("time for cost2=%f\n", cost2);
 
-	//hit_ratio = (double)count_hit/(count_hit + count_missed);
-	//qf = quantization_intervals;
-	//Nelements = dataLength;	
+	hit_ratio = (double)count_hit/(count_hit + count_missed);
+	qf = quantization_intervals;
+	Nelements = dataLength;	
 
-	//printf("count_hit=%d\n", count_hit);
-	//printf("count_missed=%d\n", count_missed);
-	//printf("hit_ratio=%f\n", hit_ratio);
-	//printf("Nelements=%d\n", Nelements);
-	//printf("qf=%d\n", qf);
+	printf("count_hit=%d\n", count_hit);
+	printf("count_missed=%d\n", count_missed);
+	printf("hit_ratio=%f\n", hit_ratio);
+	printf("Nelements=%d\n", Nelements);
+	printf("qf=%d\n", qf);
 	
 	size_t exactDataNum = exactLeadNumArray->size;
 	
