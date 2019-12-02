@@ -433,7 +433,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
         count_missed = 2;
 	tmp=0;
 
-	//gettimeofday(&totalCostS, NULL);
+	gettimeofday(&totalCostS, NULL);
 	//gettimeofday(&tmpS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
@@ -442,7 +442,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 
 		if(predAbsErr<checkRadius)
 		{
-			count_hit += 1;
+			//count_hit += 1;
 			state = ((int)(predAbsErr*recip_precision+1))>>1;
 			if(curData>=pred)
 			{
@@ -485,7 +485,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		else{	
 		//unpredictable data processing		
 		type[i] = 0;
-		count_missed += 1;
+		//count_missed += 1;
 
 		//gettimeofday(&cost0S, NULL);
 		compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
@@ -516,9 +516,9 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	}//end of for
 	
 	//jwang
-        //gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
-        //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
-        //printf("for-loop=%lf\n", elapsed);
+        gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
+        elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+        printf("for-loop=%lf\n", elapsed);
 
         //gettimeofday(&tmpE, NULL);
         //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
@@ -529,15 +529,15 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	//printf("time for cost2=%.10f\n", cost2);
 	//printf("time for cost3=%.10f\n", cost3);
 	
-	hit_ratio = (double)count_hit/(count_hit + count_missed);
-        qf = quantization_intervals;
-        Nelements = dataLength;
+	//hit_ratio = (double)count_hit/(count_hit + count_missed);
+        //qf = quantization_intervals;
+        //Nelements = dataLength;
 
-	printf("count_hit=%d\n", count_hit);
-	printf("count_missed=%d\n", count_missed);
-	printf("hit_ratio=%f\n", hit_ratio);
-	printf("Nelements=%d\n", Nelements);
-	printf("qf=%d\n", qf);
+	//printf("count_hit=%d\n", count_hit);
+	//printf("count_missed=%d\n", count_missed);
+	//printf("hit_ratio=%f\n", hit_ratio);
+	//printf("Nelements=%d\n", Nelements);
+	//printf("qf=%d\n", qf);
 
 	size_t exactDataNum = exactLeadNumArray->size;
 	
@@ -549,7 +549,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 			resiBitArray->array, resiBitArray->size, 
 			resiBitsLength,
 			realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0);
-	printf("node_count=%d\n", node_count);
+	//printf("node_count=%d\n", node_count);
 	//free memory
 	free_DIA(exactLeadNumArray);
 	free_DIA(resiBitArray);
