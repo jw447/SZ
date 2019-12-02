@@ -433,8 +433,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
         count_missed = 2;
 	tmp=0;
 
-	gettimeofday(&totalCostS, NULL);
-	//gettimeofday(&tmpS, NULL);
+	//gettimeofday(&totalCostS, NULL);
+	gettimeofday(&tmpS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
 		curData = spaceFillingValue[i];
@@ -482,8 +482,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 			
 			//continue;
 		}
-		else{	
-		//unpredictable data processing		
+		/*else{	
 		type[i] = 0;
 		//count_missed += 1;
 
@@ -508,21 +507,17 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		//gettimeofday(&cost3E, NULL);
 		//cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec))/1000000.0;
 
-#ifdef HAVE_TIMECMPR
-		if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
-			decData[i] = vce->data;
-#endif	
-		}
+		}*/
 	}//end of for
 	
 	//jwang
-        gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
-        elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
-        printf("for-loop=%lf\n", elapsed);
+        //gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
+        //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+        //printf("for-loop=%lf\n", elapsed);
 
-        //gettimeofday(&tmpE, NULL);
-        //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
-        //printf("curve-fitting=%lf\n", tmp);
+        gettimeofday(&tmpE, NULL);
+        tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
+        printf("curve-fitting=%lf\n", tmp);
 	
 	//printf("time for cost0=%.10f\n", cost0);
 	//printf("time for cost1=%.10f\n", cost1);
