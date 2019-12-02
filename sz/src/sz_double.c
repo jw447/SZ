@@ -337,7 +337,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 	double recip_realPrecision = 1/realPrecision;
         tmp=0;
-	//gettimeofday(&totalCostS, NULL); // for entire for-loop 
+	gettimeofday(&totalCostS, NULL); // for entire for-loop 
 	//gettimeofday(&tmpS, NULL); // for curve-fitting
 	for(i=2;i<dataLength;i++)
 	{
@@ -390,9 +390,9 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	}//end of for
 	
 	//jwang
-	//gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
-        //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
-	//printf("for-loop=%lf\n", elapsed);
+	gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
+        elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+	printf("for-loop=%lf\n", elapsed);
 	
 	//gettimeofday(&tmpE, NULL);
         //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
