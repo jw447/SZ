@@ -338,7 +338,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double recip_realPrecision = 1/realPrecision;
         tmp=0;
 	//gettimeofday(&totalCostS, NULL); // for entire for-loop 
-	gettimeofday(&tmpS, NULL); // for curve-fitting
+	//gettimeofday(&tmpS, NULL); // for curve-fitting
 	for(i=2;i<dataLength;i++)
 	{
 		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
@@ -365,22 +365,22 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		//count_missed += 1;
 
 		//gettimeofday(&cost0S, NULL);
-		//compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
+		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
 		//gettimeofday(&cost0E, NULL);      // cost0
 		//cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec));
 
 		//gettimeofday(&cost1S, NULL);     //cost1
-		//updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
-		//memcpy(preDataBytes,vce->curBytes,8);
+		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
+		memcpy(preDataBytes,vce->curBytes,8);
 		//gettimeofday(&cost1E, NULL);    //cost1
 		//cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec));
 
 		//gettimeofday(&cost2S, NULL);    //cost2
-		//addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
+		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
 		//gettimeofday(&cost2E, NULL);   //cost2
 		//cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec));
 
-		//gettimeofday(&cost3S, NULL); // cost3
+		//gettimeofday(&cost3S, NULL); // cost3*/
 		pred = vce->data; //
 		//gettimeofday(&cost3E, NULL); // cost3
 		//cost3 += ((cost3E.tv_sec*1000000+cost3E.tv_usec)-(cost3S.tv_sec*1000000+cost3S.tv_usec));
@@ -394,14 +394,13 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
         //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
 	//printf("for-loop=%lf\n", elapsed);
 	
-	gettimeofday(&tmpE, NULL);
-        tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
-	printf("curve-fitting=%f\n", tmp);
+	//gettimeofday(&tmpE, NULL);
+        //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
+	//printf("curve-fitting=%f\n", tmp);
 
 	//printf("time for cost0=%f\n", cost0);
 	//printf("time for cost1=%f\n", cost1);
 	//printf("time for cost2=%f\n", cost2);
-	//printf("time for cost3=%f\n", cost3);
 
 	//hit_ratio = (double)count_hit/(count_hit + count_missed);
 	//qf = quantization_intervals;
