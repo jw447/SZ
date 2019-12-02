@@ -290,8 +290,9 @@ double getRealPrecision_double(double valueRangeSize, int errBoundMode, double a
 	double precision = 0;
 	if(errBoundMode==ABS||errBoundMode==ABS_OR_PW_REL||errBoundMode==ABS_AND_PW_REL)
 		precision = absErrBound; 
-	else if(errBoundMode==REL||errBoundMode==REL_OR_PW_REL||errBoundMode==REL_AND_PW_REL)
+	else if(errBoundMode==REL||errBoundMode==REL_OR_PW_REL||errBoundMode==REL_AND_PW_REL){
 		precision = relBoundRatio*valueRangeSize;
+	}
 	else if(errBoundMode==ABS_AND_REL)
 		precision = min_d(absErrBound, relBoundRatio*valueRangeSize);
 	else if(errBoundMode==ABS_OR_REL)

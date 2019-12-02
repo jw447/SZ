@@ -768,7 +768,6 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
 	//gettimeofday(&costTreeE, NULL);
 	//costTree = ((costTreeE.tv_sec*1000000+costTreeE.tv_usec)-(costTreeS.tv_sec*1000000+costTreeS.tv_usec))/1000000.0;
-
 	//gettimeofday(&costEncodeS, NULL);	
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
