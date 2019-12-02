@@ -433,8 +433,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
         count_missed = 2;
 	tmp=0;
 
-	gettimeofday(&totalCostS, NULL);
-	//gettimeofday(&tmpS, NULL);
+	//gettimeofday(&totalCostS, NULL);
+	gettimeofday(&tmpS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
 		curData = spaceFillingValue[i];
@@ -487,18 +487,18 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		//count_missed += 1;
 
 		//gettimeofday(&cost0S, NULL);
-		compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
+		//compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		//gettimeofday(&cost0E, NULL);
 		//cost0 += ((cost0E.tv_sec*1000000+cost0E.tv_usec)-(cost0S.tv_sec*1000000+cost0S.tv_usec));
 
 		//gettimeofday(&cost1S, NULL);
-		updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
-		memcpy(preDataBytes,vce->curBytes,4);
+		//updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
+		//memcpy(preDataBytes,vce->curBytes,4);
 		//gettimeofday(&cost1E, NULL);
 		//cost1 += ((cost1E.tv_sec*1000000+cost1E.tv_usec)-(cost1S.tv_sec*1000000+cost1S.tv_usec));
 
 		//gettimeofday(&cost2S, NULL);
-		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
+		//addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 		//gettimeofday(&cost2E, NULL);
 		//cost2 += ((cost2E.tv_sec*1000000+cost2E.tv_usec)-(cost2S.tv_sec*1000000+cost2S.tv_usec));
 
@@ -511,13 +511,13 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	}//end of for
 	
 	//jwang
-        gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
-        elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
-        printf("for-loop=%lf\n", elapsed);
+        //gettimeofday(&totalCostE, NULL); // end-point of curve-fitting
+        //elapsed = ((totalCostE.tv_sec*1000000+totalCostE.tv_usec)-(totalCostS.tv_sec*1000000+totalCostS.tv_usec))/1000000.0;
+        //printf("for-loop=%lf\n", elapsed);
 
-        //gettimeofday(&tmpE, NULL);
-        //tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
-        //printf("curve-fitting=%lf\n", tmp);
+        gettimeofday(&tmpE, NULL);
+        tmp += ((tmpE.tv_sec*1000000+tmpE.tv_usec)-(tmpS.tv_sec*1000000+tmpS.tv_usec))/1000000.0;
+        printf("curve-fitting=%lf\n", tmp);
 	
 	//printf("time for cost0=%.10f\n", cost0);
 	//printf("time for cost1=%.10f\n", cost1);
