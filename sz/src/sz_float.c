@@ -543,7 +543,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 			resiBitArray->array, resiBitArray->size, 
 			resiBitsLength,
 			realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0);
-	//printf("node_count=%d\n", node_count);
+	printf("node_count=%d\n", node_count);
 	//free memory
 	free_DIA(exactLeadNumArray);
 	free_DIA(resiBitArray);
