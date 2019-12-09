@@ -302,6 +302,9 @@ double getRealPrecision_double(double valueRangeSize, int errBoundMode, double a
 		state = SZ_BERR;
 	}
 	*status = state;
+	// jwang
+        printf("valueRangeSize=%lf\n", valueRangeSize);
+        printf("precision=%lf\n", precision);
 	return precision;
 }
 
