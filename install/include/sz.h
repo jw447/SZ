@@ -363,6 +363,30 @@ struct timeval costTreeS;
 struct timeval costTreeE;
 double costTree;
 
+struct timeval Tree0S;
+struct timeval Tree0E;
+double Tree0;
+
+struct timeval Tree1S;
+struct timeval Tree1E;
+double Tree1;
+
+struct timeval Tree2S;
+struct timeval Tree2E;
+double Tree2;
+
+struct timeval Tree3S;
+struct timeval Tree3E;
+double Tree3;
+
+struct timeval Tree4S;
+struct timeval Tree4E;
+double Tree4;
+
+struct timeval Tree5S;
+struct timeval Tree5E;
+double Tree5;
+
 // huffman encoding time
 struct timeval costEncodeS;
 struct timeval costEncodeE;
