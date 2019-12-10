@@ -1,6 +1,6 @@
-#! /bin/bash
+#! /bin/sh
 # Generated automatically by config.status (sz) 2.1
-# Libtool was configured on host jon-OptiPlex-3050:
+# Libtool was configured on host cori04:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -57,7 +57,7 @@ fast_install=needless
 shared_archive_member_spec=
 
 # Shell to use when invoking shell scripts.
-SHELL="/bin/bash"
+SHELL="/bin/sh"
 
 # An echo program that protects backslashes.
 ECHO="printf %s\\n"
@@ -76,19 +76,19 @@ build=x86_64-unknown-linux-gnu
 build_os=linux-gnu
 
 # A sed program that does not truncate output.
-SED="/bin/sed"
+SED="/usr/bin/sed"
 
 # Sed that helps us avoid accidentally triggering echo(1) options like -n.
 Xsed="$SED -e 1s/^X//"
 
 # A grep program that handles long lines.
-GREP="/bin/grep"
+GREP="/usr/bin/grep"
 
 # An ERE matcher.
-EGREP="/bin/grep -E"
+EGREP="/usr/bin/grep -E"
 
 # A literal string matcher.
-FGREP="/bin/grep -F"
+FGREP="/usr/bin/grep -F"
 
 # A BSD- or MS-compatible name lister.
 NM="/usr/bin/nm -B"
@@ -97,7 +97,7 @@ NM="/usr/bin/nm -B"
 LN_S="ln -s"
 
 # What is the maximum length of a command?
-max_cmd_len=1572864
+max_cmd_len=3458764513820540925
 
 # Object file suffix (normally "o").
 objext=o
@@ -192,7 +192,7 @@ nm_file_list_spec="@"
 lt_sysroot=
 
 # Command to truncate a binary pipe.
-lt_truncate_bin="/bin/dd bs=4096 count=1"
+lt_truncate_bin="/usr/bin/dd bs=4096 count=1"
 
 # The name of the directory that contains temporary libtool files.
 objdir=.libs
@@ -232,7 +232,7 @@ extract_expsyms_cmds=""
 
 # Variables whose values should be saved in libtool wrapper scripts and
 # restored at link time.
-variables_saved_for_relink="PATH LD_LIBRARY_PATH LD_RUN_PATH GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
+variables_saved_for_relink="PATH LD_LIBRARY_PATH LD_RUN_PATH"
 
 # Do we need the "lib" prefix for modules?
 need_lib_prefix=no
@@ -282,10 +282,10 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/x86_64-linux-gnu/7 /usr/lib/x86_64-linux-gnu /usr/lib /lib/x86_64-linux-gnu /lib "
+sys_lib_search_path_spec="/usr/lib64/gcc/x86_64-suse-linux/7 /usr/lib64 /lib64 /opt/intel/compilers_and_libraries_2019.3.199/linux/compiler/lib/intel64 /opt/intel/compilers_and_libraries_2019.3.199/linux/mkl/lib/intel64 /usr/x86_64-suse-linux/lib /lib /usr/lib "
 
 # Detected run-time system search path for libraries.
-sys_lib_dlsearch_path_spec="/lib64 /usr/lib64 /lib /usr/lib /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /usr/local/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu "
+sys_lib_dlsearch_path_spec="/lib64 /usr/lib64 /lib /usr/lib /usr/local/lib64 /usr/local/lib /opt/cray/alps/default/lib64 /opt/cray/alps/default/lib64 /opt/cray/alps/default/lib64 /opt/cray/ccm/default/lib64 /opt/cray/ccm/default/lib64 /opt/cray/codbc/default/lib64 /opt/cray/comm_msg/default/lib64 /opt/cray/configparse/default/lib64 /opt/cray/llm/default/lib64 /opt/cray/daemontools/default/lib64 /opt/cray/datawarp/default/lib64 /opt/cray/dmapp/default/lib64 /opt/cray/rdma-credentials/default/lib64 /opt/cray/dws/default/lib64 /opt/cray/gni/default/lib64 /opt/cray/job/default/lib64 /opt/cray/job/default/lib64 /opt/cray/job/default/lib64 /opt/cray/nhm/default/lib64 /opt/cray/nodeservices/default/lib64 /opt/cray/pe/lib64 /opt/cray/pe/lib64/cce /opt/cray/rca/default/lib64 /opt/cray/socketauth/default/lib64 /opt/cray/swrap/default/lib64 /opt/cray/sysadm/default/lib64 /opt/cray/sysutils/default/lib64 /opt/cray/udreg/default/lib64 /opt/cray/udwfs/default/lib64 /opt/cray/ugni/default/lib64 /opt/cray/wlm_detect/default/lib64 /opt/cray/wlm_trans/default/lib64 /opt/cray/xpmem/default/lib64 /opt/ovis/lib64 /opt/ovis/lib64/ovis-ldms /opt/ovis/lib64/ovis-lib /lib64 /lib /usr/lib64 /usr/lib /opt/cray/nvidia/default/lib64 "
 
 # Explicit LT_SYS_LIBRARY_PATH set during ./configure time.
 configure_time_lt_sys_library_path=""
@@ -305,7 +305,7 @@ striplib="strip --strip-unneeded"
 
 
 # The linker used to build libraries.
-LD="/usr/bin/ld -m elf_x86_64"
+LD="/usr/x86_64-suse-linux/bin/ld -m elf_x86_64"
 
 # How to create reloadable object files.
 reload_flag=" -r"
@@ -11661,7 +11661,7 @@ build_old_libs=`case $build_libtool_libs in yes) echo no;; *) echo yes;; esac`
 # ### BEGIN LIBTOOL TAG CONFIG: FC
 
 # The linker used to build libraries.
-LD=""
+LD="/usr/x86_64-suse-linux/bin/ld -m elf_x86_64"
 
 # How to create reloadable object files.
 reload_flag=" -r"
@@ -11671,25 +11671,25 @@ reload_cmds="\$LD\$reload_flag -o \$output\$reload_objs"
 old_archive_cmds="\$AR \$AR_FLAGS \$oldlib\$oldobjs~\$RANLIB \$tool_oldlib"
 
 # A language specific compiler.
-CC=""
+CC="ifort"
 
 # Is the compiler the GNU compiler?
-with_gcc=
+with_gcc=no
 
 # Compiler flag to turn off builtin functions.
 no_builtin_flag=""
 
 # Additional compiler flags for building library objects.
-pic_flag=""
+pic_flag=" -fPIC"
 
 # How to pass a linker flag through the compiler.
-wl=""
+wl="-Wl,"
 
 # Compiler flag to prevent dynamic linking.
-link_static_flag=""
+link_static_flag="-static"
 
 # Does compiler simultaneously support -c and -o options?
-compiler_c_o=""
+compiler_c_o="yes"
 
 # Whether or not to add -lc for building shared libraries.
 build_libtool_need_lc=no
@@ -11698,13 +11698,13 @@ build_libtool_need_lc=no
 allow_libtool_libs_with_static_runtimes=no
 
 # Compiler flag to allow reflexive dlopens.
-export_dynamic_flag_spec=""
+export_dynamic_flag_spec="\$wl--export-dynamic"
 
 # Compiler flag to generate shared objects directly from archives.
-whole_archive_flag_spec=""
+whole_archive_flag_spec="\$wl--whole-archive\$convenience \$wl--no-whole-archive"
 
 # Whether the compiler copes with passing no objects directly.
-compiler_needs_object=""
+compiler_needs_object="no"
 
 # Create an old-style archive from a shared archive.
 old_archive_from_new_cmds=""
@@ -11713,8 +11713,11 @@ old_archive_from_new_cmds=""
 old_archive_from_expsyms_cmds=""
 
 # Commands used to build a shared archive.
-archive_cmds=""
-archive_expsym_cmds=""
+archive_cmds="\$CC -shared -nofor_main \$libobjs \$deplibs \$compiler_flags \$wl-soname \$wl\$soname -o \$lib"
+archive_expsym_cmds="echo \\\"{ global:\\\" > \$output_objdir/\$libname.ver~
+            cat \$export_symbols | sed -e \\\"s/\\\\(.*\\\\)/\\\\1;/\\\" >> \$output_objdir/\$libname.ver~
+            echo \\\"local: *; };\\\" >> \$output_objdir/\$libname.ver~
+            \$CC -shared -nofor_main \$libobjs \$deplibs \$compiler_flags \$wl-soname \$wl\$soname \$wl-version-script \$wl\$output_objdir/\$libname.ver -o \$lib"
 
 # Commands used to build a loadable module if different from building
 # a shared archive.
@@ -11722,7 +11725,7 @@ module_cmds=""
 module_expsym_cmds=""
 
 # Whether we are building with GNU ld or not.
-with_gnu_ld=""
+with_gnu_ld="yes"
 
 # Flag that allows shared libraries with undefined symbols to be built.
 allow_undefined_flag=""
@@ -11732,7 +11735,7 @@ no_undefined_flag=""
 
 # Flag to hardcode $libdir into a binary during linking.
 # This must work even if $libdir does not exist
-hardcode_libdir_flag_spec=""
+hardcode_libdir_flag_spec="\$wl-rpath \$wl\$libdir"
 
 # Whether we need a single "-rpath" flag with a separated argument.
 hardcode_libdir_separator=""
@@ -11753,7 +11756,7 @@ hardcode_minus_L=no
 
 # Set to "yes" if using SHLIBPATH_VAR=DIR during linking hardcodes DIR
 # into the resulting binary.
-hardcode_shlibpath_var=
+hardcode_shlibpath_var=unsupported
 
 # Set to "yes" if building a shared library automatically hardcodes DIR
 # into the library and all subsequent libraries and executables linked
@@ -11771,10 +11774,10 @@ link_all_deplibs=unknown
 always_export_symbols=no
 
 # The commands to list exported symbols.
-export_symbols_cmds=""
+export_symbols_cmds="\$NM \$libobjs \$convenience | \$global_symbol_pipe | \$SED 's/.* //' | sort | uniq > \$export_symbols"
 
 # Symbols that should not be listed in the preloaded symbols.
-exclude_expsyms=""
+exclude_expsyms="_GLOBAL_OFFSET_TABLE_|_GLOBAL__F[ID]_.*"
 
 # Symbols that must always be exported.
 include_expsyms=""
@@ -11789,7 +11792,7 @@ postlink_cmds=""
 file_list_spec=""
 
 # How to hardcode a shared library path into an executable.
-hardcode_action=
+hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
 compiler_lib_search_dirs=""

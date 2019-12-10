@@ -358,12 +358,13 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
+			//fprintf(stderr, "%d\n", type[i]); //use in huffman binary to collect qf.
 			
 		}
 		else{
 		type[i] = 0;
 		count_missed += 1;
-
+		//fprintf(stderr, "%d\n", type[i]); //use in huffman binary to collect qf.
 		//gettimeofday(&cost0S, NULL);
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
 		//gettimeofday(&cost0E, NULL);      // cost0
