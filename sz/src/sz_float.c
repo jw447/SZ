@@ -454,7 +454,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			fprintf(stderr, "%d\n", type[i]); //use in huffman binary to collect qf.
+			//fprintf(stderr, "%d\n", type[i]); //use in huffman binary to collect qf.
 			//double-check the prediction error in case of machine-epsilon impact	
 			/*if(fabs(curData-pred)>realPrecision)
 			{	
@@ -485,7 +485,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		else{	
 		type[i] = 0;
 		count_missed += 1;
-		fprintf(stderr, "%d\n", type[i]); //use in huffman binary to collect qf.
+		//fprintf(stderr, "%d\n", type[i]); //use in huffman binary to collect qf.
 		//gettimeofday(&cost0S, NULL);
 		compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		//gettimeofday(&cost0E, NULL);
