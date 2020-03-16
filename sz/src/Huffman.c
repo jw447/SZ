@@ -806,7 +806,7 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	free(treeBytes);
 	size_t enCodeSize = 0;
 	
-	unsigned char x = huffmanTree->code[0][0];
+	//unsigned char x = huffmanTree->code[0][0];
 	gettimeofday(&costEncodeS, NULL);
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
 	*outSize = 8+treeByteSize+enCodeSize;

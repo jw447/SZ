@@ -10,10 +10,18 @@
 #ifndef _SZ_H
 #define _SZ_H
 
-#include <stdio.h>
 #include <stdint.h>
 #include <sys/time.h>      /* For gettimeofday(), in microseconds */
-#include <time.h>          /* For time(), in seconds */
+#include <math.h>
+#include <unistd.h>
+#include <stdio.h>      /* for printf */
+#include <stdint.h>     /* for uint64 definition */
+#include <stdlib.h>     /* for exit() definition */
+#include <time.h>       /* for clock_gettime */
+#include <string.h>
+
+#define BILLION 1000000000L
+
 #include "CompressElement.h"
 #include "DynamicByteArray.h"
 #include "DynamicIntArray.h"
@@ -325,8 +333,27 @@ void* SZ_decompress_customize(const char* appName, void* userPara, int dataType,
 #endif /* ----- #ifndef _SZ_H  ----- */
 
 //jwang
-//#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
-#define FuncName 
+#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
+
+typedef struct {
+  float totalCost;
+  float ecost_time;
+  float max_exp_time;
+  float precision_time;
+  float emax_time;
+
+  float mcost_time;
+  float quantize_factor_time;
+  float cast_loop_time;
+
+  float embed_time;
+  float xform_time;
+  float order_time;
+  float order_loop_time;
+  float bp_time;
+  float step1, step2, step3;
+  int num_bp;
+} CPU_timing;
 
 struct timeval totalCostS; // time for the for-loop
 struct timeval totalCostE;

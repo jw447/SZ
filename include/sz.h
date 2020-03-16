@@ -322,8 +322,6 @@ void* SZ_decompress_customize(const char* appName, void* userPara, int dataType,
 }
 #endif
 
-#endif /* ----- #ifndef _SZ_H  ----- */
-
 //jwang
 //#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
 #define FuncName 
@@ -374,3 +372,5 @@ double hit_ratio;
 int node_count;
 int Nelements;
 int qf;
+
+#endif /* ----- #ifndef _SZ_H  ----- */
