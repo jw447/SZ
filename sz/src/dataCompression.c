@@ -522,8 +522,7 @@ void compressSingleDoubleValue_MSST19(DoubleValueCompressElement *vce, double tg
     vce->resiBitsLength = resiBitsLength;
 }
 
-void compressSingleDoubleValue(DoubleValueCompressElement *vce, double tgtValue, double precision, double medianValue, 
-		int reqLength, int reqBytesLength, int resiBitsLength)
+void compressSingleDoubleValue(DoubleValueCompressElement *vce, double tgtValue, double precision, double medianValue, int reqLength, int reqBytesLength, int resiBitsLength)
 {		
 	double normValue = tgtValue - medianValue;
 
@@ -535,13 +534,10 @@ void compressSingleDoubleValue(DoubleValueCompressElement *vce, double tgtValue,
 		ignBytesLength = 0;
 
 	//jwang
-	//printf("lfBuf.lvalue=%ld\n",lfBuf.lvalue);
 	long tmp_long = lfBuf.lvalue;
 	longToBytes_bigEndian(vce->curBytes, tmp_long);
 				
 	lfBuf.lvalue = (lfBuf.lvalue >> ignBytesLength)<<ignBytesLength;
-	
-	//double tmpValue = lfBuf.value;
 	
 	vce->data = lfBuf.value+medianValue; //tgtValue
 	vce->curValue = tmp_long; 

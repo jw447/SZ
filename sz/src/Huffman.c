@@ -13,7 +13,7 @@
 #include "Huffman.h"
 #include "sz.h"
 
-
+#include "jwang.h"
 HuffmanTree* createHuffmanTree(int stateNum)
 {	
 	FuncName;
@@ -111,9 +111,6 @@ node qremove(HuffmanTree* huffmanTree)
 void build_code(HuffmanTree *huffmanTree, node n, int len, unsigned long out1, unsigned long out2)
 {
 	//FuncName;
-	//printf("build_code\n");
-	//printf("n->t=%d\n", n->t);
-	//printf("len=%d\n", len);
 	if (n->t) {
 		huffmanTree->code[n->c] = (unsigned long*)malloc(2*sizeof(unsigned long));
 		if(len<=64)
@@ -163,26 +160,23 @@ void init(HuffmanTree* huffmanTree, int *s, size_t length)
 	size_t *freq = (size_t *)malloc(huffmanTree->allNodes*sizeof(size_t));
 	memset(freq, 0, huffmanTree->allNodes*sizeof(size_t));
 	
-	gettimeofday(&Tree3S, NULL);
+	//printf("init length=%lu\n", length);
 	for(i = 0;i < length;i++)
 	{
 		index = s[i];
 		freq[index]++;
 	}
-	gettimeofday(&Tree3E, NULL);
-	
-	gettimeofday(&Tree4S, NULL);
+
+	//printf("huffmanTree->allNodes=%lu\n", huffmanTree->allNodes);
 	for (i = 0; i < huffmanTree->allNodes; i++)
 		if (freq[i])
 			qinsert(huffmanTree, new_node(huffmanTree, freq[i], i, 0, 0));
 
+	//printf("huffmanTree->qend=%lu\n", huffmanTree->qend);
 	while (huffmanTree->qend > 2)
 		qinsert(huffmanTree, new_node(huffmanTree, 0, 0, qremove(huffmanTree), qremove(huffmanTree)));
-	gettimeofday(&Tree4E, NULL);
 	
-	gettimeofday(&Tree5S, NULL);
 	build_code(huffmanTree, huffmanTree->qq[1], 0, 0, 0);
-	gettimeofday(&Tree5E, NULL);
 	
 	free(freq);
 }
@@ -213,18 +207,11 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 	unsigned char *p = out;
 	int lackBits = 0;
 
-	//printf("state_num=%d\n", huffmanTree->stateNum);
+	//printf("encode length=%lu\n", length);
 	for (i = 0;i<length;i++) 
 	{
-
 		state = s[i];
-		//printf("state=%d\n", state); state = qf
 		bitSize = huffmanTree->cout[state]; // number of bits in the code; number of levels of current node	
-		//printf("bitSize=%u\n", bitSize);	
-	
-		//printf("huffmanTree->code[state])[0]=%lu\n", huffmanTree->code[state][0]); // the huffman code in unsigned int
-		//printf("huffmanTree->code[state])[1]=%lu\n", huffmanTree->code[state][1]);
-		//printf("lackBits=%d\n", lackBits);		
 		if(lackBits==0)
 		{
 			byteSize = bitSize%8==0 ? bitSize/8 : bitSize/8+1; //it's equal to the number of bytes involved (for *outSize)
@@ -769,34 +756,26 @@ node reconstruct_HuffTree_from_bytes_anyStates(HuffmanTree *huffmanTree, unsigne
 	}
 }
 
-void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize)
+void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize, CPU_timing* cpu_timing)
 {
 	FuncName;
 	size_t i; 
 	int nodeCount = 0;
 	unsigned char *treeBytes, buffer[4];
 	
-	gettimeofday(&costTreeS, NULL);
-	
-	gettimeofday(&Tree0S, NULL);
+	gettimeofday(&buildTCostS, NULL);
 	init(huffmanTree, s, length);
-	gettimeofday(&Tree0E, NULL);
-		
-	gettimeofday(&Tree1S, NULL);
+	gettimeofday(&buildTCostE, NULL);
+	(*cpu_timing).buildTCost = ((buildTCostE.tv_sec*1000000+buildTCostE.tv_usec)-(buildTCostS.tv_sec*1000000+buildTCostS.tv_usec))/1000000.0;
+	
+	//printf("huffmanTree->stateNum=%d\n", huffmanTree->stateNum);
 	for (i = 0; i < huffmanTree->stateNum; i++){
 		if (huffmanTree->code[i]) nodeCount++;
 	}
 	nodeCount = nodeCount*2-1;
-	gettimeofday(&Tree1E, NULL);
 
-	gettimeofday(&Tree2S, NULL);
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
-	gettimeofday(&Tree2E, NULL);
 	
-	gettimeofday(&costTreeE, NULL);
-	costTree = ((costTreeE.tv_sec*1000000+costTreeE.tv_usec)-(costTreeS.tv_sec*1000000+costTreeS.tv_usec))/1000000.0;
-
-	//gettimeofday(&costEncodeS, NULL);	
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
 	memcpy(*out, buffer, 4);
@@ -805,30 +784,15 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	memcpy(*out+8, treeBytes, treeByteSize);
 	free(treeBytes);
 	size_t enCodeSize = 0;
-	
-	//unsigned char x = huffmanTree->code[0][0];
-	gettimeofday(&costEncodeS, NULL);
+
+	gettimeofday(&encodeTCostS, NULL);
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
+	gettimeofday(&encodeTCostE, NULL);
+	(*cpu_timing).encodeTCost = ((encodeTCostE.tv_sec*1000000+encodeTCostE.tv_usec)-(encodeTCostS.tv_sec*1000000+encodeTCostS.tv_usec))/1000000.0;
+
 	*outSize = 8+treeByteSize+enCodeSize;
-	gettimeofday(&costEncodeE, NULL);
-	costEncode = ((costEncodeE.tv_sec*1000000+costEncodeE.tv_usec)-(costEncodeS.tv_sec*1000000+costEncodeS.tv_usec))/1000000.0;
-		
-	Tree0 = ((Tree0E.tv_sec*1000000+Tree0E.tv_usec)-(Tree0S.tv_sec*1000000+Tree0S.tv_usec))/1000000.0;
-	Tree1 = ((Tree1E.tv_sec*1000000+Tree1E.tv_usec)-(Tree1S.tv_sec*1000000+Tree1S.tv_usec))/1000000.0;
-	Tree2 = ((Tree2E.tv_sec*1000000+Tree2E.tv_usec)-(Tree2S.tv_sec*1000000+Tree2S.tv_usec))/1000000.0;
-	Tree3 = ((Tree3E.tv_sec*1000000+Tree3E.tv_usec)-(Tree3S.tv_sec*1000000+Tree3S.tv_usec))/1000000.0;
-	Tree4 = ((Tree4E.tv_sec*1000000+Tree4E.tv_usec)-(Tree4S.tv_sec*1000000+Tree4S.tv_usec))/1000000.0;
-	Tree5 = ((Tree5E.tv_sec*1000000+Tree5E.tv_usec)-(Tree5S.tv_sec*1000000+Tree5S.tv_usec))/1000000.0;
-	
-	printf("Tree0=%lf\n", Tree0);
-	printf("Tree1=%lf\n", Tree1);
-	printf("Tree2=%lf\n", Tree2);
-	printf("Tree3=%lf\n", Tree3);
-	printf("Tree4=%lf\n", Tree4);
-	printf("Tree5=%lf\n", Tree5);
-	printf("costTree=%lf\n", costTree);
-	printf("costEncode=%lf\n", costEncode);
-	node_count=nodeCount;
+
+	(*cpu_timing).node_count = nodeCount;
 }
 
 int encode_withTree_MSST19(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize)

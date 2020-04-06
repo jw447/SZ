@@ -14,6 +14,8 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
+#include "jwang.h"
 typedef struct TightDataPointStorageD
 {
 	size_t dataSeriesLength;
@@ -73,7 +75,7 @@ void new_TightDataPointStorageD(TightDataPointStorageD **self,
 		unsigned char* resiMidBits, size_t resiMidBits_size,
 		unsigned char resiBitLength, 
 		double realPrecision, double medianValue, char reqLength, unsigned int intervals, 
-		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo);
+		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo, CPU_timing* cpu_timing);
 
 void new_TightDataPointStorageD2(TightDataPointStorageD **self, 
 		size_t dataSeriesLength, size_t exactDataNum, 

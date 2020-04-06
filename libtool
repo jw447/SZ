@@ -1,6 +1,6 @@
 #! /bin/sh
 # Generated automatically by config.status (sz) 2.1
-# Libtool was configured on host cori04:
+# Libtool was configured on host cori12:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -232,7 +232,7 @@ extract_expsyms_cmds=""
 
 # Variables whose values should be saved in libtool wrapper scripts and
 # restored at link time.
-variables_saved_for_relink="PATH LD_LIBRARY_PATH LD_RUN_PATH"
+variables_saved_for_relink="PATH LD_LIBRARY_PATH LD_RUN_PATH GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
 
 # Do we need the "lib" prefix for modules?
 need_lib_prefix=no
@@ -282,7 +282,7 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib64/gcc/x86_64-suse-linux/7 /usr/lib64 /lib64 /opt/intel/compilers_and_libraries_2019.3.199/linux/compiler/lib/intel64 /opt/intel/compilers_and_libraries_2019.3.199/linux/mkl/lib/intel64 /usr/x86_64-suse-linux/lib /lib /usr/lib "
+sys_lib_search_path_spec="/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0 /opt/gcc/6.1.0/snos/lib64 /lib64 /usr/lib64 /opt/intel/compilers_and_libraries_2019.3.199/linux/compiler/lib/intel64 /opt/intel/compilers_and_libraries_2019.3.199/linux/mkl/lib/intel64 /opt/gcc/6.1.0/snos/lib /lib /usr/lib "
 
 # Detected run-time system search path for libraries.
 sys_lib_dlsearch_path_spec="/lib64 /usr/lib64 /lib /usr/lib /usr/local/lib64 /usr/local/lib /opt/cray/alps/default/lib64 /opt/cray/alps/default/lib64 /opt/cray/alps/default/lib64 /opt/cray/ccm/default/lib64 /opt/cray/ccm/default/lib64 /opt/cray/codbc/default/lib64 /opt/cray/comm_msg/default/lib64 /opt/cray/configparse/default/lib64 /opt/cray/llm/default/lib64 /opt/cray/daemontools/default/lib64 /opt/cray/datawarp/default/lib64 /opt/cray/dmapp/default/lib64 /opt/cray/rdma-credentials/default/lib64 /opt/cray/dws/default/lib64 /opt/cray/gni/default/lib64 /opt/cray/job/default/lib64 /opt/cray/job/default/lib64 /opt/cray/job/default/lib64 /opt/cray/nhm/default/lib64 /opt/cray/nodeservices/default/lib64 /opt/cray/pe/lib64 /opt/cray/pe/lib64/cce /opt/cray/rca/default/lib64 /opt/cray/socketauth/default/lib64 /opt/cray/swrap/default/lib64 /opt/cray/sysadm/default/lib64 /opt/cray/sysutils/default/lib64 /opt/cray/udreg/default/lib64 /opt/cray/udwfs/default/lib64 /opt/cray/ugni/default/lib64 /opt/cray/wlm_detect/default/lib64 /opt/cray/wlm_trans/default/lib64 /opt/cray/xpmem/default/lib64 /opt/ovis/lib64 /opt/ovis/lib64/ovis-ldms /opt/ovis/lib64/ovis-lib /lib64 /lib /usr/lib64 /usr/lib /opt/cray/nvidia/default/lib64 "
@@ -305,7 +305,7 @@ striplib="strip --strip-unneeded"
 
 
 # The linker used to build libraries.
-LD="/usr/x86_64-suse-linux/bin/ld -m elf_x86_64"
+LD="/global/common/cori/software/altd/2.0/bin/ld -m elf_x86_64"
 
 # How to create reloadable object files.
 reload_flag=" -r"
@@ -11661,7 +11661,7 @@ build_old_libs=`case $build_libtool_libs in yes) echo no;; *) echo yes;; esac`
 # ### BEGIN LIBTOOL TAG CONFIG: FC
 
 # The linker used to build libraries.
-LD="/usr/x86_64-suse-linux/bin/ld -m elf_x86_64"
+LD="/global/common/cori/software/altd/2.0/bin/ld -m elf_x86_64"
 
 # How to create reloadable object files.
 reload_flag=" -r"
@@ -11671,10 +11671,10 @@ reload_cmds="\$LD\$reload_flag -o \$output\$reload_objs"
 old_archive_cmds="\$AR \$AR_FLAGS \$oldlib\$oldobjs~\$RANLIB \$tool_oldlib"
 
 # A language specific compiler.
-CC="ifort"
+CC="gfortran"
 
 # Is the compiler the GNU compiler?
-with_gcc=no
+with_gcc=yes
 
 # Compiler flag to turn off builtin functions.
 no_builtin_flag=""
@@ -11713,11 +11713,11 @@ old_archive_from_new_cmds=""
 old_archive_from_expsyms_cmds=""
 
 # Commands used to build a shared archive.
-archive_cmds="\$CC -shared -nofor_main \$libobjs \$deplibs \$compiler_flags \$wl-soname \$wl\$soname -o \$lib"
+archive_cmds="\$CC -shared \$pic_flag \$libobjs \$deplibs \$compiler_flags \$wl-soname \$wl\$soname -o \$lib"
 archive_expsym_cmds="echo \\\"{ global:\\\" > \$output_objdir/\$libname.ver~
             cat \$export_symbols | sed -e \\\"s/\\\\(.*\\\\)/\\\\1;/\\\" >> \$output_objdir/\$libname.ver~
             echo \\\"local: *; };\\\" >> \$output_objdir/\$libname.ver~
-            \$CC -shared -nofor_main \$libobjs \$deplibs \$compiler_flags \$wl-soname \$wl\$soname \$wl-version-script \$wl\$output_objdir/\$libname.ver -o \$lib"
+            \$CC -shared \$pic_flag \$libobjs \$deplibs \$compiler_flags \$wl-soname \$wl\$soname \$wl-version-script \$wl\$output_objdir/\$libname.ver -o \$lib"
 
 # Commands used to build a loadable module if different from building
 # a shared archive.

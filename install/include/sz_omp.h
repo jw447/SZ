@@ -23,7 +23,7 @@ extern "C" {
 
 unsigned char * SZ_compress_float_1D_MDQ_openmp(float *oriData, size_t r1, double realPrecision, size_t * comp_size);
 unsigned char * SZ_compress_float_2D_MDQ_openmp(float *oriData, size_t r1, size_t r2, double realPrecision, size_t * comp_size);
-unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_t r2, size_t r3, float realPrecision, size_t * comp_size);
+unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_t r2, size_t r3, float realPrecision, size_t * comp_size, CPU_timing *cpu_timing);
 
 void decompressDataSeries_float_1D_openmp(float** data, size_t r1, unsigned char* comp_data);
 void decompressDataSeries_float_3D_openmp(float** data, size_t r1, size_t r2, size_t r3, unsigned char* comp_data);
@@ -31,14 +31,14 @@ void decompressDataSeries_float_2D_openmp(float** data, size_t r1, size_t r2, un
 
 unsigned char * SZ_compress_double_1D_MDQ_openmp(double *oriData, size_t r1, double realPrecision, size_t * comp_size);
 unsigned char * SZ_compress_double_2D_MDQ_openmp(double *oriData, size_t r1, size_t r2, double realPrecision, size_t * comp_size);
-unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, size_t r2, size_t r3, double realPrecision, size_t * comp_size);
+unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, size_t r2, size_t r3, double realPrecision, size_t * comp_size, CPU_timing *cpu_timing);
 
 void decompressDataSeries_double_1D_openmp(double** data, size_t r1, unsigned char* comp_data);
 void decompressDataSeries_double_2D_openmp(double** data, size_t r1, size_t r2, unsigned char* comp_data);
 void decompressDataSeries_double_3D_openmp(double** data, size_t r1, size_t r2, size_t r3, unsigned char* comp_data);
 
 //void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int thread_num);
-void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int thread_num, size_t * freq);
+void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int thread_num, size_t * freq, CPU_timing *cpu_timing);
 
 #ifdef __cplusplus
 }

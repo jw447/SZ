@@ -3,14 +3,14 @@ src/libSZ_la-szd_uint8.lo: src/szd_uint8.c /usr/include/stdc-predef.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/bits/long-double.h \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
- /usr/lib64/gcc/x86_64-suse-linux/7/include/stddef.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h \
  /usr/include/bits/floatn.h /usr/include/bits/stdlib-bsearch.h \
  /usr/include/bits/stdlib-float.h /usr/include/stdio.h \
  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
  /usr/include/bits/types/__FILE.h /usr/include/bits/types/FILE.h \
  /usr/include/libio.h /usr/include/_G_config.h \
  /usr/include/bits/types/__mbstate_t.h \
- /usr/lib64/gcc/x86_64-suse-linux/7/include/stdarg.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h /usr/include/string.h /usr/include/math.h \
  /usr/include/bits/math-vector.h /usr/include/bits/libm-simd-decl-stubs.h \
@@ -20,21 +20,28 @@ src/libSZ_la-szd_uint8.lo: src/szd_uint8.c /usr/include/stdc-predef.h \
  /usr/include/bits/fp-logb.h /usr/include/bits/fp-fast.h \
  /usr/include/bits/mathcalls-helper-functions.h \
  /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
- include/TightDataPointStorageI.h include/sz.h \
- /usr/lib64/gcc/x86_64-suse-linux/7/include/stdint.h \
- /usr/include/stdint.h /usr/include/bits/wchar.h \
- /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
- /usr/include/sys/time.h /usr/include/bits/types/time_t.h \
+ include/TightDataPointStorageI.h include/jwang.h /usr/include/sys/time.h \
+ /usr/include/bits/types/time_t.h \
  /usr/include/bits/types/struct_timeval.h /usr/include/sys/select.h \
  /usr/include/bits/select.h /usr/include/bits/types/sigset_t.h \
- /usr/include/bits/types/__sigset_t.h /usr/include/time.h \
+ /usr/include/bits/types/__sigset_t.h include/sz.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/wchar.h \
+ /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
+ /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
+ /usr/include/bits/getopt_core.h /usr/include/time.h \
  /usr/include/bits/time.h /usr/include/bits/types/clock_t.h \
- /usr/include/bits/types/struct_tm.h include/CompressElement.h \
- include/DynamicByteArray.h include/DynamicIntArray.h include/VarSet.h \
- include/Huffman.h include/TightDataPointStorageD.h \
- include/TightDataPointStorageF.h include/TightDataPointStorageI.h \
- include/conf.h include/dataCompression.h include/sz.h \
- /usr/lib64/gcc/x86_64-suse-linux/7/include/stdbool.h \
+ /usr/include/bits/types/struct_tm.h \
+ /usr/include/bits/types/struct_timespec.h \
+ /usr/include/bits/types/clockid_t.h /usr/include/bits/types/timer_t.h \
+ /usr/include/bits/types/struct_itimerspec.h include/jwang.h \
+ include/CompressElement.h include/DynamicByteArray.h \
+ include/DynamicIntArray.h include/VarSet.h include/Huffman.h \
+ include/TightDataPointStorageD.h include/TightDataPointStorageF.h \
+ include/TightDataPointStorageI.h include/conf.h \
+ include/dataCompression.h include/sz.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdbool.h \
  include/ByteToolkit.h include/TypeManager.h include/sz_int8.h \
  include/sz_int16.h include/sz_int32.h include/sz_int64.h \
  include/sz_uint8.h include/sz_uint16.h include/sz_uint32.h \
@@ -70,7 +77,7 @@ src/libSZ_la-szd_uint8.lo: src/szd_uint8.c /usr/include/stdc-predef.h \
 
 /usr/include/gnu/stubs-64.h:
 
-/usr/lib64/gcc/x86_64-suse-linux/7/include/stddef.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h:
 
 /usr/include/bits/floatn.h:
 
@@ -94,7 +101,7 @@ src/libSZ_la-szd_uint8.lo: src/szd_uint8.c /usr/include/stdc-predef.h \
 
 /usr/include/bits/types/__mbstate_t.h:
 
-/usr/lib64/gcc/x86_64-suse-linux/7/include/stdarg.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdarg.h:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -134,17 +141,7 @@ src/libSZ_la-szd_uint8.lo: src/szd_uint8.c /usr/include/stdc-predef.h \
 
 include/TightDataPointStorageI.h:
 
-include/sz.h:
-
-/usr/lib64/gcc/x86_64-suse-linux/7/include/stdint.h:
-
-/usr/include/stdint.h:
-
-/usr/include/bits/wchar.h:
-
-/usr/include/bits/stdint-intn.h:
-
-/usr/include/bits/stdint-uintn.h:
+include/jwang.h:
 
 /usr/include/sys/time.h:
 
@@ -160,6 +157,28 @@ include/sz.h:
 
 /usr/include/bits/types/__sigset_t.h:
 
+include/sz.h:
+
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/include/bits/stdint-intn.h:
+
+/usr/include/bits/stdint-uintn.h:
+
+/usr/include/unistd.h:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/bits/confname.h:
+
+/usr/include/bits/getopt_posix.h:
+
+/usr/include/bits/getopt_core.h:
+
 /usr/include/time.h:
 
 /usr/include/bits/time.h:
@@ -167,6 +186,16 @@ include/sz.h:
 /usr/include/bits/types/clock_t.h:
 
 /usr/include/bits/types/struct_tm.h:
+
+/usr/include/bits/types/struct_timespec.h:
+
+/usr/include/bits/types/clockid_t.h:
+
+/usr/include/bits/types/timer_t.h:
+
+/usr/include/bits/types/struct_itimerspec.h:
+
+include/jwang.h:
 
 include/CompressElement.h:
 
@@ -190,7 +219,7 @@ include/dataCompression.h:
 
 include/sz.h:
 
-/usr/lib64/gcc/x86_64-suse-linux/7/include/stdbool.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdbool.h:
 
 include/ByteToolkit.h:
 

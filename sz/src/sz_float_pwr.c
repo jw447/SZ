@@ -681,12 +681,12 @@ size_t dataLength, size_t *outSize, float min, float max)
 	
 	TightDataPointStorageF* tdps;
 			
-	new_TightDataPointStorageF2(&tdps, dataLength, exactDataNum, 
-			type, exactMidByteArray->array, exactMidByteArray->size,  
-			exactLeadNumArray->array,  
-			resiBitArray->array, resiBitArray->size, 
-			resiBitLengthArray->array, resiBitLengthArray->size, 
-			realPrecision, medianValue, (char)reqLength, quantization_intervals, pwrErrBoundBytes, pwrErrBoundBytes_size, radExpo);
+	//new_TightDataPointStorageF2(&tdps, dataLength, exactDataNum, 
+	//		type, exactMidByteArray->array, exactMidByteArray->size,  
+	//		exactLeadNumArray->array,  
+	//		resiBitArray->array, resiBitArray->size, 
+	//		resiBitLengthArray->array, resiBitLengthArray->size, 
+	//		realPrecision, medianValue, (char)reqLength, quantization_intervals, pwrErrBoundBytes, pwrErrBoundBytes_size, radExpo);
 
 //sdi:Debug
 /*	int sum =0;
@@ -998,12 +998,12 @@ size_t *outSize, float min, float max)
 	
 	TightDataPointStorageF* tdps;
 			
-	new_TightDataPointStorageF2(&tdps, dataLength, exactDataNum, 
-			type, exactMidByteArray->array, exactMidByteArray->size,  
-			exactLeadNumArray->array,  
-			resiBitArray->array, resiBitArray->size, 
-			resiBitLengthArray->array, resiBitLengthArray->size, 
-			realPrecision, medianValue, (char)reqLength, quantization_intervals, pwrErrBoundBytes, pwrErrBoundBytes_size, radExpo);
+	//new_TightDataPointStorageF2(&tdps, dataLength, exactDataNum, 
+	//		type, exactMidByteArray->array, exactMidByteArray->size,  
+	//		exactLeadNumArray->array,  
+	//		resiBitArray->array, resiBitArray->size, 
+	//		resiBitLengthArray->array, resiBitLengthArray->size, 
+	//		realPrecision, medianValue, (char)reqLength, quantization_intervals, pwrErrBoundBytes, pwrErrBoundBytes_size, radExpo);
 	
 	//free memory
 	free_DBA(resiBitLengthArray);
@@ -1454,12 +1454,12 @@ size_t r1, size_t r2, size_t r3, size_t *outSize, float min, float max)
 
 	TightDataPointStorageF* tdps;
 
-	new_TightDataPointStorageF2(&tdps, dataLength, exactDataNum,
-			type, exactMidByteArray->array, exactMidByteArray->size,
-			exactLeadNumArray->array,
-			resiBitArray->array, resiBitArray->size,
-			resiBitLengthArray->array, resiBitLengthArray->size, 
-			realPrecision, medianValue, (char)reqLength, quantization_intervals, pwrErrBoundBytes, pwrErrBoundBytes_size, radExpo);
+	//new_TightDataPointStorageF2(&tdps, dataLength, exactDataNum,
+	//		type, exactMidByteArray->array, exactMidByteArray->size,
+	//		exactLeadNumArray->array,
+	//		resiBitArray->array, resiBitArray->size,
+	//		resiBitLengthArray->array, resiBitLengthArray->size, 
+	//		realPrecision, medianValue, (char)reqLength, quantization_intervals, pwrErrBoundBytes, pwrErrBoundBytes_size, radExpo);
 
 //sdi:Debug
 /*	int sum =0;
@@ -1519,7 +1519,7 @@ void compressGroupIDArray_float(char* groupID, TightDataPointStorageF* tdps)
 	size_t outSize;
 	
 	HuffmanTree* huffmanTree = SZ_Reset();
-	encode_withTree(huffmanTree, standGroupID, dataLength, &out, &outSize);
+	//encode_withTree(huffmanTree, standGroupID, dataLength, &out, &outSize);
 	SZ_ReleaseHuffman(huffmanTree);
 	
 	tdps->pwrErrBoundBytes = out; //groupIDArray
@@ -1741,12 +1741,12 @@ double absErrBound, double relBoundRatio, double pwrErrRatio, float valueRangeSi
 			
 	//combineTypeAndGroupIDArray(nbBins, dataLength, &type, groupID);
 
-	new_TightDataPointStorageF(&tdps, dataLength, exactDataNum, 
-			type, exactMidByteArray->array, exactMidByteArray->size,  
-			exactLeadNumArray->array,  
-			resiBitArray->array, resiBitArray->size, 
-			resiBitsLength, 
-			realPrecision, medianValue, (char)reqLength, nbBins, NULL, 0, radExpo);	
+	//new_TightDataPointStorageF(&tdps, dataLength, exactDataNum, 
+	//		type, exactMidByteArray->array, exactMidByteArray->size,  
+	//		exactLeadNumArray->array,  
+	//		resiBitArray->array, resiBitArray->size, 
+	//		resiBitsLength, 
+	//		realPrecision, medianValue, (char)reqLength, nbBins, NULL, 0, radExpo);	
 	
 	compressGroupIDArray_float(groupID, tdps);
 	
@@ -1821,8 +1821,9 @@ void SZ_compress_args_float_NoCkRngeNoGzip_1D_pwr_pre_log(unsigned char** newByt
 			log_data[i] = min_log_data - 2.0001*realPrecision;
 		}
 	}
-
-    TightDataPointStorageF* tdps = SZ_compress_float_1D_MDQ(log_data, dataLength, realPrecision, valueRangeSize, medianValue_f);
+    TightDataPointStorageF* tdps;
+    memset(&tdps, 0, sizeof(TightDataPointStorageF*));
+    //TightDataPointStorageF* tdps = SZ_compress_float_1D_MDQ(log_data, dataLength, realPrecision, valueRangeSize, medianValue_f);
     tdps->minLogValue = min_log_data - 1.0001*realPrecision;
     free(log_data);
     if(!positive){

@@ -16,7 +16,7 @@ double sz_wtime(){
     return omp_get_wtime();
 #else
     struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+    clock_gettime(CLOCK_MONOTONIC, &ts);
 
     return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
 #endif
@@ -51,28 +51,21 @@ unsigned char * SZ_compress_float_2D_MDQ_openmp(float *oriData, size_t r1, size_
 	return NULL;
 }
 
-unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_t r2, size_t r3, float realPrecision, size_t * comp_size){
+unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_t r2, size_t r3, float realPrecision, size_t * comp_size, CPU_timing *cpu_timing){
+	//jwang
+	double elapsed_time = 0.0;
 
-	float elapsed_time = 0.0;
-
-	elapsed_time = -sz_wtime();
 	unsigned int quantization_intervals;
 	if(exe_params->optQuantMode==1)
 	{
-		// quantization_intervals = optimize_intervals_float_3D(oriData, r1, realPrecision);
 		quantization_intervals = optimize_intervals_float_3D_opt(oriData, r1, r2, r3, realPrecision);
-		//quantization_intervals = 32768;
 		printf("3D number of bins: %d\nerror bound %.20f\n", quantization_intervals, realPrecision);
-		// exit(0);		
 		updateQuantizationInfo(quantization_intervals);
 	}	
 	else{
 		quantization_intervals = exe_params->intvCapacity;
 	}
-	elapsed_time += sz_wtime();
-	printf("opt interval time: %.4f\n", elapsed_time);
 
-	elapsed_time = -sz_wtime();
 	int thread_num = sz_get_max_threads();
 	int thread_order = (int)log2(thread_num);
 	size_t num_x = 0, num_y = 0, num_z = 0;
@@ -102,8 +95,6 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	}
 	sz_set_num_threads(thread_num);
 	// calculate block dims
-	printf("number of blocks: %zu %zu %zu\n", num_x, num_y, num_z);
-
 	size_t split_index_x, split_index_y, split_index_z;
 	size_t early_blockcount_x, early_blockcount_y, early_blockcount_z;
 	size_t late_blockcount_x, late_blockcount_y, late_blockcount_z;
@@ -114,23 +105,22 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	size_t max_num_block_elements = early_blockcount_x * early_blockcount_y * early_blockcount_z;
 	size_t num_blocks = num_x * num_y * num_z;
 	size_t num_elements = r1 * r2 * r3;
-	// printf("max_num_block_elements %d num_blocks %d\n", max_num_block_elements, num_blocks);
-
 	size_t dim0_offset = r2 * r3;
 	size_t dim1_offset = r3;
-	
-	// printf("malloc blockinfo array start\n");
-	// fflush(stdout);
 
 	size_t buffer_size = early_blockcount_y * early_blockcount_z * sizeof(float);
 	int * result_type = (int *) malloc(num_elements * sizeof(int));
+
 	size_t unpred_data_max_size = max_num_block_elements;
 	float * result_unpredictable_data = (float *) malloc(unpred_data_max_size * sizeof(float) * num_blocks);
 	unsigned int * unpredictable_count = (unsigned int *) malloc(num_blocks * sizeof(unsigned int));
+	
 	float * mean = malloc(num_blocks * sizeof(float));
+	
 	float * buffer0, * buffer1;
 	buffer0 = (float *) malloc(buffer_size * thread_num);
 	buffer1 = (float *) malloc(buffer_size * thread_num);
+	
 	unsigned char * result = (unsigned char *) malloc(num_elements * (sizeof(int) + sizeof(float)));
 	size_t * unpred_offset = (size_t *) malloc(num_blocks * sizeof(size_t));
 	unsigned char * encoding_buffer = (unsigned char *) malloc(max_num_block_elements * sizeof(int) * num_blocks);
@@ -140,7 +130,8 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	
 	size_t stateNum = quantization_intervals*2;
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);	
-	
+
+	elapsed_time = -sz_wtime();
 	int num_yz = num_y * num_z;
 	#pragma omp parallel for
 	for(int t=0; t<thread_num; t++){
@@ -148,11 +139,10 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		int i = id/(num_yz);
 		int j = (id % num_yz) / num_z;
 		int k = id % num_z;
-		// printf("%d: %d %d %d\n", sz_get_thread_num(), i, j, k);
 		size_t offset_x = (i < split_index_x) ? i * early_blockcount_x : i * late_blockcount_x + split_index_x;
 		size_t offset_y = (j < split_index_y) ? j * early_blockcount_y : j * late_blockcount_y + split_index_y;
 		size_t offset_z = (k < split_index_z) ? k * early_blockcount_z : k * late_blockcount_z + split_index_z;
-		float * data_pos = oriData + offset_x * dim0_offset + offset_y * dim1_offset + offset_z;
+		float * data_pos = oriData + offset_x * dim0_offset + offset_y * dim1_offset + offset_z; // current data block to be predicted.
 
 		size_t current_blockcount_x = (i < split_index_x) ? early_blockcount_x : late_blockcount_x;
 		size_t current_blockcount_y = (j < split_index_y) ? early_blockcount_y : late_blockcount_y;
@@ -162,43 +152,42 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 
 		float * unpredictable_data = result_unpredictable_data + id * unpred_data_max_size;
 		float *P0, *P1; // buffer
-		// P0 = (float *) malloc(buffer_size);
-		// P1 = (float *) malloc(buffer_size);
 		P0 = buffer0 + id * early_blockcount_y * early_blockcount_z;
 		P1 = buffer1 + id * early_blockcount_y * early_blockcount_z;
-		unpredictable_count[id] = SZ_compress_float_3D_MDQ_RA_block(data_pos, mean + id, r1, r2, r3, current_blockcount_x, current_blockcount_y, current_blockcount_z, realPrecision, P0, P1, type, unpredictable_data);
-		// free(P0);
-		// free(P1);
+		unpredictable_count[id] = SZ_compress_float_3D_MDQ_RA_block(data_pos, mean + id, r1, r2, r3, current_blockcount_x, current_blockcount_y, current_blockcount_z, realPrecision, P0, P1, type, unpredictable_data, cpu_timing);
 	}
-	elapsed_time += sz_wtime();
-	printf("compression and quantization time: %.4f\n", elapsed_time);
+	(*cpu_timing).cfCost_omp = elapsed_time + sz_wtime();
+	printf("curve-fitting time: %lf\n", (*cpu_timing).cfCost_omp);
+	// ------------------------------------------------------------
 	elapsed_time = -sz_wtime();
-	// printf("unpred count:\n");
-	// for(int i=0; i<num_blocks; i++){
-	// 	printf("%d ", unpredictable_count[i]);
-	// }
-	// printf("\n");
-	// printf("total_unpred num: %d\n", total_unpred);
-	// printf("Block wise compression end, num_elements %ld\n", num_elements);
-	// huffman encode
-
 	size_t nodeCount = 0;
-	Huffman_init_openmp(huffmanTree, result_type, num_elements, thread_num, freq);
-	elapsed_time += sz_wtime();
-	printf("Build Huffman: %.4f\n", elapsed_time);
+	Huffman_init_openmp(huffmanTree, result_type, num_elements, thread_num, freq, cpu_timing);
+	(*cpu_timing).tree0_omp = elapsed_time + sz_wtime();
+	printf("tree0=%lf\n", (*cpu_timing).tree0_omp);
+	// ------------------------------------------------------------
 	elapsed_time = -sz_wtime();
 	for (size_t i = 0; i < stateNum; i++)
 		if (huffmanTree->code[i]) nodeCount++;
 	nodeCount = nodeCount*2-1;
+	(*cpu_timing).tree1_omp = elapsed_time + sz_wtime();
+	printf("tree1=%lf\n", (*cpu_timing).tree1_omp);
+	(*cpu_timing).node_count = nodeCount;
+	// ------------------------------------------------------------
+	elapsed_time = -sz_wtime();
 	unsigned char *treeBytes;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
-
+	(*cpu_timing).tree2_omp = elapsed_time + sz_wtime();
+	printf("tree2=%lf\n", (*cpu_timing).tree2_omp);
+	(*cpu_timing).costTree_omp = (*cpu_timing).tree0_omp + (*cpu_timing).tree1_omp + (*cpu_timing).tree2_omp;
+	// ------------------------------------------------------------
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
 	size_t total_unpred = 0;
 	for(int i=0; i<num_blocks; i++){
 		total_unpred += unpredictable_count[i];
-		// printf("%d: %d mean %.2f\n", i, unpredictable_count[i], mean[i]);
 	}
+	(*cpu_timing).hit_ratio_omp = (float)(num_elements - total_unpred)/num_elements;
+	printf("hit ratio = %f\n", (*cpu_timing).hit_ratio_omp);
+
 	unsigned char * result_pos = result;
 	initRandomAccessBytes(result_pos);
 	result_pos += meta_data_offset;
@@ -222,14 +211,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	result_pos += num_blocks * sizeof(unsigned int);
 	memcpy(result_pos, mean, num_blocks * sizeof(float));
 	result_pos += num_blocks * sizeof(float);	
-	// printf("unpred offset: %ld\n", result_pos - result);
-	// store unpredicable data
-	// float * unpred_pos = (float *) result_pos;
-	// for(int t=0; t<thread_num; t++){
-	// 	float * unpredictable_data = result_unpredictable_data + t * unpred_data_max_size;
-	// 	memcpy(result_pos, unpredictable_data, unpredictable_count[t] * sizeof(float));		
-	// 	result_pos += unpredictable_count[t]*sizeof(float);
-	// }
+
 	unpred_offset[0] = 0;
 	for(int t=1; t<thread_num; t++){
 		unpred_offset[t] = unpredictable_count[t-1] + unpred_offset[t-1];
@@ -241,11 +223,8 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		memcpy(result_pos + unpred_offset[id] * sizeof(float), unpredictable_data, unpredictable_count[id] * sizeof(float));		
 	}
 	result_pos += total_unpred * sizeof(float);
-
-	elapsed_time += sz_wtime();
-	printf("write misc time: %.4f\n", elapsed_time);
+	// ------------------------------------------------------------
 	elapsed_time = -sz_wtime();
-
 	size_t * block_pos = (size_t *) result_pos;
 	result_pos += num_blocks * sizeof(size_t);
 	#pragma omp parallel for
@@ -268,13 +247,9 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		encode(huffmanTree, type, current_block_elements, encoding_buffer_pos, &enCodeSize);
 		block_pos[id] = enCodeSize;
 	}
-	elapsed_time += sz_wtime();
-	printf("Parallel Huffman encoding elapsed time: %.4f\n", elapsed_time);
-	elapsed_time = -sz_wtime();
-	// for(int t=0; t<thread_num; t++){
-	// 	memcpy(result_pos, encoding_buffer + t * max_num_block_elements * sizeof(int), block_pos[t]);
-	// 	result_pos += block_pos[t];
-	// }
+	(*cpu_timing).costEncode_omp = elapsed_time + sz_wtime();
+	printf("encode time: %lf\n", (*cpu_timing).costEncode_omp);
+	// ------------------------------------------------------------
 	block_offset[0] = 0;
 	for(int t=1; t<thread_num; t++){
 		block_offset[t] = block_pos[t-1] + block_offset[t-1];
@@ -285,21 +260,10 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		memcpy(result_pos + block_offset[id], encoding_buffer + t * max_num_block_elements * sizeof(int), block_pos[t]);		
 	}
 	result_pos += block_offset[thread_num - 1] + block_pos[thread_num - 1];
-
-	elapsed_time += sz_wtime();
-	printf("Final copy elapsed time: %.4f\n", elapsed_time);
-	// {
-	// 	int status;
-	// 	writeIntData_inBytes(result_type, num_elements, "/Users/LiangXin/github/SZ-develop/example/openmp/comp001_type.dat", &status);
-	// }
-
-	// int status;
-	// writeIntData_inBytes(result_type, num_elements, "/Users/LiangXin/github/SZ-develop/example/openmp/omp_type.dat", &status);
-	// printf("type array size: %ld\n", enCodeSize);
+	// ------------------------------------------------------------
 	result_pos += enCodeSize;
 	size_t totalEncodeSize = 0;
 	totalEncodeSize = result_pos - result;
-	// printf("Total size %ld\n", totalEncodeSize);
 	free(freq);
 	free(buffer0);
 	free(buffer1);
@@ -394,17 +358,15 @@ void decompressDataSeries_float_3D_openmp(float** data, size_t r1, size_t r2, si
 	comp_data_pos += sizeof(float);
 
 	size_t stateNum = intervals*2;
-	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
+        HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
 
 	updateQuantizationInfo(intervals);
-	// exe_params->intvRadius = (int)((tdps->intervals - 1)/ 2);
 
 	unsigned int tree_size = bytesToInt_bigEndian(comp_data_pos);
 	comp_data_pos += sizeof(unsigned int);
 	size_t huffman_nodes = bytesToInt_bigEndian(comp_data_pos);
 	huffmanTree->allNodes = huffman_nodes;
-	// printf("Reconstruct huffman tree with node count %ld\n", nodeCount);
-	// fflush(stdout);
+
 	node root = reconstruct_HuffTree_from_bytes_anyStates(huffmanTree, comp_data_pos+4, huffmanTree->allNodes);
 
 	comp_data_pos += 4 + tree_size;
@@ -420,27 +382,6 @@ void decompressDataSeries_float_3D_openmp(float** data, size_t r1, size_t r2, si
 	}
 	comp_data_pos += total_unpred * sizeof(float);
 
-	// printf("unpred count:\n");
-	// for(int i=0; i<num_blocks; i++){
-	// 	printf("%d ", unpred_count[i]);
-	// }
-	// printf("\n");
-	// for(int i=0; i<1000; i++){
-	// 	printf("%.2f ", result_unpredictable_data[i]);
-	// }
-	// printf("\ntotal_unpred num: %d\n", total_unpred);
-	
-	// for(int i=0; i<num_blocks; i++){
-	// 	printf("%d unpred offset %ld\n", i, unpred_offset[i]);
-	// 	for(int tmp=0; tmp<10; tmp++){
-	// 		printf("%.2f ", (result_unpredictable_data + unpred_offset[i])[tmp]);
-	// 	}
-	// 	printf("\n");
-	// }
-	// exit(0);
-	// printf("Block wise decompression start: %d %d %d\n", early_blockcount_x, early_blockcount_y, early_blockcount_z);
-	// fflush(stdout);
-	// decode(comp_data_pos, num_elements, root, result_type);
 	size_t * block_pos = (size_t *) comp_data_pos;
 	comp_data_pos += num_blocks * sizeof(size_t);
 	block_offset[0] = 0;
@@ -491,16 +432,10 @@ void decompressDataSeries_float_3D_openmp(float** data, size_t r1, size_t r2, si
 
 		float * unpredictable_data = result_unpredictable_data + unpred_offset[id];
 		float mean = mean_pos[id];
-		// printf("\n%d\ndata_offset: %ld\n", t, offset_x * dim0_offset + offset_y * dim1_offset + offset_z);
-		// printf("mean: %.2f\n", mean);
-		// for(int tmp=0; tmp<10; tmp++){
-		// 	printf("%.2f ", unpredictable_data[tmp]);
-		// }
-		// printf("\n\n");
 		decompressDataSeries_float_3D_RA_block(data_pos, mean, r1, r2, r3, current_blockcount_x, current_blockcount_y, current_blockcount_z, realPrecision, type, unpredictable_data);
 	}	
 	elapsed_time += sz_wtime();
-	printf("Parallel decompress elapsed time: %.4f\n", elapsed_time);
+	printf("Parallel decompress elapsed time: %f\n", elapsed_time);
 
 	free(block_offset);
 	free(result_type);
@@ -518,27 +453,21 @@ unsigned char * SZ_compress_double_2D_MDQ_openmp(double *oriData, size_t r1, siz
 	return NULL;
 }
 
-unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, size_t r2, size_t r3, double realPrecision, size_t * comp_size){
+unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, size_t r2, size_t r3, double realPrecision, size_t * comp_size, CPU_timing *cpu_timing){
 
-	float elapsed_time = 0.0;
-
-	elapsed_time = -sz_wtime();
+	// jwang
+	double elapsed_time = 0.0;
 	unsigned int quantization_intervals;
 	if(exe_params->optQuantMode==1)
 	{
-		// quantization_intervals = optimize_intervals_float_3D(oriData, r1, realPrecision);
 		quantization_intervals = optimize_intervals_double_3D_opt(oriData, r1, r2, r3, realPrecision);
-		//quantization_intervals = 32768;
 		printf("3D number of bins: %d\nerror bound %.20f\n", quantization_intervals, realPrecision);
-		// exit(0);		
 		updateQuantizationInfo(quantization_intervals);
 	}	
 	else{
 		quantization_intervals = exe_params->intvCapacity;
 	}
-	elapsed_time += sz_wtime();
-	printf("opt interval time: %.4f\n", elapsed_time);
-
+	// ------------------------------------------------------------
 	elapsed_time = -sz_wtime();
 	int thread_num = sz_get_max_threads();
 	int thread_order = (int)log2(thread_num);
@@ -568,8 +497,6 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		thread_num = num_x * num_y * num_z;
 	}
 	sz_set_num_threads(thread_num);
-	// calculate block dims
-	printf("number of blocks: %zu %zu %zu\n", num_x, num_y, num_z);
 
 	size_t split_index_x, split_index_y, split_index_z;
 	size_t early_blockcount_x, early_blockcount_y, early_blockcount_z;
@@ -581,13 +508,9 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	size_t max_num_block_elements = early_blockcount_x * early_blockcount_y * early_blockcount_z;
 	size_t num_blocks = num_x * num_y * num_z;
 	size_t num_elements = r1 * r2 * r3;
-	// printf("max_num_block_elements %d num_blocks %d\n", max_num_block_elements, num_blocks);
 
 	size_t dim0_offset = r2 * r3;
 	size_t dim1_offset = r3;
-	
-	// printf("malloc blockinfo array start\n");
-	// fflush(stdout);
 
 	size_t buffer_size = early_blockcount_y * early_blockcount_z * sizeof(double);
 	int * result_type = (int *) malloc(num_elements * sizeof(int));
@@ -603,10 +526,11 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	unsigned char * encoding_buffer = (unsigned char *) malloc(max_num_block_elements * sizeof(int) * num_blocks);
 	size_t * block_offset = (size_t *) malloc(num_blocks * sizeof(size_t));
 	size_t *freq = (size_t *)malloc(thread_num*quantization_intervals*4*sizeof(size_t));
+
 	memset(freq, 0, thread_num*quantization_intervals*4*sizeof(size_t));
 	
-	size_t stateNum = quantization_intervals*2;
-	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);	
+        size_t stateNum = quantization_intervals*2;
+        HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
 	
 	int num_yz = num_y * num_z;
 	#pragma omp parallel for
@@ -615,7 +539,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		int i = id/(num_yz);
 		int j = (id % num_yz) / num_z;
 		int k = id % num_z;
-		// printf("%d: %d %d %d\n", sz_get_thread_num(), i, j, k);
+
 		size_t offset_x = (i < split_index_x) ? i * early_blockcount_x : i * late_blockcount_x + split_index_x;
 		size_t offset_y = (j < split_index_y) ? j * early_blockcount_y : j * late_blockcount_y + split_index_y;
 		size_t offset_z = (k < split_index_z) ? k * early_blockcount_z : k * late_blockcount_z + split_index_z;
@@ -634,23 +558,11 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		P1 = buffer1 + id * early_blockcount_y * early_blockcount_z;
 		unpredictable_count[id] = SZ_compress_double_3D_MDQ_RA_block(data_pos, mean + id, r1, r2, r3, current_blockcount_x, current_blockcount_y, current_blockcount_z, realPrecision, P0, P1, type, unpredictable_data);
 	}
-	elapsed_time += sz_wtime();
-	printf("compression and quantization time: %.4f\n", elapsed_time);
-	elapsed_time = -sz_wtime();
-	// printf("unpred count:\n");
-	// for(int i=0; i<num_blocks; i++){
-	// 	printf("%d ", unpredictable_count[i]);
-	// }
-	// printf("\n");
-	// printf("total_unpred num: %d\n", total_unpred);
-	// printf("Block wise compression end, num_elements %ld\n", num_elements);
+	// ------------------------------------------------------------
 	// huffman encode
-
 	size_t nodeCount = 0;
-	Huffman_init_openmp(huffmanTree, result_type, num_elements, thread_num, freq);
-	elapsed_time += sz_wtime();
-	printf("Build Huffman: %.4f\n", elapsed_time);
-	elapsed_time = -sz_wtime();
+	Huffman_init_openmp(huffmanTree, result_type, num_elements, thread_num, freq, cpu_timing);
+	// ------------------------------------------------------------
 	for (size_t i = 0; i < stateNum; i++)
 		if (huffmanTree->code[i]) nodeCount++;
 	nodeCount = nodeCount*2-1;
@@ -661,7 +573,6 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	size_t total_unpred = 0;
 	for(int i=0; i<num_blocks; i++){
 		total_unpred += unpredictable_count[i];
-		// printf("%d: %d mean %.2f\n", i, unpredictable_count[i], mean[i]);
 	}
 	unsigned char * result_pos = result;
 	initRandomAccessBytes(result_pos);
@@ -686,28 +597,24 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	result_pos += num_blocks * sizeof(unsigned int);
 	memcpy(result_pos, mean, num_blocks * sizeof(double));
 	result_pos += num_blocks * sizeof(double);	
-
 	unpred_offset[0] = 0;
 	for(int t=1; t<thread_num; t++){
 		unpred_offset[t] = unpredictable_count[t-1] + unpred_offset[t-1];
 	}
 	
 	#pragma omp parallel for
-	for(int t=0; t<thread_num; t++){
+	for(int t=0; t<thread_num; t++){ // t<thread_num
 		int id = sz_get_thread_num();
 		double * unpredictable_data = result_unpredictable_data + id * unpred_data_max_size;
-		memcpy(result_pos + unpred_offset[id] * sizeof(double), unpredictable_data, unpredictable_count[id] * sizeof(double));		
+		memcpy(result_pos + unpred_offset[id] * sizeof(double), unpredictable_data, unpredictable_count[id] * sizeof(double));
 	}
+
 	result_pos += total_unpred * sizeof(double);
-
-	elapsed_time += sz_wtime();
-	printf("write misc time: %.4f\n", elapsed_time);
-	elapsed_time = -sz_wtime();
-
+	// ------------------------------------------------------------
 	size_t * block_pos = (size_t *) result_pos;
 	result_pos += num_blocks * sizeof(size_t);
 	#pragma omp parallel for
-	for(int t=0; t<thread_num; t++){
+	for(int t=0; t<thread_num; t++){ // t<thread_num
 		int id = sz_get_thread_num();
 		int i = id/(num_yz);
 		int j = (id % num_yz) / num_z;
@@ -726,13 +633,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		encode(huffmanTree, type, current_block_elements, encoding_buffer_pos, &enCodeSize);
 		block_pos[id] = enCodeSize;
 	}
-	elapsed_time += sz_wtime();
-	printf("Parallel Huffman encoding elapsed time: %.4f\n", elapsed_time);
-	elapsed_time = -sz_wtime();
-	// for(int t=0; t<thread_num; t++){
-	// 	memcpy(result_pos, encoding_buffer + t * max_num_block_elements * sizeof(int), block_pos[t]);
-	// 	result_pos += block_pos[t];
-	// }
+	// ------------------------------------------------------------
 	block_offset[0] = 0;
 	for(int t=1; t<thread_num; t++){
 		block_offset[t] = block_pos[t-1] + block_offset[t-1];
@@ -743,27 +644,16 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		memcpy(result_pos + block_offset[id], encoding_buffer + t * max_num_block_elements * sizeof(int), block_pos[t]);		
 	}
 	result_pos += block_offset[thread_num - 1] + block_pos[thread_num - 1];
-
-	elapsed_time += sz_wtime();
-	printf("Final copy elapsed time: %.4f\n", elapsed_time);
-	// {
-	// 	int status;
-	// 	writeIntData_inBytes(result_type, num_elements, "/Users/LiangXin/github/SZ-develop/example/openmp/comp001_type.dat", &status);
-	// }
-
-	// int status;
-	// writeIntData_inBytes(result_type, num_elements, "/Users/LiangXin/github/SZ-develop/example/openmp/omp_type.dat", &status);
-	// printf("type array size: %ld\n", enCodeSize);
+	// ------------------------------------------------------------
 	result_pos += enCodeSize;
 	size_t totalEncodeSize = 0;
 	totalEncodeSize = result_pos - result;
-	// printf("Total size %ld\n", totalEncodeSize);
+
 	free(freq);
 	free(buffer0);
 	free(buffer1);
 	free(treeBytes);
 	free(unpred_offset);
-	free(block_offset);
 	free(encoding_buffer);
 	free(mean);
 	free(result_unpredictable_data);
@@ -771,7 +661,9 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	free(result_type);
 	SZ_ReleaseHuffman(huffmanTree);
 
+	free(block_offset);
 	*comp_size = totalEncodeSize;
+	
 	return result;
 }
 
@@ -886,7 +778,7 @@ void decompressDataSeries_double_3D_openmp(double** data, size_t r1, size_t r2, 
 	}
 	int num_yz = num_y * num_z;
 	elapsed_time += sz_wtime();
-	printf("Read data info elapsed time: %.4f\n", elapsed_time);
+	printf("Read data info elapsed time: %f\n", elapsed_time);
 	elapsed_time = -sz_wtime();
 	#pragma omp parallel for
 	for(int t=0; t<thread_num; t++){
@@ -905,7 +797,7 @@ void decompressDataSeries_double_3D_openmp(double** data, size_t r1, size_t r2, 
 		decode(comp_data_pos + block_offset[id], current_blockcount_x*current_blockcount_y*current_blockcount_z, root, type);
 	}
 	elapsed_time += sz_wtime();
-	printf("Parallel Huffman decoding elapsed time: %.4f\n", elapsed_time);
+	printf("Parallel Huffman decoding elapsed time: %f\n", elapsed_time);
 	elapsed_time = -sz_wtime();
 
 	#pragma omp parallel for
@@ -932,7 +824,7 @@ void decompressDataSeries_double_3D_openmp(double** data, size_t r1, size_t r2, 
 		decompressDataSeries_double_3D_RA_block(data_pos, mean, r1, r2, r3, current_blockcount_x, current_blockcount_y, current_blockcount_z, realPrecision, type, unpredictable_data);
 	}	
 	elapsed_time += sz_wtime();
-	printf("Parallel decompress elapsed time: %.4f\n", elapsed_time);
+	printf("Parallel decompress elapsed time: %f\n", elapsed_time);
 
 	free(block_offset);
 	free(result_type);
@@ -940,13 +832,13 @@ void decompressDataSeries_double_3D_openmp(double** data, size_t r1, size_t r2, 
 	SZ_ReleaseHuffman(huffmanTree);
 }
 
-void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int thread_num, size_t * freq){
+void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int thread_num, size_t * freq, CPU_timing *cpu_timing){
 
 	size_t i;
-	// size_t *freq = (size_t *)malloc(thread_num*huffmanTree->allNodes*sizeof(size_t));
-	// memset(freq, 0, thread_num*huffmanTree->allNodes*sizeof(size_t));
 	size_t block_size = (length - 1)/ thread_num + 1;
 	size_t block_residue = length - (thread_num - 1) * block_size;
+
+	double elapsed_time = -sz_wtime();
 	#pragma omp parallel for
 	for(int t=0; t<thread_num; t++){
 		int id = sz_get_thread_num();
@@ -971,16 +863,23 @@ void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int th
 		freq_pos += huffmanTree->allNodes;
 	}
 
+	(*cpu_timing).tree3_omp = elapsed_time + sz_wtime();
+	printf("tree3 = %f\n", (*cpu_timing).tree3_omp);
+
+	elapsed_time = -sz_wtime();
 	for (i = 0; i < huffmanTree->allNodes; i++)
 		if (freq[i]) 
 			qinsert(huffmanTree, new_node(huffmanTree, freq[i], i, 0, 0));
- 
+ 	
 	while (huffmanTree->qend > 2) 
 		qinsert(huffmanTree, new_node(huffmanTree, 0, 0, qremove(huffmanTree), qremove(huffmanTree)));
  
+	(*cpu_timing).tree4_omp = elapsed_time + sz_wtime();
+        printf("tree4 = %f\n", (*cpu_timing).tree4_omp);
+
+	elapsed_time = -sz_wtime();
 	build_code(huffmanTree, huffmanTree->qq[1], 0, 0, 0);
+	(*cpu_timing).tree5_omp = elapsed_time + sz_wtime();
+        printf("tree5 = %f\n", (*cpu_timing).tree5_omp);
 	// free(freq);
 }
-
-
-

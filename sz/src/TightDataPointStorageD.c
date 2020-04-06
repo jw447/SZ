@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "TightDataPointStorageD.h"
-#include "sz.h"
 #include "Huffman.h"
-//#include "rw.h"
+#include "sz.h"
+#include <jwang.h>
 
 void new_TightDataPointStorageD_Empty(TightDataPointStorageD **this)
 {
@@ -282,7 +282,7 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 		unsigned char* resiMidBits, size_t resiMidBits_size,
 		unsigned char resiBitLength, 
 		double realPrecision, double medianValue, char reqLength, unsigned int intervals,
-		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo) {
+		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo, CPU_timing *cpu_timing) {
 	//jwang
 	FuncName;
 	*this = (TightDataPointStorageD *)malloc(sizeof(TightDataPointStorageD));
@@ -301,28 +301,21 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->rtypeArray_size = 0;
 
 	int stateNum = 2*intervals;
+
+	gettimeofday(&treeCostS, NULL);
 	
-	// =============
-        //int type0[15] = { 1,2,1,1,1,2,2,1,4,5,4,2,3,4,1 };
-        //HuffmanTree* huffmanTree0 = createHuffmanTree(5);
-        //encode_withTree(huffmanTree0, type0, 15, &(*this)->typeArray, &(*this)->typeArray_size);
-	
-	//struct timeval start;
-	//struct timeval end;
-	//double duration = 0;
-	
-	//jwang
-	//gettimeofday(&start, NULL);
+	gettimeofday(&createTCostS, NULL);
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
+        gettimeofday(&createTCostE, NULL);
+	(*cpu_timing).createTCost = ((createTCostE.tv_sec*1000000+createTCostE.tv_usec)-(createTCostS.tv_sec*1000000+createTCostS.tv_usec))/1000000.0;
 
 	if(confparams_cpr->errorBoundMode == PW_REL && confparams_cpr->accelerate_pw_rel_compression)
 		(*this)->max_bits = encode_withTree_MSST19(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	else
-		encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
-	//gettimeofday(&end, NULL);
-	//duration = ((end.tv_sec*1000000+end.tv_usec)-(start.tv_sec*1000000+start.tv_usec))/1000000.0;
-	//printf("Huffman total=%lf\n", duration);
-	//
+		encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size, cpu_timing);
+
+	gettimeofday(&treeCostE, NULL);
+	(*cpu_timing).treeCost = ((treeCostE.tv_sec*1000000+treeCostE.tv_usec)-(treeCostS.tv_sec*1000000+treeCostS.tv_usec))/1000000.0;
 	SZ_ReleaseHuffman(huffmanTree);
 	
 	(*this)->exactMidBytes = exactMidBytes;
@@ -370,7 +363,7 @@ void new_TightDataPointStorageD2(TightDataPointStorageD **this,
 
 	int stateNum = 2*intervals;
 	HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
-	encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
+	//encode_withTree(huffmanTree, type, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size);
 	SZ_ReleaseHuffman(huffmanTree);
 
 	(*this)->exactMidBytes = exactMidBytes;
@@ -661,8 +654,7 @@ void convertTDPStoFlatBytes_double(TightDataPointStorageD *tdps, unsigned char**
 		}
 
 		size_t totalByteLength = 3 + 1 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 4 + radExpoL + segmentL + pwrBoundArrayL + 4 + 8 + 1 + 8 + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + exe_params->SZ_SIZE_TYPE + minLogValueSize + tdps->typeArray_size + tdps->leadNumArray_size + tdps->exactMidBytes_size + residualMidBitsLength + tdps->pwrErrBoundBytes_size;
-		//jwang
-		//printf("totalsize=%lu\n",totalByteLength);
+
 		if(confparams_cpr->errorBoundMode == PW_REL && confparams_cpr->accelerate_pw_rel_compression)
 			totalByteLength += (1+1); // for MSST19
 			

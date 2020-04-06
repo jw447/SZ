@@ -92,7 +92,8 @@ int main(int argc, char * argv[])
    
     size_t outSize;
     cost_start(); 
-    unsigned char *bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
+    //unsigned char *bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
+    unsigned char *bytes = 0;
     //char *bytes = (char *)malloc(nbEle*sizeof(double)); //
     //char* bytes = SZ_compress_args(SZ_DOUBLE, data, &outSize, ABS, 1E-12, 0.000001, 0.01, r5, r4, r3, r2, r1);
     cost_end();

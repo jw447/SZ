@@ -356,7 +356,7 @@ int main(int argc, char* argv[])
 			}
 			cost_start();	
 			if(confparams_cpr->sol_ID == SZ)
-				bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
+				//bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
 			else if(confparams_cpr->sol_ID == PASTRI)
 			{
 				pastri_par.dataSize = 4;
@@ -441,7 +441,7 @@ int main(int argc, char* argv[])
 				}
 				cost_start();
 				if(confparams_cpr->sol_ID == SZ)
-					bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
+					//bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
 				else if(confparams_cpr->sol_ID == PASTRI)
 				{
 					pastri_par.dataSize = 8;

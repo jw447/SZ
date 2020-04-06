@@ -82,7 +82,8 @@ int main(int argc, char * argv[])
     //SZ_compress_args2(SZ_FLOAT, data, bytes, &outSize, ABS, 0.0001, 0.0001, r5, r4, r3, r2, r1);    
     //char *bytes = SZ_compress_rev(SZ_FLOAT, data, revValue, &outSize, r5, r4, r3, r2, r1);
     cost_start();
-    unsigned char *bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
+    unsigned char *bytes = 0;
+    //unsigned char *bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
     cost_end();
     printf("timecost=%f\n",totalCost); 
     writeByteData(bytes, outSize, outputFilePath, &status);

@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 #include <stdio.h> 
-
+#include <jwang.h>
 typedef struct TightDataPointStorageI
 {
 	size_t dataSeriesLength;

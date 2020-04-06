@@ -285,7 +285,7 @@ int main(int argc, char* argv[])
 
 		//compression
 		ZC_DataProperty* dataProperty = ZC_startCmpr(varName, ZC_FLOAT, ori_data, r5, r4, r3, r2, r1);
-		bytes = SZ_compress(SZ_FLOAT, ori_data, &outSize, r5, r4, r3, r2, r1);
+		//bytes = SZ_compress(SZ_FLOAT, ori_data, &outSize, r5, r4, r3, r2, r1);
 		ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, solName, outSize);
 			
 		//decompression
@@ -381,7 +381,7 @@ int main(int argc, char* argv[])
 		}
 		
 		ZC_DataProperty* dataProperty = ZC_startCmpr(varName, ZC_DOUBLE, ori_data, r5, r4, r3, r2, r1);
-		bytes = SZ_compress(SZ_DOUBLE, ori_data, &outSize, r5, r4, r3, r2, r1);
+		//bytes = SZ_compress(SZ_DOUBLE, ori_data, &outSize, r5, r4, r3, r2, r1);
 		ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, solName, outSize);
 	
 		//decompression

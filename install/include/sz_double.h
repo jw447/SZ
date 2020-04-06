@@ -34,11 +34,9 @@ size_t SZ_compress_double_3D_MDQ_RA_block(double * block_ori_data, double * mean
 unsigned int optimize_intervals_double_1D_opt_MSST19(double *oriData, size_t dataLength, double realPrecision);
 unsigned int optimize_intervals_double_2D_opt_MSST19(double *oriData, size_t r1, size_t r2, double realPrecision);
 unsigned int optimize_intervals_double_3D_opt_MSST19(double *oriData, size_t r1, size_t r2, size_t r3, double realPrecision);
-TightDataPointStorageD* SZ_compress_double_1D_MDQ(double *oriData, 
-size_t dataLength, double realPrecision, double valueRangeSize, double medianValue_d);
+TightDataPointStorageD* SZ_compress_double_1D_MDQ(double *oriData, size_t dataLength, double realPrecision, double valueRangeSize, double medianValue_d, CPU_timing* cpu_timing);
 void SZ_compress_args_double_StoreOriData(double* oriData, size_t dataLength, unsigned char** newByteData, size_t *outSize);
-
-char SZ_compress_args_double_NoCkRngeNoGzip_1D(int cmprType, unsigned char** newByteData, double *oriData, size_t dataLength, double realPrecision, size_t *outSize, double valueRangeSize, double medianValue_d);
+char SZ_compress_args_double_NoCkRngeNoGzip_1D(int cmprType, unsigned char** newByteData, double *oriData, size_t dataLength, double realPrecision, size_t *outSize, double valueRangeSize, double medianValue_d, CPU_timing* cpu_timing);
 
 TightDataPointStorageD* SZ_compress_double_2D_MDQ(double *oriData, size_t r1, size_t r2, double realPrecision, double valueRangeSize, double medianValue_d);
 char SZ_compress_args_double_NoCkRngeNoGzip_2D(int cmprType, unsigned char** newByteData, double *oriData, size_t r1, size_t r2, double realPrecision, size_t *outSize, double valueRangeSize, double medianValue_d);
@@ -61,7 +59,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwrErrRatio)
 
 int SZ_compress_args_double(int cmprType, unsigned char** newByteData, double *oriData, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t *outSize, 
-int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRatio);
+int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRatio, CPU_timing* cpu_timing);
 
 void SZ_compress_args_double_NoCkRnge_1D_subblock(unsigned char* compressedBytes, double *oriData, double realPrecision, size_t *outSize, double valueRangeSize, double medianValue_d,
 size_t r1, size_t s1, size_t e1);

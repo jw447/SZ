@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
-#am__append_1 = -fopenmp
+am__append_1 = -fopenmp
 bin_PROGRAMS = testint_compress$(EXEEXT) \
 	testint_decompress$(EXEEXT) \
 	testfloat_compress$(EXEEXT) \
@@ -123,20 +123,20 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__sz_SOURCES_DIST = sz.c sz_openmp.c sz_gsl.c sz_pastri.c \
 	sz_randomaccess.c
-am_sz_OBJECTS = sz.$(OBJEXT)
-#am_sz_OBJECTS = sz_openmp.$(OBJEXT)
+#am_sz_OBJECTS = sz.$(OBJEXT)
+am_sz_OBJECTS = sz_openmp.$(OBJEXT)
 #am_sz_OBJECTS =  \
 #	sz_gsl.$(OBJEXT)
 #am_sz_OBJECTS = sz_pastri.$(OBJEXT)
 #am_sz_OBJECTS = sz_randomaccess.$(OBJEXT)
 sz_OBJECTS = $(am_sz_OBJECTS)
 am__DEPENDENCIES_1 =
-sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
-	../zlib/.libs/libzlib.a \
-	../zstd/.libs/libzstd.a
 #sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
 #	../zlib/.libs/libzlib.a \
 #	../zstd/.libs/libzstd.a
+sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
+	../zlib/.libs/libzlib.a \
+	../zstd/.libs/libzstd.a
 #sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
 #	../zlib/.libs/libzlib.a \
 #	../zstd/.libs/libzstd.a \
@@ -345,8 +345,8 @@ ECHO_N = -n
 ECHO_T = 
 EGREP = /usr/bin/grep -E
 EXEEXT = 
-FC = ifort
-FCFLAGS = -g
+FC = gfortran
+FCFLAGS = -g -O2
 FGREP = /usr/bin/grep -F
 GREP = /usr/bin/grep
 GSL_CFLAGS = 
@@ -360,7 +360,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /usr/x86_64-suse-linux/bin/ld -m elf_x86_64
+LD = /global/common/cori/software/altd/2.0/bin/ld -m elf_x86_64
 LDFLAGS = 
 LIBOBJS = 
 LIBS = 
@@ -377,7 +377,7 @@ NM = /usr/bin/nm -B
 NMEDIT = 
 OBJDUMP = objdump
 OBJEXT = o
-OPENMP_FLAGS = 
+OPENMP_FLAGS = -DHAVE_OPENMP
 OTOOL = 
 OTOOL64 = 
 PACKAGE = sz
@@ -403,7 +403,7 @@ abs_top_srcdir = /global/cscratch1/sd/jw447/local_build/SZ
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
-ac_ct_FC = ifort
+ac_ct_FC = gfortran
 am__include = include
 am__leading_dot = .
 am__quote = 
@@ -481,13 +481,13 @@ testdouble_decompress_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zst
 #testdouble_compress_ts_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 #testdouble_decompress_ts_SOURCES = testdouble_decompress_ts.c
 #testdouble_decompress_ts_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
-sz_SOURCES = sz.c
-#sz_SOURCES = sz_openmp.c
+#sz_SOURCES = sz.c
+sz_SOURCES = sz_openmp.c
 #sz_SOURCES = sz_gsl.c
 #sz_SOURCES = sz_pastri.c
 #sz_SOURCES = sz_randomaccess.c
-sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 #sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
+sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 #sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a $(GSL_LIBS) $(GSL_HDR) $(GSL_LIB) -lm
 #sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 #sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm

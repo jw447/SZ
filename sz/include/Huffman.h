@@ -14,6 +14,7 @@
 extern "C" {
 #endif
 
+#include "jwang.h"
 //Note: when changing the following settings, intvCapacity in sz.h should be changed as well.
 //#define allNodes 131072
 //#define stateNum 65536
@@ -62,7 +63,7 @@ void unpad_tree_ushort(HuffmanTree* huffmanTree, unsigned short* L, unsigned sho
 void unpad_tree_uint(HuffmanTree* huffmanTree, unsigned int* L, unsigned int* R, unsigned int* C, unsigned char* t, unsigned int i, node root);
 node reconstruct_HuffTree_from_bytes_anyStates(HuffmanTree *huffmanTree, unsigned char* bytes, int nodeCount);
 
-void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize);
+void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize, CPU_timing* cpu_timing);
 int encode_withTree_MSST19(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize);
 void decode_withTree(HuffmanTree* huffmanTree, unsigned char *s, size_t targetLength, int *out);
 void decode_withTree_MSST19(HuffmanTree* huffmanTree, unsigned char *s, size_t targetLength, int *out, int maxBits);

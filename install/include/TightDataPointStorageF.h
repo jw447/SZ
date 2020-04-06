@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 #include <stdio.h> 
-
+#include <jwang.h>
 typedef struct TightDataPointStorageF
 {
 	size_t dataSeriesLength;
@@ -75,7 +75,7 @@ void new_TightDataPointStorageF(TightDataPointStorageF **self,
 		unsigned char* resiMidBits, size_t resiMidBits_size,
 		unsigned char resiBitLength,
 		double realPrecision, float medianValue, char reqLength, unsigned int intervals, 
-		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo);
+		unsigned char* pwrErrBoundBytes, size_t pwrErrBoundBytes_size, unsigned char radExpo, CPU_timing* cpu_timing);
 
 /**
  * This function is designed for first-version of the point-wise relative error bound (developed by Sheng Di for TPDS18 paper)

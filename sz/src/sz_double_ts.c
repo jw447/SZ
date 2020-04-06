@@ -167,12 +167,12 @@ double realPrecision, double valueRangeSize, double medianValue_d)
 	
 	TightDataPointStorageD* tdps;
 			
-	new_TightDataPointStorageD(&tdps, dataLength, exactDataNum, 
-			type, exactMidByteArray->array, exactMidByteArray->size,  
-			exactLeadNumArray->array,  
-			resiBitArray->array, resiBitArray->size, 
-			resiBitsLength, 
-			realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0);
+	//new_TightDataPointStorageD(&tdps, dataLength, exactDataNum, 
+	//		type, exactMidByteArray->array, exactMidByteArray->size,  
+	//		exactLeadNumArray->array,  
+	//		resiBitArray->array, resiBitArray->size, 
+	//		resiBitsLength, 
+	//		realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0);
 	
 	//free memory
 	free_DIA(exactLeadNumArray);

@@ -10,10 +10,19 @@
 #ifndef _SZ_H
 #define _SZ_H
 
-#include <stdio.h>
 #include <stdint.h>
 #include <sys/time.h>      /* For gettimeofday(), in microseconds */
-#include <time.h>          /* For time(), in seconds */
+#include <math.h>
+#include <unistd.h>
+#include <stdio.h>      /* for printf */
+#include <stdint.h>     /* for uint64 definition */
+#include <stdlib.h>     /* for exit() definition */
+#include <time.h>       /* for clock_gettime */
+#include <string.h>
+
+#define BILLION 1000000000L
+
+#include "jwang.h"
 #include "CompressElement.h"
 #include "DynamicByteArray.h"
 #include "DynamicIntArray.h"
@@ -262,10 +271,10 @@ size_t s5, size_t s4, size_t s3, size_t s2, size_t s1,
 size_t e5, size_t e4, size_t e3, size_t e2, size_t e1,
 size_t *outSize, int errBoundMode, double absErr_Bound, double relBoundRatio);
 
-unsigned char *SZ_compress(int dataType, void *data, size_t *outSize, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+unsigned char *SZ_compress(int dataType, void *data, size_t *outSize, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, CPU_timing *cpu_timing);
 
 unsigned char* SZ_compress_args(int dataType, void *data, size_t *outSize, int errBoundMode, double absErrBound, 
-double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, CPU_timing *cpu_timing);
 
 int SZ_compress_args2(int dataType, void *data, unsigned char* compressed_bytes, size_t *outSize, 
 int errBoundMode, double absErrBound, double relBoundRatio, double pwrBoundRatio, 
@@ -320,81 +329,13 @@ void* SZ_decompress_customize(const char* appName, void* userPara, int dataType,
 
 #ifdef __cplusplus
 }
+
 #endif
-
-#endif /* ----- #ifndef _SZ_H  ----- */
-
 //jwang
 //#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
 #define FuncName 
 
-struct timeval totalCostS; // time for the for-loop
-struct timeval totalCostE;
-double elapsed;
+#endif /* ----- #ifndef _SZ_H  ----- */
 
-struct timeval costHitS;   // time for hitted points
-struct timeval costHitE;
-double costHit;
 
-// curve missed time
-struct timeval cost0S;     // time for compressing single double value
-struct timeval cost0E;
-double cost0;
 
-struct timeval cost1S; 
-struct timeval cost1E;
-double cost1;
-
-struct timeval cost2S;
-struct timeval cost2E;
-double cost2;
-
-struct timeval cost3S;
-struct timeval cost3E;
-double cost3;
-
-// curve fitting time
-struct timeval tmpS;
-struct timeval tmpE;
-double tmp;
-
-// huffman tree
-struct timeval costTreeS;
-struct timeval costTreeE;
-double costTree;
-
-struct timeval Tree0S;
-struct timeval Tree0E;
-double Tree0;
-
-struct timeval Tree1S;
-struct timeval Tree1E;
-double Tree1;
-
-struct timeval Tree2S;
-struct timeval Tree2E;
-double Tree2;
-
-struct timeval Tree3S;
-struct timeval Tree3E;
-double Tree3;
-
-struct timeval Tree4S;
-struct timeval Tree4E;
-double Tree4;
-
-struct timeval Tree5S;
-struct timeval Tree5E;
-double Tree5;
-
-// huffman encoding time
-struct timeval costEncodeS;
-struct timeval costEncodeE;
-double costEncode;
-//
-int count_hit;
-int count_missed;
-double hit_ratio;
-int node_count;
-int Nelements;
-int qf;

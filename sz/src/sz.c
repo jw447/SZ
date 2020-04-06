@@ -160,7 +160,7 @@ size_t computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
  **/
 /*-------------------------------------------------------------------------*/
 unsigned char* SZ_compress_args(int dataType, void *data, size_t *outSize, int errBoundMode, double absErrBound, 
-double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, CPU_timing *cpu_timing)
 {
 	FuncName;
 	if(confparams_cpr == NULL)
@@ -183,7 +183,7 @@ double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, siz
 		unsigned char *newByteData = NULL;
 		
 		SZ_compress_args_float(-1, &newByteData, (float *)data, r5, r4, r3, r2, r1, 
-		outSize, errBoundMode, absErrBound, relBoundRatio, pwrBoundRatio);
+		outSize, errBoundMode, absErrBound, relBoundRatio, pwrBoundRatio, cpu_timing);
 		
 		return newByteData;
 	}
@@ -191,7 +191,7 @@ double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, siz
 	{
 		unsigned char *newByteData;
 		SZ_compress_args_double(-1, &newByteData, (double *)data, r5, r4, r3, r2, r1, 
-		outSize, errBoundMode, absErrBound, relBoundRatio, pwrBoundRatio);
+		outSize, errBoundMode, absErrBound, relBoundRatio, pwrBoundRatio, cpu_timing);
 		
 		return newByteData;
 	}
@@ -254,10 +254,11 @@ int SZ_compress_args2(int dataType, void *data, unsigned char* compressed_bytes,
 int errBoundMode, double absErrBound, double relBoundRatio, double pwrBoundRatio, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
-	unsigned char* bytes = SZ_compress_args(dataType, data, outSize, errBoundMode, absErrBound, relBoundRatio, pwrBoundRatio, r5, r4, r3, r2, r1);
-    memcpy(compressed_bytes, bytes, *outSize);
-    free(bytes); 
-	return SZ_SCES;
+	//unsigned char* bytes = SZ_compress_args(dataType, data, outSize, errBoundMode, absErrBound, relBoundRatio, pwrBoundRatio, r5, r4, r3, r2, r1);
+	//memcpy(compressed_bytes, bytes, *outSize);
+	//free(bytes); 
+	//return SZ_SCES;
+	return 0; // dont use this function
 }
 
 int SZ_compress_args3(int dataType, void *data, unsigned char* compressed_bytes, size_t *outSize, int errBoundMode, double absErrBound, double relBoundRatio, 
@@ -293,11 +294,11 @@ size_t e5, size_t e4, size_t e3, size_t e2, size_t e1)
 	}	
 }
 
-unsigned char *SZ_compress(int dataType, void *data, size_t *outSize, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+unsigned char *SZ_compress(int dataType, void *data, size_t *outSize, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, CPU_timing *cpu_timing)
 {	
 	FuncName;
 	unsigned char *newByteData = SZ_compress_args(dataType, data, outSize, confparams_cpr->errorBoundMode, confparams_cpr->absErrBound, confparams_cpr->relBoundRatio, 
-	confparams_cpr->pw_relBoundRatio, r5, r4, r3, r2, r1);
+	confparams_cpr->pw_relBoundRatio, r5, r4, r3, r2, r1, cpu_timing);
 	return newByteData;
 }
 
@@ -1198,7 +1199,7 @@ unsigned char* SZ_compress_customize(const char* cmprName, void* userPara, int d
 	if(strcmp(cmprName, "SZ2.0")==0 || strcmp(cmprName, "SZ")==0)
 	{
 		sz_maybe_init_with_user_params(userPara, confparams_cpr);
-		result = SZ_compress(dataType, data, outSize, r5, r4, r3, r2, r1);
+		//result = SZ_compress(dataType, data, outSize, r5, r4, r3, r2, r1);
 		*status = SZ_SCES;
 	}
 	else if(strcmp(cmprName, "SZ1.4")==0)
@@ -1206,7 +1207,7 @@ unsigned char* SZ_compress_customize(const char* cmprName, void* userPara, int d
 		sz_maybe_init_with_user_params(userPara, confparams_cpr);
 		confparams_cpr->withRegression = SZ_NO_REGRESSION;
 		
-		result = SZ_compress(dataType, data, outSize, r5, r4, r3, r2, r1);
+		//result = SZ_compress(dataType, data, outSize, r5, r4, r3, r2, r1);
 		*status = SZ_SCES;		
 	}
 	else
