@@ -317,6 +317,19 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	gettimeofday(&treeCostE, NULL);
 	(*cpu_timing).treeCost = ((treeCostE.tv_sec*1000000+treeCostE.tv_usec)-(treeCostS.tv_sec*1000000+treeCostS.tv_usec))/1000000.0;
 	SZ_ReleaseHuffman(huffmanTree);
+
+	/* jwang: debug huffman tree */
+	//printf("debug huffman tree\n");
+	//stateNum=20;
+	//int type1[10] = {1, 1, 1, 2, 2, 3, 3, 4, 5, 6};
+	
+	//printf("createHuffmanTree\n");
+	//HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
+	//printf("encode_withtree\n");
+	//dataSeriesLength=10;
+	//encode_withTree(huffmanTree, type1, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size, cpu_timing);
+
+	//SZ_ReleaseHuffman(huffmanTree);
 	
 	(*this)->exactMidBytes = exactMidBytes;
 

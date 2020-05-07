@@ -67,6 +67,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	}
 
 	int thread_num = sz_get_max_threads();
+	//printf("thread_num=%d\n", thread_num);
 	int thread_order = (int)log2(thread_num);
 	size_t num_x = 0, num_y = 0, num_z = 0;
 	{
@@ -93,6 +94,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		}
 		thread_num = num_x * num_y * num_z;
 	}
+	//printf("thread_num=%d\n", thread_num);
 	sz_set_num_threads(thread_num);
 	// calculate block dims
 	size_t split_index_x, split_index_y, split_index_z;
@@ -157,27 +159,24 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		unpredictable_count[id] = SZ_compress_float_3D_MDQ_RA_block(data_pos, mean + id, r1, r2, r3, current_blockcount_x, current_blockcount_y, current_blockcount_z, realPrecision, P0, P1, type, unpredictable_data, cpu_timing);
 	}
 	(*cpu_timing).cfCost_omp = elapsed_time + sz_wtime();
-	printf("curve-fitting time: %lf\n", (*cpu_timing).cfCost_omp);
 	// ------------------------------------------------------------
 	elapsed_time = -sz_wtime();
 	size_t nodeCount = 0;
 	Huffman_init_openmp(huffmanTree, result_type, num_elements, thread_num, freq, cpu_timing);
+	printf("debug\n");
 	(*cpu_timing).tree0_omp = elapsed_time + sz_wtime();
-	printf("tree0=%lf\n", (*cpu_timing).tree0_omp);
 	// ------------------------------------------------------------
 	elapsed_time = -sz_wtime();
 	for (size_t i = 0; i < stateNum; i++)
 		if (huffmanTree->code[i]) nodeCount++;
 	nodeCount = nodeCount*2-1;
 	(*cpu_timing).tree1_omp = elapsed_time + sz_wtime();
-	printf("tree1=%lf\n", (*cpu_timing).tree1_omp);
 	(*cpu_timing).node_count = nodeCount;
 	// ------------------------------------------------------------
 	elapsed_time = -sz_wtime();
 	unsigned char *treeBytes;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
 	(*cpu_timing).tree2_omp = elapsed_time + sz_wtime();
-	printf("tree2=%lf\n", (*cpu_timing).tree2_omp);
 	(*cpu_timing).costTree_omp = (*cpu_timing).tree0_omp + (*cpu_timing).tree1_omp + (*cpu_timing).tree2_omp;
 	// ------------------------------------------------------------
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
@@ -186,7 +185,6 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		total_unpred += unpredictable_count[i];
 	}
 	(*cpu_timing).hit_ratio_omp = (float)(num_elements - total_unpred)/num_elements;
-	printf("hit ratio = %f\n", (*cpu_timing).hit_ratio_omp);
 
 	unsigned char * result_pos = result;
 	initRandomAccessBytes(result_pos);
@@ -248,7 +246,6 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		block_pos[id] = enCodeSize;
 	}
 	(*cpu_timing).costEncode_omp = elapsed_time + sz_wtime();
-	printf("encode time: %lf\n", (*cpu_timing).costEncode_omp);
 	// ------------------------------------------------------------
 	block_offset[0] = 0;
 	for(int t=1; t<thread_num; t++){
@@ -264,19 +261,31 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	result_pos += enCodeSize;
 	size_t totalEncodeSize = 0;
 	totalEncodeSize = result_pos - result;
+	//printf("debug-1\n");
 	free(freq);
+	//printf("debug-2\n");
 	free(buffer0);
+	//printf("debug-3\n");
 	free(buffer1);
+	//printf("debug-4\n");
 	free(treeBytes);
+	//printf("debug-5\n");
 	free(unpred_offset);
+	//printf("debug-6\n");
 	free(block_offset);
-	free(encoding_buffer);
+	//printf("debug-7\n");
+	//free(encoding_buffer);
+	//printf("debug-8\n");
 	free(mean);
+	//printf("debug-9\n");
 	free(result_unpredictable_data);
+	//printf("debug-10\n");
 	free(unpredictable_count);
+	//printf("debug-11\n");
 	free(result_type);
+	//printf("debug-12\n");
 	SZ_ReleaseHuffman(huffmanTree);
-
+	//printf("debug-13\n");
 	*comp_size = totalEncodeSize;
 	return result;
 }
@@ -837,11 +846,16 @@ void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int th
 	size_t i;
 	size_t block_size = (length - 1)/ thread_num + 1;
 	size_t block_residue = length - (thread_num - 1) * block_size;
+	//printf("length=%lu, block_size=%lu, block_residue=%lu\n", length, block_size, block_residue);
 
+	//printf("debug-1\n");
 	double elapsed_time = -sz_wtime();
+	//printf("thread_num=%d\n", thread_num);
 	#pragma omp parallel for
 	for(int t=0; t<thread_num; t++){
 		int id = sz_get_thread_num();
+		//printf("id-%d\n",id);
+		//TODO
 		int * s_pos = s + id * block_size;
 		size_t * freq_pos = freq + id * huffmanTree->allNodes;
 		if(id < thread_num - 1){
@@ -850,36 +864,43 @@ void Huffman_init_openmp(HuffmanTree* huffmanTree, int *s, size_t length, int th
 			}
 		}
 		else{
+			//printf("block_residue=%lu\n", block_residue);
 			for(size_t i=0; i<block_residue; i++){
 				freq_pos[s_pos[i]] ++;
 			}
 		}
 	}
+	//printf("debug-1.1\n");
 	size_t * freq_pos = freq + huffmanTree->allNodes;
+	//printf("debug-1.2\n");
 	for(int t=1; t<thread_num; t++){
 		for(i = 0; i<huffmanTree->allNodes; i++){
 			freq[i] += freq_pos[i];
 		}
+		//printf("debug-1.3\n");
 		freq_pos += huffmanTree->allNodes;
 	}
 
+	//printf("debug-2\n");
 	(*cpu_timing).tree3_omp = elapsed_time + sz_wtime();
-	printf("tree3 = %f\n", (*cpu_timing).tree3_omp);
 
 	elapsed_time = -sz_wtime();
 	for (i = 0; i < huffmanTree->allNodes; i++)
 		if (freq[i]) 
 			qinsert(huffmanTree, new_node(huffmanTree, freq[i], i, 0, 0));
  	
+	//printf("debug-3\n");
 	while (huffmanTree->qend > 2) 
 		qinsert(huffmanTree, new_node(huffmanTree, 0, 0, qremove(huffmanTree), qremove(huffmanTree)));
  
 	(*cpu_timing).tree4_omp = elapsed_time + sz_wtime();
-        printf("tree4 = %f\n", (*cpu_timing).tree4_omp);
 
+	//printf("debug-4\n");
 	elapsed_time = -sz_wtime();
 	build_code(huffmanTree, huffmanTree->qq[1], 0, 0, 0);
+	//printf("debug-5\n");
 	(*cpu_timing).tree5_omp = elapsed_time + sz_wtime();
-        printf("tree5 = %f\n", (*cpu_timing).tree5_omp);
-	// free(freq);
+	//printf("debug-6\n");
+	//free(freq);
 }
+

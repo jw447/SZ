@@ -349,7 +349,7 @@ int main(int argc, char* argv[])
 				cost_start();
 				bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1, cpu_timing);
 				cost_end();
-				/*
+				/*	
 				printf("compCost=%f\n", (*cpu_timing).compCost);
                                 printf("cfCost=%f\n", (*cpu_timing).cfCost);
                                 printf("hitCost=%f\n", (*cpu_timing).hitCost);
@@ -368,6 +368,17 @@ int main(int argc, char* argv[])
 				printf("Nelements=%d\n", (*cpu_timing).Nelements);
 				printf("qf=%d\n", (*cpu_timing).qf);
 				*/
+				
+				printf("inputsize=%lu\n", (long unsigned)nbEle*4);
+				printf("qf=%d\n", (*cpu_timing).qf);
+				printf("node_count=%d\n", (*cpu_timing).node_count);
+				printf("hit_ratio=%f\n", (*cpu_timing).hit_ratio);
+				printf("treesize=%lu\n", (*cpu_timing).treesize);
+				printf("encodesize=%lu\n", (*cpu_timing).encodesize);
+				printf("outputsize=%lu\n", outSize);
+				printf("outliersize=%lu\n", outSize - (*cpu_timing).treesize - (*cpu_timing).encodesize);
+				printf("cratio=%f\n", (float)nbEle*4/outSize);
+				
 			}
 			else if(parallelMode==1) //openMP
 			{
@@ -389,25 +400,22 @@ int main(int argc, char* argv[])
 				else //3d
 					bytes = SZ_compress_float_3D_MDQ_openmp(data, r3, r2, r1, confparams_cpr->absErrBound, &outSize, cpu_timing);
 				cost_end_omp();
-				printf("compCost=%f\n", (*cpu_timing).compCost);
-                                printf("cfCost=%f\n", (*cpu_timing).cfCost);
-                                printf("hitCost=%f\n", (*cpu_timing).hitCost);
-                                printf("misCost=%f\n", (*cpu_timing).misCost);
-                                printf("cSDVCost=%f\n", (*cpu_timing).cSDVCost);
-                                printf("uLCECost=%f\n", (*cpu_timing).uLCECost);
-                                printf("aEDCost=%f\n", (*cpu_timing).aEDCost);
-                                printf("treeCost=%f\n", (*cpu_timing).treeCost);
-                                printf("createTCost=%f\n", (*cpu_timing).createTCost);
-                                printf("buildTCost=%f\n", (*cpu_timing).buildTCost);
-                                printf("encodeTCost=%f\n", (*cpu_timing).encodeTCost);
-                                printf("count_hit=%d\n", (*cpu_timing).count_hit);
-                                printf("count_missed=%d\n", (*cpu_timing).count_missed);
-                                printf("hit_ratio=%f\n", (*cpu_timing).hit_ratio);
+				/*
+				printf("compCost=%lf\n", totalCost);
+				printf("Nelements=%d\n", r3*r2*r1);
+                                printf("cfCost=%lf\n", (*cpu_timing).cfCost_omp);
+                                printf("hit_ratio=%lf\n", (*cpu_timing).hit_ratio_omp);
                                 printf("node_count=%d\n", (*cpu_timing).node_count);
-                                printf("Nelements=%d\n", (*cpu_timing).Nelements);
-                                printf("qf=%d\n", (*cpu_timing).qf);
-				printf("outSize=%zu\n", outSize);
-				printf("compression time = %f\n", totalCost);
+                                printf("treeCost=%lf\n", (*cpu_timing).costTree_omp);
+                                printf("tree0=%lf\n", (*cpu_timing).tree0_omp);
+                                printf("tree1=%lf\n", (*cpu_timing).tree1_omp);
+				printf("tree2=%lf\n", (*cpu_timing).tree2_omp);
+                                printf("tree3=%lf\n", (*cpu_timing).tree3_omp);
+                                printf("tree4=%lf\n", (*cpu_timing).tree4_omp);
+                                printf("tree5=%lf\n", (*cpu_timing).tree5_omp);
+                                printf("encodeCost=%lf\n", (*cpu_timing).costEncode_omp);
+                                printf("outSize=%zu\n", outSize);
+				*/
 			}
 
 			if(cmpPath == NULL)
@@ -489,7 +497,8 @@ int main(int argc, char* argv[])
 					cost_start();
 					bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1, cpu_timing);
 					cost_end();
-					/*
+					
+					/*	
 					printf("compCost=%f\n", (*cpu_timing).compCost);
 					printf("cfCost=%f\n", (*cpu_timing).cfCost);
 					printf("hitCost=%f\n", (*cpu_timing).hitCost);
@@ -508,6 +517,16 @@ int main(int argc, char* argv[])
 					printf("Nelements=%d\n", (*cpu_timing).Nelements);
 					printf("qf=%d\n", (*cpu_timing).qf);
 					*/
+
+				        printf("inputsize=%lu\n", (long unsigned)nbEle*8);
+				        printf("qf=%d\n", (*cpu_timing).qf);
+				        printf("node_count=%d\n", (*cpu_timing).node_count);
+				        printf("hit_ratio=%f\n", (*cpu_timing).hit_ratio);
+				        printf("treesize=%lu\n", (*cpu_timing).treesize);
+				        printf("encodesize=%lu\n", (*cpu_timing).encodesize);
+					printf("outliersize=%lu\n", outSize - (*cpu_timing).treesize - (*cpu_timing).encodesize);
+				        printf("outputsize=%lu\n", outSize);
+				        printf("cratio=%f\n", (float)nbEle*8/outSize);
 				}
 				else if(parallelMode==1)//openMP
 				{
@@ -529,26 +548,22 @@ int main(int argc, char* argv[])
 					else //3d
 						bytes = SZ_compress_double_3D_MDQ_openmp(data, r3, r2, r1, confparams_cpr->absErrBound, &outSize, cpu_timing);
 					cost_end_omp();	
-					printf("compCost=%f\n", (*cpu_timing).compCost);
-					printf("cfCost=%f\n", (*cpu_timing).cfCost);
-                                        printf("hitCost=%f\n", (*cpu_timing).hitCost);
-                                        printf("misCost=%f\n", (*cpu_timing).misCost);
-                                        printf("cSDVCost=%f\n", (*cpu_timing).cSDVCost);
-                                        printf("uLCECost=%f\n", (*cpu_timing).uLCECost);
-                                        printf("aEDCost=%f\n", (*cpu_timing).aEDCost);
-                                        printf("treeCost=%f\n", (*cpu_timing).treeCost);
-                                        printf("createTCost=%f\n", (*cpu_timing).createTCost);
-                                        printf("buildTCost=%f\n", (*cpu_timing).buildTCost);
-                                        printf("encodeTCost=%f\n", (*cpu_timing).encodeTCost);
-                                        printf("count_hit=%d\n", (*cpu_timing).count_hit);
-                                        printf("count_missed=%d\n", (*cpu_timing).count_missed);
-                                        printf("hit_ratio=%f\n", (*cpu_timing).hit_ratio);
+					/*
+				        printf("compCost=%lf\n", totalCost);
+				        printf("Nelements=%lu\n", r3*r2*r1);
+                                        printf("cfCost=%lf\n", (*cpu_timing).cfCost_omp);
+                                        printf("hit_ratio=%lf\n", (*cpu_timing).hit_ratio_omp);
                                         printf("node_count=%d\n", (*cpu_timing).node_count);
-                                        printf("Nelements=%d\n", (*cpu_timing).Nelements);
-                                        printf("qf=%d\n", (*cpu_timing).qf);
-				        printf("outSize=%zu\n", outSize);
-				        printf("compression time = %f\n", totalCost);
-
+                                        printf("treeCost=%lf\n", (*cpu_timing).costTree_omp);
+                                        printf("tree0=%lf\n", (*cpu_timing).tree0_omp);
+                                        printf("tree1=%lf\n", (*cpu_timing).tree1_omp);
+				        printf("tree2=%lf\n", (*cpu_timing).tree2_omp);
+                                        printf("tree3=%lf\n", (*cpu_timing).tree3_omp);
+                                        printf("tree4=%lf\n", (*cpu_timing).tree4_omp);
+                                        printf("tree5=%lf\n", (*cpu_timing).tree5_omp);
+                                        printf("encodeCost=%lf\n", (*cpu_timing).costEncode_omp);
+                                        printf("outSize=%zu\n", outSize);
+					*/
 				}
 
 				if(cmpPath == NULL)

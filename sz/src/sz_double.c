@@ -61,6 +61,7 @@ unsigned int optimize_intervals_double_1D(double *oriData, size_t dataLength, do
 {	
 	size_t i = 0, radiusIndex;
 	double pred_value = 0, pred_err;
+	printf("maxRangeRadius=%u\n", confparams_cpr->maxRangeRadius);
 	size_t *intervals = (size_t*)malloc(confparams_cpr->maxRangeRadius*sizeof(size_t));
 	memset(intervals, 0, confparams_cpr->maxRangeRadius*sizeof(size_t));
 	size_t totalSampleSize = dataLength/confparams_cpr->sampleDistance;
@@ -92,8 +93,8 @@ unsigned int optimize_intervals_double_1D(double *oriData, size_t dataLength, do
 	unsigned int accIntervals = 2*(i+1);
 	unsigned int powerOf2 = roundUpToPowerOf2(accIntervals);
 
-	if(powerOf2<32)
-		powerOf2 = 32;
+	//if(powerOf2<32)
+	//	powerOf2 = 32;
 
 	free(intervals);
 	return powerOf2;
@@ -256,7 +257,7 @@ TightDataPointStorageD* SZ_compress_double_1D_MDQ(double *oriData,
 size_t dataLength, double realPrecision, double valueRangeSize, double medianValue_d, CPU_timing* cpu_timing)
 {
 	FuncName;
-	printf("%f,%f\n", valueRangeSize, realPrecision);
+	//printf("%f,%f\n", valueRangeSize, realPrecision);
 	(*cpu_timing).count_hit = 0;
         (*cpu_timing).count_missed = 2;
 
@@ -339,6 +340,8 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 	struct timespec tpstart;
         struct timespec tpend;
+	//printf("checkRadius=%f\n", checkRadius);
+	//printf("exe_params->intvRadius=%d\n", exe_params->intvRadius);
         gettimeofday(&cfCostS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
@@ -371,7 +374,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 			//printf("hitcost=%f\n", ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0);
 		}
 		else{
-			//type[i] = 0;
+			type[i] = 0;
 			(*cpu_timing).count_missed += 1;
 			//gettimeofday(&misCostS, NULL);
 
@@ -401,6 +404,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 			//(*cpu_timing).uLCECost += ((uLCECostE.tv_sec*1000000+uLCECostE.tv_usec)-(uLCECostS.tv_sec*1000000+uLCECostS.tv_usec))/1000000.0;	
 			//(*cpu_timing).aEDCost += ((aEDCostE.tv_sec*1000000+aEDCostE.tv_usec)-(aEDCostS.tv_sec*1000000+aEDCostS.tv_usec))/1000000.0;	
 		}
+		//printf("%d\n", type[i]);
 		
 	}//end of for
 	gettimeofday(&cfCostE, NULL);
@@ -4747,6 +4751,7 @@ unsigned int optimize_intervals_double_1D_opt(double *oriData, size_t dataLength
 	FuncName;	
 	size_t i = 0, radiusIndex;
 	double pred_value = 0, pred_err;
+	//printf("maxRangeRadius=%lu\n", confparams_cpr->maxRangeRadius);
 	size_t *intervals = (size_t*)malloc(confparams_cpr->maxRangeRadius*sizeof(size_t));
 	memset(intervals, 0, confparams_cpr->maxRangeRadius*sizeof(size_t));
 	size_t totalSampleSize = 0;
@@ -4778,9 +4783,10 @@ unsigned int optimize_intervals_double_1D_opt(double *oriData, size_t dataLength
 	unsigned int accIntervals = 2*(i+1);
 	unsigned int powerOf2 = roundUpToPowerOf2(accIntervals);
 	
-	if(powerOf2<32)
-		powerOf2 = 32;
+	//if(powerOf2<32)
+	//	powerOf2 = 32;
 	
+	//printf("target_count=%u, accIntervals=%u\n", targetCount, accIntervals);
 	free(intervals);
 	return powerOf2;
 }

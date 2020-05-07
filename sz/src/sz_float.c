@@ -362,9 +362,13 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	
 	unsigned int quantization_intervals;
 	if(exe_params->optQuantMode==1)
+	{
 		quantization_intervals = optimize_intervals_float_1D_opt(oriData, dataLength, realPrecision);
+	}
 	else
+	{
 		quantization_intervals = exe_params->intvCapacity;
+	}
 	updateQuantizationInfo(quantization_intervals);	
 
 	size_t i;
@@ -430,7 +434,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	float pred = last3CmprsData[0];
 	float predAbsErr;
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
-	printf("%f,%f\n", valueRangeSize, realPrecision);
+	//printf("checkRadius=%f\n", checkRadius);
+	//printf("%f,%f\n", valueRangeSize, realPrecision);
 	float interval = 2*realPrecision;
 	
 	float recip_precision = 1/realPrecision;
@@ -464,7 +469,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		else{	
 			(*cpu_timing).count_missed += 1;
                         gettimeofday(&misCostS, NULL);
-			//type[i] = 0;
+			type[i] = 0;
 			gettimeofday(&cSDVCostS, NULL);
 			compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 			gettimeofday(&cSDVCostE, NULL);
@@ -486,6 +491,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
                         (*cpu_timing).uLCECost += ((uLCECostE.tv_sec*1000000+uLCECostE.tv_usec)-(uLCECostS.tv_sec*1000000+uLCECostS.tv_usec))/1000000.0;
                         (*cpu_timing).aEDCost += ((aEDCostE.tv_sec*1000000+aEDCostE.tv_usec)-(aEDCostS.tv_sec*1000000+aEDCostS.tv_usec))/1000000.0;
 		}
+		//printf("%d\n", type[i]);
 	}//end of for
 	gettimeofday(&cfCostE, NULL);
 	

@@ -24,9 +24,8 @@ typedef struct {
   int qf;
 
   // openmp
-  float hit_ratio_omp;
-
   double cfCost_omp;               // time for curve-fitting
+  double hit_ratio_omp;
   double hitCost_omp;              // time for curve-hit points
   double misCost_omp;              // time for curve-missed points
   double cSDVCost_omp;
@@ -47,6 +46,14 @@ typedef struct {
   //double createTCost_omp;
   //double buildTCost_omp;
   //double encodeTCost_omp;
+  
+  // crm metrics
+  // qf;
+  // node_count;
+  // hit_ratio;
+  long unsigned treesize;
+  long unsigned encodesize;
+  long unsigned outliersize;
 } CPU_timing;
 
 struct timeval compCostS, compCostE; // time for SZ_compress_double_1D_MDQ
