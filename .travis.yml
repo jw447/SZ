@@ -24,6 +24,8 @@ matrix:
     - osx_image: xcode11
       os: osx
       env: PATH=/usr/local/bin:$PATH
+  exclude:
+          os: osx 
 install:
     - mkdir build
     - cd build
