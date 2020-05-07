@@ -319,17 +319,18 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	SZ_ReleaseHuffman(huffmanTree);
 
 	/* jwang: debug huffman tree */
+	// Run a small example of huffman encoding.
 	//printf("debug huffman tree\n");
 	//stateNum=20;
-	//int type1[10] = {1, 1, 1, 2, 2, 3, 3, 4, 5, 6};
-	
+	//int type1[20] = {1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 8, 12, 19, 19, 18, 16, 5, 13, 15, 14};
 	//printf("createHuffmanTree\n");
-	//HuffmanTree* huffmanTree = createHuffmanTree(stateNum);
+	//huffmanTree = createHuffmanTree(stateNum);
 	//printf("encode_withtree\n");
-	//dataSeriesLength=10;
+	//dataSeriesLength=20;
 	//encode_withTree(huffmanTree, type1, dataSeriesLength, &(*this)->typeArray, &(*this)->typeArray_size, cpu_timing);
 
 	//SZ_ReleaseHuffman(huffmanTree);
+	//
 	
 	(*this)->exactMidBytes = exactMidBytes;
 

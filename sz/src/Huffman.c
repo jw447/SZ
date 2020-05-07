@@ -19,6 +19,9 @@ HuffmanTree* createHuffmanTree(int stateNum)
 	FuncName;
 	//printf("stateNum=%d\n", stateNum);
 	HuffmanTree *huffmanTree = (HuffmanTree*)malloc(sizeof(HuffmanTree));
+	
+	//printf("sizeof huffman tree = %lu\n", sizeof(HuffmanTree));
+	//printf("sizeof node_t = %lu\n", sizeof(struct node_t));
 	memset(huffmanTree, 0, sizeof(HuffmanTree));
 	huffmanTree->stateNum = stateNum;
 	huffmanTree->allNodes = 2*stateNum;
@@ -36,7 +39,6 @@ HuffmanTree* createHuffmanTree(int stateNum)
 	huffmanTree->n_nodes = 0;
     huffmanTree->n_inode = 0;
     huffmanTree->qend = 1;	
-    
     return huffmanTree;
 }
 
@@ -55,13 +57,13 @@ node new_node(HuffmanTree* huffmanTree, size_t freq, unsigned int c, node a, nod
 	{
 		n->c = c;
 		n->freq = freq;
-		n->t = 1;
+		n->t = 1; // leaves node
 	}
 	else {
 		n->left = a; 
 		n->right = b;
 		n->freq = a->freq + b->freq;
-		n->t = 0;
+		n->t = 0; // non-leave node
 		//n->c = 0;
 	}
 	return n;
@@ -93,6 +95,7 @@ node qremove(HuffmanTree* huffmanTree)
 {
 	int i, l;
 	node n = huffmanTree->qq[i = 1];
+	//printf("n->freq: %lu\n", n->freq);
  
 	if (huffmanTree->qend < 2) return 0;
 	huffmanTree->qend --;
@@ -114,8 +117,7 @@ node qremove(HuffmanTree* huffmanTree)
 void build_code(HuffmanTree *huffmanTree, node n, int len, unsigned long out1, unsigned long out2)
 {
 	//FuncName;
-	//printf("build_code\n");
-	//printf("n->t=%d, len=%d\n", n->t, len);
+	//printf("root->freq-%lu\n", n->freq);
 	if (n->t) {
 		huffmanTree->code[n->c] = (unsigned long*)malloc(2*sizeof(unsigned long));
 		if(len<=64)
@@ -130,6 +132,7 @@ void build_code(HuffmanTree *huffmanTree, node n, int len, unsigned long out1, u
 			(huffmanTree->code[n->c])[1] = out2 << (128 - len);
 		}
 		huffmanTree->cout[n->c] = (unsigned char)len;
+		//printf("n->c=%d, cout-%lu\n", n->c, huffmanTree->cout[n->c]);
 		return;
 	}
 	int index = len >> 6; //=len/64
@@ -170,48 +173,62 @@ void init(HuffmanTree* huffmanTree, int *s, size_t length)
 	for(i = 0;i < length;i++)
 	{
 		index = s[i];
-		//printf("s[%lu]=%d\n", i, s[i]);
+		//printf("%d ", s[i]);
 		freq[index]++;
 	}
-	//printf("huffmanTree->allNodes=%lu\n", huffmanTree->allNodes);
-	//printf("qend=%d\n", huffmanTree->qend);
+	//printf("\n");
+
 	for (i = 0; i < huffmanTree->allNodes; i++)
 		if (freq[i])
 		{
 			node n = new_node(huffmanTree, freq[i], i, 0, 0);
 			qinsert(huffmanTree, n);
-	                //for (jj = 1; jj < huffmanTree->qend; jj++)
-			//	printf("%lu ", huffmanTree->qq[jj]->freq);
-	                //printf("\n");
+			// qq list
+			//for (jj = 1; jj < huffmanTree->n_nodes+1; jj++) printf("%lu ", huffmanTree->qq[jj]->freq);
+			//printf("\n");
+			// pool list
+			//for (jj = 0; jj < huffmanTree->n_nodes; jj++) printf("%lu ", (huffmanTree->pool + jj)->freq);
+			//printf("\n");
 		}
-	//printf("huffmanTree->qend=%d\n", huffmanTree->qend);
 	//printf("huffmanTree->n_nodes=%d\n", huffmanTree->n_nodes);
 
-	// for(i = 0; i < huffmanTree->n_nodes; i++)
-	// {
-	// 	// try to extract node from pool. pool is the pointer to the first node.
-	// 	node nc = huffmanTree->pool + i;
-	// 	printf("%lu, %u, %d \n", nc->freq, nc->c, nc->t);
-	// }
+	// pool is a sorted list
+	//for (jj = 0; jj < huffmanTree->n_nodes; jj++) printf("%lu ", (huffmanTree->pool + jj)->freq);
+	//printf("\n");
+
 	while (huffmanTree->qend > 2)
 	{
-		qinsert(huffmanTree, new_node(huffmanTree, 0, 0, qremove(huffmanTree), qremove(huffmanTree)));
-	        //for (jj = 1; jj < huffmanTree->qend; jj++)
-		//	printf("%lu ", huffmanTree->qq[jj]->freq);
+		//qinsert(huffmanTree, new_node(huffmanTree, 0, 0, qremove(huffmanTree), qremove(huffmanTree)));
+		node n1 = qremove(huffmanTree);
+		//for (jj = 1; jj < huffmanTree->qend; jj++) printf("%lu ", huffmanTree->qq[jj]->freq);
+		//printf("\n");
+
+		node n2 = qremove(huffmanTree);
+		//for (jj = 1; jj < huffmanTree->qend; jj++) printf("%lu ", huffmanTree->qq[jj]->freq);
+		//printf("\n");
+		
+		node n12 = new_node(huffmanTree, 0, 0, n1, n2);
+		
+		qinsert(huffmanTree, n12);
+		//for (jj = 0; jj < huffmanTree->n_nodes; jj++) printf("%lu ", (huffmanTree->pool + jj)->freq);
+		//for (jj = 1; jj < huffmanTree->qend; jj++) printf("%lu ", huffmanTree->qq[jj]->freq);
 		//printf("\n");
 		//printf("number of nodes=%d\n", huffmanTree->n_nodes);
 	}
+	//for (jj = 0; jj < huffmanTree->n_nodes; jj++) printf("%lu ", (huffmanTree->pool + jj)->freq);
+	//printf("\n");
+	//for (jj = 0; jj < huffmanTree->n_nodes; jj++) printf("%u ", (huffmanTree->pool + jj)->t);
+	//printf("\n");
+	//for (jj = 0; jj < huffmanTree->n_nodes; jj++) printf("%d ", (huffmanTree->pool + jj)->c);
+	//printf("\n");
 	//printf("huffmanTree->n_nodes=%d\n", huffmanTree->n_nodes);
 	//printf("huffmanTree->qend=%d\n", huffmanTree->qend);
 
-	//printf("build_code\n");
-	//printf("qq1->t = %d\n", huffmanTree->qq[1]->t);
 	build_code(huffmanTree, huffmanTree->qq[1], 0, 0, 0);
-	//printf("finished build_code\n");
-	// jwang - print the huffman code of tree nodes
-	//for(i = 0; i < huffmanTree->stateNum; i++)
-	//	if(huffmanTree->code[i] != 0)
-	//		printf("code->%d\n", huffmanTree->cout[i]);
+	for (jj = 0; jj < huffmanTree->stateNum; jj++)
+	       if(huffmanTree->cout[jj])
+		       printf("%lu,%lu,%d\n", jj, freq[jj], huffmanTree->cout[jj]);
+	//printf("\n");
 	
 	free(freq);
 }
