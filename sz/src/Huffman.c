@@ -264,6 +264,7 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 	{
 		state = s[i];
 		bitSize = huffmanTree->cout[state]; // number of bits in the code; number of levels of current node	
+		
 		if(lackBits==0)
 		{
 			byteSize = bitSize%8==0 ? bitSize/8 : bitSize/8+1; //it's equal to the number of bytes involved (for *outSize)
