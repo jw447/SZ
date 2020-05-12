@@ -2878,7 +2878,10 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 		}
 		else
 		if (r3==0)
-		{			
+		{	
+			
+			//if(confparams_cpr->errorBoundMode<PW_REL)
+				//printf("yes\n");
 			if(confparams_cpr->errorBoundMode>=PW_REL)
 			{
 				if(confparams_cpr->accelerate_pw_rel_compression && confparams_cpr->maxRangeRadius <= 32768)
@@ -2898,10 +2901,17 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 					{
 #endif							
 						if(confparams_cpr->withRegression == SZ_NO_REGRESSION)
+						{	
+							//printf("no regression\n");
 							SZ_compress_args_float_NoCkRngeNoGzip_2D(cmprType, &tmpByteData, oriData, r2, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
+						}
 						else 
 						{
+							//printf("with regression\n");
+							// debug - study the performance of curve-fitting models.
 							tmpByteData = SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(oriData, r2, r1, realPrecision, &tmpOutSize);					
+							//printf("tmpsize=%lu\n", tmpOutSize);
+							//printf("%lu\n", dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1);
 							if(tmpOutSize>=dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
 								SZ_compress_args_float_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);						
 						}
@@ -5472,6 +5482,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 	else{
 		quantization_intervals = exe_params->intvCapacity;
 	}
+	//printf("qf=%d\n", quantization_intervals);
 
 	// calculate block dims
 	size_t num_x, num_y;
@@ -5479,6 +5490,8 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 
 	SZ_COMPUTE_2D_NUMBER_OF_BLOCKS(r1, num_x, block_size);
 	SZ_COMPUTE_2D_NUMBER_OF_BLOCKS(r2, num_y, block_size);
+
+	//printf("block_x=%lu, block_y=%lu\n", num_x, num_y);
 
 	size_t split_index_x, split_index_y;
 	size_t early_blockcount_x, early_blockcount_y;
@@ -5554,6 +5567,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 
 	float mean = 0;
 	use_mean = 0;
+	//printf("use-mean=%d\n", use_mean);
 	if(use_mean){
 		// compute mean
 		float sum = 0.0;
@@ -5614,6 +5628,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 	unsigned int coeff_unpredictable_count[3] = {0};
 	float noise = realPrecision * 0.81;
 	if(use_mean){
+		//printf("using mean\n");
 		type = result_type;
 		int intvCapacity_sz = intvCapacity - 2;
 		for(size_t i=0; i<num_x; i++){
@@ -5965,7 +5980,8 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 						err_sz += fabsf(pred_sz - curData) + noise;
 						err_reg += fabsf(pred_reg - curData);								
 					}
-					use_reg = (err_reg < err_sz);
+					//use_reg = (err_reg < err_sz);
+					use_reg=0;
 				}
 				if(use_reg)
 				{
@@ -6010,17 +6026,21 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
+								//fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
 								//ganrantee comporession error against the case of machine-epsilon
+								//
 								if(fabsf(curData - pred)>realPrecision){	
+									//printf("missed\n");
 									type[index] = 0;
 									pred = curData;
 									unpredictable_data[block_unpredictable_count ++] = curData;
 								}		
 							}
 							else{
+								//printf("missed\n");
 								type[index] = 0;
 								pred = curData;
 								unpredictable_data[block_unpredictable_count ++] = curData;
@@ -6037,6 +6057,8 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
+								//printf("%f\n", diff);
+								//fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6069,6 +6091,8 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
+								//printf("%f\n", diff);
+								//fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6098,6 +6122,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
+								//printf("%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6146,17 +6171,21 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred2D;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity_sz){
+								//printf("%f\n", diff);
+								//fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * tmp_realPrecision;
 								//ganrantee comporession error against the case of machine-epsilon
 								if(fabsf(curData - *cur_pb_pos)>tmp_realPrecision){	
+									//printf("missed\n");
 									type[index] = 0;
 									*cur_pb_pos = curData;	
 									unpredictable_data[unpredictable_count ++] = curData;
 								}					
 							}
 							else{
+								//printf("missed\n");
 								type[index] = 0;
 								*cur_pb_pos = curData;
 								unpredictable_data[unpredictable_count ++] = curData;
@@ -6179,6 +6208,8 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred2D;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity_sz){
+								//printf("%f\n", diff);
+								//fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * tmp_realPrecision;
@@ -6233,6 +6264,9 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 
 	unsigned char *treeBytes;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
+	printf("nodeCount=%lu, treeByteSize=%u\n", nodeCount, treeByteSize);
+	printf("total_unpred=%lu\n", total_unpred);
+	//printf("hit ratio=%f\n", (float)(r1*r2 - unpredictable_count)/(r1*r2));
 
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
 	// total size 										metadata		  # elements   real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements

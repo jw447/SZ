@@ -368,7 +368,7 @@ int main(int argc, char* argv[])
 				printf("Nelements=%d\n", (*cpu_timing).Nelements);
 				printf("qf=%d\n", (*cpu_timing).qf);
 				*/
-				
+				/*
 				printf("inputsize=%lu\n", (long unsigned)nbEle*4);
 				printf("qf=%d\n", (*cpu_timing).qf);
 				printf("node_count=%d\n", (*cpu_timing).node_count);
@@ -378,6 +378,7 @@ int main(int argc, char* argv[])
 				printf("outputsize=%lu\n", outSize);
 				printf("outliersize=%lu\n", outSize - (*cpu_timing).treesize - (*cpu_timing).encodesize);
 				printf("cratio=%f\n", (float)nbEle*4/outSize);
+				*/
 				
 			}
 			else if(parallelMode==1) //openMP
@@ -517,7 +518,7 @@ int main(int argc, char* argv[])
 					printf("Nelements=%d\n", (*cpu_timing).Nelements);
 					printf("qf=%d\n", (*cpu_timing).qf);
 					*/
-
+					/*
 				        printf("inputsize=%lu\n", (long unsigned)nbEle*8);
 				        printf("qf=%d\n", (*cpu_timing).qf);
 				        printf("node_count=%d\n", (*cpu_timing).node_count);
@@ -527,6 +528,7 @@ int main(int argc, char* argv[])
 					printf("outliersize=%lu\n", outSize - (*cpu_timing).treesize - (*cpu_timing).encodesize);
 				        printf("outputsize=%lu\n", outSize);
 				        printf("cratio=%f\n", (float)nbEle*8/outSize);
+					*/
 				}
 				else if(parallelMode==1)//openMP
 				{

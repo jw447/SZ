@@ -2551,6 +2551,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t *outSize,
 int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRatio, CPU_timing *cpu_timing)
 {
 	FuncName;
+	printf("SZ_compress_args_double\n");
 	confparams_cpr->errorBoundMode = errBoundMode;
 	if(errBoundMode==PW_REL)
 	{
@@ -2638,6 +2639,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 		else
 		if (r3==0)
 		{
+			printf("errBoundMode=%d\n", confparams_cpr->errorBoundMode);
 			if(confparams_cpr->errorBoundMode>=PW_REL)
 			{
 				if(confparams_cpr->accelerate_pw_rel_compression && confparams_cpr->maxRangeRadius <= 32768)
@@ -2656,6 +2658,7 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 						SZ_compress_args_double_NoCkRngeNoGzip_2D(cmprType, &tmpByteData, oriData, r2, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
 					else 
 					{
+						printf("yes\n");
 						tmpByteData = SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(oriData, r2, r1, realPrecision, &tmpOutSize);
 						if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
 							SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
