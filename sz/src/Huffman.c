@@ -225,9 +225,9 @@ void init(HuffmanTree* huffmanTree, int *s, size_t length)
 	//printf("huffmanTree->qend=%d\n", huffmanTree->qend);
 
 	build_code(huffmanTree, huffmanTree->qq[1], 0, 0, 0);
-	for (jj = 0; jj < huffmanTree->stateNum; jj++)
-	       if(huffmanTree->cout[jj])
-		       printf("%lu,%lu,%d\n", jj, freq[jj], huffmanTree->cout[jj]);
+	//for (jj = 0; jj < huffmanTree->stateNum; jj++)
+	//       if(huffmanTree->cout[jj])
+	//	       printf("%lu,%lu,%d\n", jj, freq[jj], huffmanTree->cout[jj]);
 	//printf("\n");
 	
 	free(freq);
