@@ -5658,6 +5658,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 					}
 					use_reg = (err_reg < err_sz);
 				}
+				use_reg = 0;
 				if(use_reg)
 				{
 					{
@@ -5669,7 +5670,6 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = cur_coeff - last_coeffcients[e];
 							itvNum = fabsf(diff)*recip_precision[e] + 1;
 							if (itvNum < coeff_intvCapacity_sz){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								coeff_type[e][coeff_index] = (int) (itvNum/2) + coeff_intvRadius;
 								last_coeffcients[e] = last_coeffcients[e] + 2 * (coeff_type[e][coeff_index] - coeff_intvRadius) * precision[e];
@@ -5702,7 +5702,6 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5729,7 +5728,6 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5762,7 +5760,6 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5791,7 +5788,6 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5837,7 +5833,6 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							curData = *cur_data_pos;
 							diff = curData - mean;
 							if(fabsf(curData - mean) <= realPrecision){
-								fprintf(stderr, "%f\n", diff);
 								// adjust type[index] to intvRadius for coherence with freq in reg
 								type[index] = intvRadius;
 								*cur_pb_pos = mean;
@@ -6247,6 +6242,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 	unsigned char *treeBytes;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
 
+	printf("nodeCount=%lu, treeByteSize=%u, total_unpred=%lu\n", nodeCount, treeByteSize, total_unpred);
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
 	// total size 										metadata		  # elements   real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements
 	unsigned char * result = (unsigned char *) calloc(meta_data_offset + exe_params->SZ_SIZE_TYPE + sizeof(float) + sizeof(int) + sizeof(int) + 5*treeByteSize + 3*num_blocks*sizeof(int) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(float) + total_unpred * sizeof(float) + num_elements * sizeof(int), 1);
@@ -6598,6 +6594,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 	}
 
 	float mean = 0;
+	use_mean = 0;
 	if(use_mean){
 		// compute mean
 		float sum = 0.0;
@@ -7064,6 +7061,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 						use_reg = (err_reg < err_sz);
 
 					}
+					use_reg=0;
 					if(use_reg)
 					{
 						{
@@ -7109,6 +7107,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -7154,6 +7153,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -7213,6 +7213,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred3D;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity_sz){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;
@@ -7256,6 +7257,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred3D;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity_sz){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;
@@ -7331,6 +7333,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 
 	unsigned char *treeBytes;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
+	printf("nodeCount=%lu, treeByteSize=%u, total_unpred=%lu\n", nodeCount, treeByteSize, total_unpred);
 
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
 	// total size 										metadata		  # elements     real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements

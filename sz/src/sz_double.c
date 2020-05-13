@@ -5273,7 +5273,6 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 							diff = curData - pred;
 							itvNum = fabs(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5300,7 +5299,6 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 							diff = curData - pred;
 							itvNum = fabs(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5333,7 +5331,6 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 							diff = curData - pred;
 							itvNum = fabs(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5362,7 +5359,6 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 							diff = curData - pred;
 							itvNum = fabs(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5417,7 +5413,6 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 								diff = curData - pred2D;
 								itvNum = fabs(diff)*recip_realPrecision + 1;
 								if (itvNum < intvCapacity_sz){
-									fprintf(stderr, "%f\n", diff);
 									if (diff < 0) itvNum = -itvNum;
 									type[index] = (int) (itvNum/2) + intvRadius;
 									*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5458,7 +5453,6 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 								diff = curData - pred2D;
 								itvNum = fabs(diff)*recip_realPrecision + 1;
 								if (itvNum < intvCapacity_sz){
-									fprintf(stderr, "%f\n", diff);
 									if (diff < 0) itvNum = -itvNum;
 									type[index] = (int) (itvNum/2) + intvRadius;
 									*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * realPrecision;
@@ -5545,6 +5539,7 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 					}
 					use_reg = (err_reg < err_sz);
 				}
+				use_reg = 0;
 				if(use_reg)
 				{
 					{
@@ -5817,6 +5812,7 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 
 	unsigned char *treeBytes;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
+	printf("nodeCount=%lu, treeByteSize=%u, total_unpred=%lu\n", nodeCount, treeByteSize, total_unpred);
 
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
 	// total size 										metadata		  # elements   real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements
@@ -6034,6 +6030,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 	}
 
 	double mean = 0;
+	use_mean = 0;
 	if(use_mean){
 		// compute mean
 		double sum = 0.0;
@@ -6504,6 +6501,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 						use_reg = (err_reg < err_sz);
 
 					}
+					use_reg=0;
 					if(use_reg)
 					{
 						{
@@ -6549,6 +6547,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 									diff = curData - pred;
 									itvNum = fabs(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6593,6 +6592,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 									diff = curData - pred;
 									itvNum = fabs(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6652,6 +6652,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 									diff = curData - pred3D;
 									itvNum = fabs(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity_sz){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6696,6 +6697,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 									diff = curData - pred3D;
 									itvNum = fabs(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity_sz){
+										fprintf(stderr, "%f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6771,6 +6773,8 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 
 	unsigned char *treeBytes;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
+
+	printf("nodeCount=%lu, treeByteSize=%u, total_unpred=%lu\n", nodeCount, treeByteSize, total_unpred);
 
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
 	// total size 										metadata		  # elements     real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements
