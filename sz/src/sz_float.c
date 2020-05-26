@@ -5658,7 +5658,6 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 					}
 					use_reg = (err_reg < err_sz);
 				}
-				use_reg = 0;
 				if(use_reg)
 				{
 					{
@@ -5969,6 +5968,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 					}
 					use_reg = (err_reg < err_sz);
 				}
+				use_reg=1;
 				if(use_reg)
 				{
 					{
@@ -6012,7 +6012,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
+								fprintf(stderr, "%.10f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6040,7 +6040,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
+								fprintf(stderr, "%.10f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6073,7 +6073,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
+								fprintf(stderr, "%.10f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6103,7 +6103,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity){
-								fprintf(stderr, "%f\n", diff);
+								fprintf(stderr, "%.10f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -6152,7 +6152,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred2D;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity_sz){
-								fprintf(stderr, "%f\n", diff);
+								fprintf(stderr, "%.10f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * tmp_realPrecision;
@@ -6186,7 +6186,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 							diff = curData - pred2D;
 							itvNum = fabsf(diff)*recip_realPrecision + 1;
 							if (itvNum < intvCapacity_sz){
-								fprintf(stderr, "%f\n", diff);
+								fprintf(stderr, "%.10f\n", diff);
 								if (diff < 0) itvNum = -itvNum;
 								type[index] = (int) (itvNum/2) + intvRadius;
 								*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * tmp_realPrecision;
@@ -7061,7 +7061,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 						use_reg = (err_reg < err_sz);
 
 					}
-					use_reg=0;
+					use_reg=1;
 					if(use_reg)
 					{
 						{
@@ -7107,7 +7107,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity){
-										fprintf(stderr, "%f\n", diff);
+										fprintf(stderr, "%.10f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -7153,7 +7153,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity){
-										fprintf(stderr, "%f\n", diff);
+										fprintf(stderr, "%.10f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
@@ -7213,7 +7213,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred3D;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity_sz){
-										fprintf(stderr, "%f\n", diff);
+										fprintf(stderr, "%.10f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;
@@ -7257,7 +7257,7 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 									diff = curData - pred3D;
 									itvNum = fabsf(diff)*recip_realPrecision + 1;
 									if (itvNum < intvCapacity_sz){
-										fprintf(stderr, "%f\n", diff);
+										fprintf(stderr, "%.10f\n", diff);
 										if (diff < 0) itvNum = -itvNum;
 										type[index] = (int) (itvNum/2) + intvRadius;
 										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;

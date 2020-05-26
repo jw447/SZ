@@ -5539,7 +5539,7 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 					}
 					use_reg = (err_reg < err_sz);
 				}
-				use_reg = 0;
+				use_reg=1;
 				if(use_reg)
 				{
 					{
@@ -6501,7 +6501,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 						use_reg = (err_reg < err_sz);
 
 					}
-					use_reg=0;
+					use_reg=1;
 					if(use_reg)
 					{
 						{
