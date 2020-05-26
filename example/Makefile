@@ -123,26 +123,26 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__sz_SOURCES_DIST = sz.c sz_openmp.c sz_gsl.c sz_pastri.c \
 	sz_randomaccess.c
-#am_sz_OBJECTS = sz.$(OBJEXT)
-am_sz_OBJECTS = sz_openmp.$(OBJEXT)
-#am_sz_OBJECTS =  \
-#	sz_gsl.$(OBJEXT)
+##am_sz_OBJECTS = sz.$(OBJEXT)
+#am_sz_OBJECTS = sz_openmp.$(OBJEXT)
+am_sz_OBJECTS =  \
+	sz_gsl.$(OBJEXT)
 #am_sz_OBJECTS = sz_pastri.$(OBJEXT)
 #am_sz_OBJECTS = sz_randomaccess.$(OBJEXT)
 sz_OBJECTS = $(am_sz_OBJECTS)
 am__DEPENDENCIES_1 =
+##sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
+##	../zlib/.libs/libzlib.a \
+##	../zstd/.libs/libzstd.a
 #sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
 #	../zlib/.libs/libzlib.a \
 #	../zstd/.libs/libzstd.a
 sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
 	../zlib/.libs/libzlib.a \
-	../zstd/.libs/libzstd.a
-#sz_DEPENDENCIES = ../sz/.libs/libSZ.a \
-#	../zlib/.libs/libzlib.a \
-#	../zstd/.libs/libzstd.a \
-#	$(am__DEPENDENCIES_1) \
-#	$(am__DEPENDENCIES_1) \
-#	$(am__DEPENDENCIES_1)
+	../zstd/.libs/libzstd.a \
+	$(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 #sz_DEPENDENCIES =  \
 #	../sz/.libs/libSZ.a \
 #	../zlib/.libs/libzlib.a \
@@ -349,12 +349,12 @@ FC = gfortran
 FCFLAGS = -g -O2
 FGREP = /usr/bin/grep -F
 GREP = /usr/bin/grep
-GSL_CFLAGS = 
-GSL_CONFIG = 
-GSL_HDR = 
-GSL_LIB = 
-GSL_LIBS = 
-GSL_STATIC = 
+GSL_CFLAGS = -I/global/common/sw/cray/cnl7/haswell/gsl/2.5/intel/19.0.3.199/7twqxxq/include -DHAVE_GSL
+GSL_CONFIG = /global/common/sw/cray/cnl7/haswell/gsl/2.5/intel/19.0.3.199/7twqxxq/bin/gsl-config
+GSL_HDR = -I/global/common/sw/cray/cnl7/haswell/gsl/2.5/intel/19.0.3.199/7twqxxq/include
+GSL_LIB = -L/global/common/sw/cray/cnl7/haswell/gsl/2.5/intel/19.0.3.199/7twqxxq/lib
+GSL_LIBS = -L/global/common/sw/cray/cnl7/haswell/gsl/2.5/intel/19.0.3.199/7twqxxq/lib -lgsl -lgslcblas -lm
+GSL_STATIC = -lgsl -lgslcblas
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -363,7 +363,7 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /global/common/cori/software/altd/2.0/bin/ld -m elf_x86_64
 LDFLAGS = 
 LIBOBJS = 
-LIBS = 
+LIBS = -lgsl -lgslcblas -L/global/common/sw/cray/cnl7/haswell/gsl/2.5/intel/19.0.3.199/7twqxxq/lib
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -481,14 +481,14 @@ testdouble_decompress_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zst
 #testdouble_compress_ts_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 #testdouble_decompress_ts_SOURCES = testdouble_decompress_ts.c
 #testdouble_decompress_ts_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
-#sz_SOURCES = sz.c
-sz_SOURCES = sz_openmp.c
-#sz_SOURCES = sz_gsl.c
+##sz_SOURCES = sz.c
+#sz_SOURCES = sz_openmp.c
+sz_SOURCES = sz_gsl.c
 #sz_SOURCES = sz_pastri.c
 #sz_SOURCES = sz_randomaccess.c
+##sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 #sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
-sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
-#sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a $(GSL_LIBS) $(GSL_HDR) $(GSL_LIB) -lm
+sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a $(GSL_LIBS) $(GSL_HDR) $(GSL_LIB) -lm
 #sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 #sz_LDADD = ../sz/.libs/libSZ.a ../zlib/.libs/libzlib.a ../zstd/.libs/libzstd.a -lm
 all: all-am
