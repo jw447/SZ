@@ -1,0 +1,77 @@
+compress/libzstd_la-zstd_double_fast.lo: compress/zstd_double_fast.c \
+ /usr/include/stdc-predef.h compress/zstd_compress_internal.h \
+ common/zstd_internal.h common/compiler.h common/mem.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h \
+ /usr/include/string.h /usr/include/bits/libc-header-start.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/long-double.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/types.h \
+ /usr/include/bits/typesizes.h /usr/include/bits/wchar.h \
+ /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
+ common/debug.h common/error_private.h common/zstd_errors.h zstd.h \
+ common/fse.h common/bitstream.h common/huf.h common/xxhash.h \
+ compress/zstd_double_fast.h common/mem.h
+
+/usr/include/stdc-predef.h:
+
+compress/zstd_compress_internal.h:
+
+common/zstd_internal.h:
+
+common/compiler.h:
+
+common/mem.h:
+
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h:
+
+/usr/include/string.h:
+
+/usr/include/bits/libc-header-start.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/bits/long-double.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/include/bits/stdint-intn.h:
+
+/usr/include/bits/stdint-uintn.h:
+
+common/debug.h:
+
+common/error_private.h:
+
+common/zstd_errors.h:
+
+zstd.h:
+
+common/fse.h:
+
+common/bitstream.h:
+
+common/huf.h:
+
+common/xxhash.h:
+
+compress/zstd_double_fast.h:
+
+common/mem.h:

@@ -1,0 +1,82 @@
+libzlib_la-deflate.lo: deflate.c /usr/include/stdc-predef.h deflate.h \
+ zutil.h zlib.h zconf.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/limits.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/libc-header-start.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/long-double.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+ /usr/include/sys/types.h /usr/include/bits/types.h \
+ /usr/include/bits/typesizes.h /usr/include/bits/types/clockid_t.h \
+ /usr/include/bits/types/time_t.h /usr/include/bits/types/timer_t.h \
+ /usr/include/bits/stdint-intn.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdarg.h \
+ /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/confname.h /usr/include/string.h /usr/include/stdlib.h \
+ /usr/include/bits/floatn.h /usr/include/bits/stdlib-bsearch.h \
+ /usr/include/bits/stdlib-float.h
+
+/usr/include/stdc-predef.h:
+
+deflate.h:
+
+zutil.h:
+
+zlib.h:
+
+zconf.h:
+
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h:
+
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/limits.h:
+
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/bits/libc-header-start.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/bits/long-double.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/bits/types/clockid_t.h:
+
+/usr/include/bits/types/time_t.h:
+
+/usr/include/bits/types/timer_t.h:
+
+/usr/include/bits/stdint-intn.h:
+
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdarg.h:
+
+/usr/include/unistd.h:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/bits/confname.h:
+
+/usr/include/string.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/bits/floatn.h:
+
+/usr/include/bits/stdlib-bsearch.h:
+
+/usr/include/bits/stdlib-float.h:
