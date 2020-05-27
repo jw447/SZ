@@ -1,3 +1,6 @@
+##
+#SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+
 add_library(ZSTD SHARED 
   ./common/entropy_common.c
   ./common/pool.c

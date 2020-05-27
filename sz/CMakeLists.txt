@@ -1,3 +1,6 @@
+##
+#SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+
 add_library (SZ SHARED 
   src/ArithmeticCoding.c
   src/ByteToolkit.c
@@ -94,3 +97,4 @@ install (TARGETS SZ ${thirdparty_export} EXPORT SZConfig
 install (EXPORT SZConfig DESTINATION share/SZ/cmake)
 install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sz)
 export(TARGETS SZ FILE SZ.cmake)
+

@@ -1,5 +1,8 @@
 cmake_minimum_required (VERSION 3.10.2)
 
+##
+#SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+
 #disable in-source builds
 set (CMAKE_DISABLE_SOURCE_CHANGES ON)
 set (CMAKE_DISABLE_IN_SOURCE_BUILD ON)
@@ -125,4 +128,5 @@ configure_file(
   @ONLY
 )
 install(FILES ${CMAKE_BINARY_DIR}/sz.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pkgconfig)
+
 

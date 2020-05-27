@@ -61,7 +61,7 @@ unsigned int optimize_intervals_double_1D(double *oriData, size_t dataLength, do
 {	
 	size_t i = 0, radiusIndex;
 	double pred_value = 0, pred_err;
-	printf("maxRangeRadius=%u\n", confparams_cpr->maxRangeRadius);
+	//printf("maxRangeRadius=%u\n", confparams_cpr->maxRangeRadius);
 	size_t *intervals = (size_t*)malloc(confparams_cpr->maxRangeRadius*sizeof(size_t));
 	memset(intervals, 0, confparams_cpr->maxRangeRadius*sizeof(size_t));
 	size_t totalSampleSize = dataLength/confparams_cpr->sampleDistance;
@@ -2551,7 +2551,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t *outSize,
 int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRatio, CPU_timing *cpu_timing)
 {
 	FuncName;
-	printf("SZ_compress_args_double\n");
+	//printf("SZ_compress_args_double\n");
 	confparams_cpr->errorBoundMode = errBoundMode;
 	if(errBoundMode==PW_REL)
 	{

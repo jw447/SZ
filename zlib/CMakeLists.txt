@@ -1,3 +1,6 @@
+##
+#SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+
 add_library(ZLIB SHARED 
   ./gzclose.c
   ./uncompr.c
@@ -27,3 +30,4 @@ install(TARGETS ZLIB EXPORT ZLIBConfig
 
 install(FILES zlib.h zconf.h DESTINATION include)
 export(TARGETS ZLIB FILE ZLIBConfig.cmake)
+

@@ -23,4 +23,5 @@ install (TARGETS testint_compress testint_decompress testfloat_compress testfloa
 	testdouble_compress testdouble_decompress sz
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-
+##
+#SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
