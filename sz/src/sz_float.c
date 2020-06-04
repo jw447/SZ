@@ -425,6 +425,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	
 	float recip_precision = 1/realPrecision;
 	
+	size_t miss = 2;
 	for(i=2;i<dataLength;i++)
 	{	
 		curData = spaceFillingValue[i];
@@ -473,6 +474,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		}
 		
 		//unpredictable data processing		
+		miss++;
 		type[i] = 0;		
 		compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
@@ -487,6 +489,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 #endif	
 		
 	}//end of for
+	//printf("miss=%lu\n", miss);
+	//printf("medianValue=%lf\nreqLength=%d\nreqBytesLength=%d\nresiBitsLength=%d\n", medianValue, reqLength, reqBytesLength, resiBitsLength);
 		
 //	char* expSegmentsInBytes;
 //	int expSegmentsInBytes_size = convertESCToBytes(esc, &expSegmentsInBytes);
@@ -595,8 +599,8 @@ size_t dataLength, double realPrecision, size_t *outSize, float valueRangeSize, 
 
 	convertTDPStoFlatBytes_float(tdps, newByteData, outSize);
 	
-	if(*outSize>3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1 + sizeof(float)*dataLength)
-		SZ_compress_args_float_StoreOriData(oriData, dataLength, newByteData, outSize);
+	//if(*outSize>3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1 + sizeof(float)*dataLength)
+	//	SZ_compress_args_float_StoreOriData(oriData, dataLength, newByteData, outSize);
 	
 	free_TightDataPointStorageF(tdps);
 	return compressionType;
@@ -2860,8 +2864,8 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 						{
 #endif							
 							SZ_compress_args_float_NoCkRngeNoGzip_1D(cmprType, &tmpByteData, oriData, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
-							if(tmpOutSize>=dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
-								SZ_compress_args_float_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
+							//if(tmpOutSize>=dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
+							//	SZ_compress_args_float_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
 #ifdef HAVE_RANDOMACCESS
 						}
 						else

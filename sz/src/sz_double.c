@@ -330,6 +330,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
 	double interval = 2*realPrecision;
 
+	size_t miss = 2;
 	double recip_realPrecision = 1/realPrecision;
 	for(i=2;i<dataLength;i++)
 	{				
@@ -359,13 +360,13 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 			continue;
 		}
 		
+		miss += 1;
 		//unpredictable data processing
 		type[i] = 0;		
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 		memcpy(preDataBytes,vce->curBytes,8);
-		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
-							
+		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);	
 		//listAdd_double(last3CmprsData, vce->data);
 		pred = vce->data;
 		
@@ -375,21 +376,19 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 #endif	
 		
 	}//end of for
-		
+	//printf("miss=%lu\n", miss);
+	//printf("medianValue=%lf\nreqLength=%d\nreqBytesLength=%d\nresiBitsLength=%d\n", medianValue, reqLength, reqBytesLength, resiBitsLength);	
 	size_t exactDataNum = exactLeadNumArray->size;
 	
 	TightDataPointStorageD* tdps;
 			
 	new_TightDataPointStorageD(&tdps, dataLength, exactDataNum, 
 			type, exactMidByteArray->array, exactMidByteArray->size,  
-			exactLeadNumArray->array,  
-			resiBitArray->array, resiBitArray->size, 
-			resiBitsLength, 
+			exactLeadNumArray->array,
+			resiBitArray->array, resiBitArray->size,
+			resiBitsLength,
 			realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0);
-	
-//	printf("exactDataNum=%d, expSegmentsInBytes_size=%d, exactMidByteArray->size=%d\n", 
-//			exactDataNum, expSegmentsInBytes_size, exactMidByteArray->size);
-	
+
 	//free memory
 	free_DIA(exactLeadNumArray);
 	free_DIA(resiBitArray);
@@ -479,8 +478,8 @@ size_t dataLength, double realPrecision, size_t *outSize, double valueRangeSize,
 	
 	convertTDPStoFlatBytes_double(tdps, newByteData, outSize);
 	
-	if(*outSize>3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1 + sizeof(double)*dataLength)
-		SZ_compress_args_double_StoreOriData(oriData, dataLength, newByteData, outSize);
+	//if(*outSize>3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1 + sizeof(double)*dataLength)
+	//	SZ_compress_args_double_StoreOriData(oriData, dataLength, newByteData, outSize);
 	
 	free_TightDataPointStorageD(tdps);	
 	return compressionType;
@@ -2581,8 +2580,8 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 #endif
 					{
 						SZ_compress_args_double_NoCkRngeNoGzip_1D(cmprType, &tmpByteData, oriData, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
-						if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
-							SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
+						//if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
+						//	SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
 					}
 		}
 		else

@@ -315,6 +315,11 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	
 	(*this)->isLossless = 0;
 	
+	//printf("resiBitLength=%u\n", (unsigned int)resiBitLength);
+	//int i;
+	//for(i=0;i<exactDataNum;i++) printf("%u ",( unsigned int)leadNumIntArray[i]);
+	//printf("\n");
+	
 	if(confparams_cpr->errorBoundMode>=PW_REL)
 		(*this)->pwrErrBoundBytes = pwrErrBoundBytes;
 	else
@@ -323,6 +328,10 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->radExpo = radExpo;
 	
 	(*this)->pwrErrBoundBytes_size = pwrErrBoundBytes_size;
+	//printf("Huffmansize(byte)=%lu\n", (*this)->typeArray_size);
+	//printf("outliersize=%lu\n", ((size_t)(*this)->leadNumArray_size+(size_t)(*this)->residualMidBits_size+(*this)->exactMidBytes_size));
+	//printf("LeadZeroArraySize(byte)=%lu\nBitArraySize(byte)=%lu\nByteArraySize(byte)=%lu\n", (size_t)(*this)->leadNumArray_size, (size_t)(*this)->residualMidBits_size, (*this)->exactMidBytes_size);
+	//printf("LeadZeroArrayLen(count)=%lu\nBitArrayLen(count)=%lu\nBitLen=%u\nByteArrayLen(count)=%lu\n", (size_t)exactDataNum, (size_t)exactDataNum, (unsigned int)resiBitLength, exactMidBytes_size);
 }
 
 void new_TightDataPointStorageD2(TightDataPointStorageD **this, 

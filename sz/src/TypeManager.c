@@ -131,6 +131,7 @@ void convertByteArray2IntArray_fast_1b(size_t intArrayLength, unsigned char* byt
  * @param timeStepType
  * @return
  */
+//(*this)->leadNumArray_size = convertIntArray2ByteArray_fast_2b(leadNumIntArray, exactDataNum, &((*this)->leadNumArray));
 size_t convertIntArray2ByteArray_fast_2b(unsigned char* timeStepType, size_t timeStepTypeLength, unsigned char **result)
 {
 	size_t i, j, byteLength = 0;
@@ -367,6 +368,7 @@ inline int getLeftMovingSteps(size_t k, unsigned char resiBitLength)
  * @param timeStepType is the resiMidBits
  * @param resiBitLength is the length of resiMidBits for each element, (the number of resiBitLength == the # of unpredictable elements
  * @return
+ * (*this)->residualMidBits_size = convertIntArray2ByteArray_fast_dynamic(resiMidBits, resiBitLength, exactDataNum, &((*this)->residualMidBits));
  */
 size_t convertIntArray2ByteArray_fast_dynamic(unsigned char* timeStepType, unsigned char resiBitLength, size_t nbEle, unsigned char **bytes)
 {

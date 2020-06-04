@@ -201,6 +201,7 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 	{
 		state = s[i];
 		bitSize = huffmanTree->cout[state];	
+		//printf("%u\n", bitSize);
 		
 		//printf("%d %d : %d %u\n",i, state, bitSize, (code[state])[0] >> (64-cout[state])); 
 		//debug: compute the average bitSize and the count that is over 32... 	
@@ -772,7 +773,6 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 		if (huffmanTree->code[i]) nodeCount++; 
 	nodeCount = nodeCount*2-1;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
-	//printf("treeByteSize = %d\n", treeByteSize);
 
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
@@ -783,6 +783,8 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	free(treeBytes);
 	size_t enCodeSize = 0;
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
+	//fprintf(stderr, "nodecount=%d\n", nodeCount);
+	//printf("treeByteSize=%u\nencodesize=%lu\n", treeByteSize, enCodeSize);
 	*outSize = 8+treeByteSize+enCodeSize;
 }
 

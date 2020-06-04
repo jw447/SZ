@@ -358,20 +358,22 @@ int main(int argc, char* argv[])
 			}
 			cost_start();	
 			bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
+			printf("outputsize=%lu\n", outSize);
+			printf("compressionratio=%f\n", (float)nbEle*4/outSize);
 			cost_end();
 			if(cmpPath == NULL)
 				sprintf(outputFilePath, "%s.sz", inPath);
 			else
 				strcpy(outputFilePath, cmpPath);
-			writeByteData(bytes, outSize, outputFilePath, &status);		
+			writeByteData(bytes, outSize, outputFilePath, &status);	
 			free(data);
 			if(status != SZ_SCES)
 			{
 				printf("Error: data file %s cannot be written!\n", outputFilePath);
 				exit(0);
 			}
-			printf("compression time = %f\n", totalCost);
-			printf("compressed data file: %s\n", outputFilePath);			
+			//printf("compression time = %f\n", totalCost);
+			//printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
 		{
@@ -461,6 +463,11 @@ int main(int argc, char* argv[])
 				}
 				cost_start();
 				bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
+				printf("outputsize=%lu\n", outSize);
+				printf("compressionratio=%f\n", (float)nbEle*8/outSize);
+
+				double compressionRatio = 1.0*nbEle*sizeof(float)/byteLength;
+
 				cost_end();
 				if(cmpPath == NULL)
 					sprintf(outputFilePath, "%s.sz", inPath);
@@ -473,8 +480,8 @@ int main(int argc, char* argv[])
 					printf("Error: data file %s cannot be written!\n", outputFilePath);
 					exit(0);
 				}		
-				printf("compression time = %f\n", totalCost);
-				printf("compressed data file: %s\n", outputFilePath);
+				//printf("compression time = %f\n", totalCost);
+				//printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
 

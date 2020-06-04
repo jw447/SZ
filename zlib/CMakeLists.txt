@@ -1,3 +1,5 @@
+SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+
 add_library(ZLIB SHARED 
   ./gzclose.c
   ./uncompr.c
