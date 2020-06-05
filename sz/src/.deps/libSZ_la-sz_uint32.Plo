@@ -1,205 +1,202 @@
 src/libSZ_la-sz_uint32.lo: src/sz_uint32.c /usr/include/stdc-predef.h \
- /usr/include/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
- /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
- /usr/include/x86_64-linux-gnu/bits/wordsize.h \
- /usr/include/x86_64-linux-gnu/bits/long-double.h \
- /usr/include/x86_64-linux-gnu/gnu/stubs.h \
- /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h \
- /usr/include/x86_64-linux-gnu/bits/types.h \
- /usr/include/x86_64-linux-gnu/bits/typesizes.h \
- /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/libio.h \
- /usr/include/x86_64-linux-gnu/bits/_G_config.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
- /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
- /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h /usr/include/stdlib.h \
- /usr/include/x86_64-linux-gnu/bits/floatn.h \
- /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/string.h \
- /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
- /usr/include/x86_64-linux-gnu/bits/confname.h \
- /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/math.h \
- /usr/include/x86_64-linux-gnu/bits/math-vector.h \
- /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
- /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
- /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
- /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h include/sz.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/x86_64-linux-gnu/sys/time.h \
- /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
- /usr/include/x86_64-linux-gnu/sys/select.h \
- /usr/include/x86_64-linux-gnu/bits/select.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
- /usr/include/x86_64-linux-gnu/bits/select2.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- include/CompressElement.h include/DynamicByteArray.h \
- include/DynamicIntArray.h include/VarSet.h include/Huffman.h \
- include/TightDataPointStorageD.h include/TightDataPointStorageF.h \
- include/TightDataPointStorageI.h include/conf.h \
- include/dataCompression.h include/sz.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stdbool.h include/ByteToolkit.h \
- include/TypeManager.h include/sz_int8.h include/sz_int16.h \
- include/sz_int32.h include/sz_int64.h include/sz_uint8.h \
- include/sz_uint16.h include/sz_uint32.h include/sz_uint64.h \
- include/sz_float.h include/DynamicFloatArray.h include/sz_double.h \
- include/szd_int8.h include/szd_int16.h include/szd_int32.h \
- include/szd_int64.h include/szd_uint8.h include/szd_uint16.h \
- include/szd_uint32.h include/szd_uint64.h include/szd_float.h \
- include/szd_double.h include/sz_float_pwr.h include/sz_double_pwr.h \
- include/sz_opencl.h include/callZlib.h include/rw.h include/pastri.h \
- /usr/include/assert.h include/pastriGeneral.h include/pastriD.h \
- include/pastriF.h include/sz_float_ts.h include/szd_float_ts.h \
- include/utility.h include/CacheTable.h include/MultiLevelCacheTable.h \
+ /usr/include/stdio.h /usr/include/bits/libc-header-start.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/long-double.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/bits/types/__FILE.h /usr/include/bits/types/FILE.h \
+ /usr/include/libio.h /usr/include/_G_config.h \
+ /usr/include/bits/types/__mbstate_t.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdarg.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
+ /usr/include/bits/stdio.h /usr/include/stdlib.h \
+ /usr/include/bits/floatn.h /usr/include/bits/stdlib-bsearch.h \
+ /usr/include/bits/stdlib-float.h /usr/include/string.h \
+ /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
+ /usr/include/bits/getopt_core.h /usr/include/math.h \
+ /usr/include/bits/math-vector.h /usr/include/bits/libm-simd-decl-stubs.h \
+ /usr/include/bits/huge_val.h /usr/include/bits/huge_valf.h \
+ /usr/include/bits/huge_vall.h /usr/include/bits/inf.h \
+ /usr/include/bits/nan.h /usr/include/bits/flt-eval-method.h \
+ /usr/include/bits/fp-logb.h /usr/include/bits/fp-fast.h \
+ /usr/include/bits/mathcalls-helper-functions.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
+ include/sz.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/wchar.h \
+ /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
+ /usr/include/sys/time.h /usr/include/bits/types/time_t.h \
+ /usr/include/bits/types/struct_timeval.h /usr/include/sys/select.h \
+ /usr/include/bits/select.h /usr/include/bits/types/sigset_t.h \
+ /usr/include/bits/types/__sigset_t.h /usr/include/time.h \
+ /usr/include/bits/time.h /usr/include/bits/types/clock_t.h \
+ /usr/include/bits/types/struct_tm.h \
+ /usr/include/bits/types/struct_timespec.h \
+ /usr/include/bits/types/clockid_t.h /usr/include/bits/types/timer_t.h \
+ /usr/include/bits/types/struct_itimerspec.h include/CompressElement.h \
+ include/DynamicByteArray.h include/DynamicIntArray.h include/VarSet.h \
+ include/Huffman.h include/TightDataPointStorageD.h \
+ include/TightDataPointStorageF.h include/TightDataPointStorageI.h \
+ include/conf.h include/dataCompression.h include/sz.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdbool.h \
+ include/ByteToolkit.h include/TypeManager.h include/sz_int8.h \
+ include/sz_int16.h include/sz_int32.h include/sz_int64.h \
+ include/sz_uint8.h include/sz_uint16.h include/sz_uint32.h \
+ include/sz_uint64.h include/sz_float.h include/DynamicFloatArray.h \
+ include/sz_double.h include/szd_int8.h include/szd_int16.h \
+ include/szd_int32.h include/szd_int64.h include/szd_uint8.h \
+ include/szd_uint16.h include/szd_uint32.h include/szd_uint64.h \
+ include/szd_float.h include/szd_double.h include/sz_float_pwr.h \
+ include/sz_double_pwr.h include/sz_opencl.h include/callZlib.h \
+ include/rw.h include/pastri.h /usr/include/assert.h \
+ include/pastriGeneral.h include/pastriD.h include/pastriF.h \
+ include/sz_float_ts.h include/szd_float_ts.h include/utility.h \
+ include/CacheTable.h include/MultiLevelCacheTable.h \
  /usr/include/memory.h include/MultiLevelCacheTableWideInterval.h \
  include/defines.h include/CompressElement.h include/DynamicByteArray.h \
  include/DynamicIntArray.h ../zlib/zlib.h ../zlib/zconf.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h \
- /usr/include/limits.h /usr/include/x86_64-linux-gnu/sys/types.h \
- /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/timer_t.h include/rw.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/limits.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h /usr/include/sys/types.h \
+ /usr/include/bits/pthreadtypes.h /usr/include/bits/thread-shared-types.h \
+ /usr/include/bits/pthreadtypes-arch.h include/rw.h \
  include/TightDataPointStorageI.h include/sz_uint32.h include/utility.h
 
 /usr/include/stdc-predef.h:
 
 /usr/include/stdio.h:
 
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
+/usr/include/bits/libc-header-start.h:
 
 /usr/include/features.h:
 
-/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+/usr/include/sys/cdefs.h:
 
-/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+/usr/include/bits/wordsize.h:
 
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
+/usr/include/bits/long-double.h:
 
-/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+/usr/include/gnu/stubs.h:
 
-/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+/usr/include/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h:
 
-/usr/include/x86_64-linux-gnu/bits/types.h:
+/usr/include/bits/types.h:
 
-/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+/usr/include/bits/typesizes.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
+/usr/include/bits/types/__FILE.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
+/usr/include/bits/types/FILE.h:
 
-/usr/include/x86_64-linux-gnu/bits/libio.h:
+/usr/include/libio.h:
 
-/usr/include/x86_64-linux-gnu/bits/_G_config.h:
+/usr/include/_G_config.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
+/usr/include/bits/types/__mbstate_t.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdarg.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+/usr/include/bits/stdio_lim.h:
 
-/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
+/usr/include/bits/sys_errlist.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdio.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:
+/usr/include/bits/stdio.h:
 
 /usr/include/stdlib.h:
 
-/usr/include/x86_64-linux-gnu/bits/floatn.h:
+/usr/include/bits/floatn.h:
 
-/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
+/usr/include/bits/stdlib-bsearch.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib.h:
+/usr/include/bits/stdlib-float.h:
 
 /usr/include/string.h:
 
-/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
-
 /usr/include/unistd.h:
 
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+/usr/include/bits/posix_opt.h:
 
-/usr/include/x86_64-linux-gnu/bits/confname.h:
+/usr/include/bits/confname.h:
 
-/usr/include/x86_64-linux-gnu/bits/unistd.h:
+/usr/include/bits/getopt_posix.h:
+
+/usr/include/bits/getopt_core.h:
 
 /usr/include/math.h:
 
-/usr/include/x86_64-linux-gnu/bits/math-vector.h:
+/usr/include/bits/math-vector.h:
 
-/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
+/usr/include/bits/libm-simd-decl-stubs.h:
 
-/usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
+/usr/include/bits/huge_val.h:
 
-/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
+/usr/include/bits/huge_valf.h:
 
-/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
+/usr/include/bits/huge_vall.h:
 
-/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
+/usr/include/bits/inf.h:
 
-/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
+/usr/include/bits/nan.h:
 
-/usr/include/x86_64-linux-gnu/bits/mathinline.h:
+/usr/include/bits/flt-eval-method.h:
+
+/usr/include/bits/fp-logb.h:
+
+/usr/include/bits/fp-fast.h:
+
+/usr/include/bits/mathcalls-helper-functions.h:
+
+/usr/include/bits/mathcalls.h:
+
+/usr/include/bits/mathinline.h:
 
 include/sz.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h:
 
 /usr/include/stdint.h:
 
-/usr/include/x86_64-linux-gnu/bits/wchar.h:
+/usr/include/bits/wchar.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
+/usr/include/bits/stdint-intn.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
+/usr/include/bits/stdint-uintn.h:
 
-/usr/include/x86_64-linux-gnu/sys/time.h:
+/usr/include/sys/time.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/time_t.h:
+/usr/include/bits/types/time_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
+/usr/include/bits/types/struct_timeval.h:
 
-/usr/include/x86_64-linux-gnu/sys/select.h:
+/usr/include/sys/select.h:
 
-/usr/include/x86_64-linux-gnu/bits/select.h:
+/usr/include/bits/select.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
+/usr/include/bits/types/sigset_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/select2.h:
+/usr/include/bits/types/__sigset_t.h:
 
 /usr/include/time.h:
 
-/usr/include/x86_64-linux-gnu/bits/time.h:
+/usr/include/bits/time.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
+/usr/include/bits/types/clock_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
+/usr/include/bits/types/struct_tm.h:
+
+/usr/include/bits/types/struct_timespec.h:
+
+/usr/include/bits/types/clockid_t.h:
+
+/usr/include/bits/types/timer_t.h:
+
+/usr/include/bits/types/struct_itimerspec.h:
 
 include/CompressElement.h:
 
@@ -223,7 +220,7 @@ include/dataCompression.h:
 
 include/sz.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stdbool.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdbool.h:
 
 include/ByteToolkit.h:
 
@@ -317,17 +314,27 @@ include/DynamicIntArray.h:
 
 ../zlib/zconf.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
-/usr/include/x86_64-linux-gnu/sys/types.h:
+/usr/include/bits/posix1_lim.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
+/usr/include/bits/local_lim.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
+/usr/include/linux/limits.h:
+
+/usr/include/bits/posix2_lim.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/bits/thread-shared-types.h:
+
+/usr/include/bits/pthreadtypes-arch.h:
 
 include/rw.h:
 

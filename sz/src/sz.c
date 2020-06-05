@@ -171,7 +171,7 @@ double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, siz
 		memset(exe_params, 0, sizeof(sz_exedata));
 	}
 	//jwang
-	printf("exe_params->intvCapacity = %d\n",exe_params->intvCapacity);
+	//printf("exe_params->intvCapacity = %d\n",exe_params->intvCapacity);
 	if(exe_params->intvCapacity == 0)
 	{
 		exe_params->intvCapacity = confparams_cpr->maxRangeRadius*2;
@@ -183,7 +183,6 @@ double relBoundRatio, double pwrBoundRatio, size_t r5, size_t r4, size_t r3, siz
 	if(dataType==SZ_FLOAT)
 	{
 		unsigned char *newByteData = NULL;
-		
 		SZ_compress_args_float(-1, &newByteData, (float *)data, r5, r4, r3, r2, r1, 
 		outSize, errBoundMode, absErrBound, relBoundRatio, pwrBoundRatio);
 		

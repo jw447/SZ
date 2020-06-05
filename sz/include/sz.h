@@ -69,7 +69,8 @@
 extern "C" {
 #endif
 
-#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
+//#define FuncName printf("func: %s at file: %s\n", __func__, __FILE__)
+#define FuncName
 
 //typedef char int8_t;
 //typedef unsigned char uint8_t;
@@ -122,6 +123,9 @@ extern "C" {
 
 //typedef unsigned long unsigned long;
 //typedef unsigned int uint;
+
+struct timeval compCostS, compCostE;
+struct timeval samplingS, samplingE;
 
 typedef union lint16
 {

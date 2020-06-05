@@ -1,25 +1,20 @@
 compress/libzstd_la-zstdmt_compress.lo: compress/zstdmt_compress.c \
  /usr/include/stdc-predef.h /usr/include/string.h \
- /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
- /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
- /usr/include/x86_64-linux-gnu/bits/wordsize.h \
- /usr/include/x86_64-linux-gnu/bits/long-double.h \
- /usr/include/x86_64-linux-gnu/gnu/stubs.h \
- /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h \
- /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h \
+ /usr/include/bits/libc-header-start.h /usr/include/features.h \
+ /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
+ /usr/include/bits/long-double.h /usr/include/gnu/stubs.h \
+ /usr/include/gnu/stubs-64.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/limits.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/syslimits.h \
  /usr/include/limits.h common/pool.h zstd.h common/threading.h \
  compress/zstd_compress_internal.h common/zstd_internal.h \
  common/compiler.h common/mem.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/types.h \
- /usr/include/x86_64-linux-gnu/bits/typesizes.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h common/debug.h \
- common/error_private.h common/zstd_errors.h common/fse.h \
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/types.h \
+ /usr/include/bits/typesizes.h /usr/include/bits/wchar.h \
+ /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
+ common/debug.h common/error_private.h common/zstd_errors.h common/fse.h \
  common/bitstream.h common/huf.h common/xxhash.h compress/zstd_ldm.h \
  compress/zstdmt_compress.h
 
@@ -27,27 +22,25 @@ compress/libzstd_la-zstdmt_compress.lo: compress/zstdmt_compress.c \
 
 /usr/include/string.h:
 
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
+/usr/include/bits/libc-header-start.h:
 
 /usr/include/features.h:
 
-/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+/usr/include/sys/cdefs.h:
 
-/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+/usr/include/bits/wordsize.h:
 
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
+/usr/include/bits/long-double.h:
 
-/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+/usr/include/gnu/stubs.h:
 
-/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+/usr/include/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h:
 
-/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -65,19 +58,19 @@ common/compiler.h:
 
 common/mem.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stdint.h:
 
 /usr/include/stdint.h:
 
-/usr/include/x86_64-linux-gnu/bits/types.h:
+/usr/include/bits/types.h:
 
-/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+/usr/include/bits/typesizes.h:
 
-/usr/include/x86_64-linux-gnu/bits/wchar.h:
+/usr/include/bits/wchar.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
+/usr/include/bits/stdint-intn.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
+/usr/include/bits/stdint-uintn.h:
 
 common/debug.h:
 

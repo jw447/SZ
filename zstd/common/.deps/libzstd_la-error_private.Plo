@@ -1,11 +1,12 @@
 common/libzstd_la-error_private.lo: common/error_private.c \
  /usr/include/stdc-predef.h common/error_private.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h common/zstd_errors.h
+ /opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h \
+ common/zstd_errors.h
 
 /usr/include/stdc-predef.h:
 
 common/error_private.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
+/opt/gcc/6.1.0/snos/lib/gcc/x86_64-suse-linux/6.1.0/include/stddef.h:
 
 common/zstd_errors.h:

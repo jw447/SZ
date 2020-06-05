@@ -10,6 +10,7 @@ struct timeval endTime;  /* Start and end times */
 struct timeval costStart; /*only used for recording the cost*/
 double totalCost = 0;
 
+
 void cost_start()
 {
 	totalCost = 0;
@@ -370,8 +371,10 @@ int main(int argc, char* argv[])
 				printf("Error: data file %s cannot be written!\n", outputFilePath);
 				exit(0);
 			}
+			printf("comp_cf_time=%f\n", ((compCostE.tv_sec*1000000+compCostE.tv_usec)-(compCostS.tv_sec*1000000+compCostS.tv_usec))/1000000.0);
 			printf("compression time = %f\n", totalCost);
-			printf("compressed data file: %s\n", outputFilePath);			
+			printf("compressionratio=%f\n", (float)nbEle*4/outSize);
+			//printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
 		{
@@ -473,8 +476,10 @@ int main(int argc, char* argv[])
 					printf("Error: data file %s cannot be written!\n", outputFilePath);
 					exit(0);
 				}		
+				printf("comp_cf_time=%f\n", ((compCostE.tv_sec*1000000+compCostE.tv_usec)-(compCostS.tv_sec*1000000+compCostS.tv_usec))/1000000.0);
 				printf("compression time = %f\n", totalCost);
-				printf("compressed data file: %s\n", outputFilePath);
+				printf("compressionratio=%f\n", (float)nbEle*8/outSize);
+				//printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
 
