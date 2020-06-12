@@ -376,8 +376,8 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 #endif	
 		
 	}//end of for
-	//printf("miss=%lu\n", miss);
-	//printf("medianValue=%lf\nreqLength=%d\nreqBytesLength=%d\nresiBitsLength=%d\n", medianValue, reqLength, reqBytesLength, resiBitsLength);	
+	printf("miss=%lu\n", miss);
+	printf("medianValue=%lf\nreqLength=%d\nreqBytesLength=%d\nresiBitsLength=%d\n", medianValue, reqLength, reqBytesLength, resiBitsLength);	
 	size_t exactDataNum = exactLeadNumArray->size;
 	
 	TightDataPointStorageD* tdps;
@@ -2605,9 +2605,9 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 						SZ_compress_args_double_NoCkRngeNoGzip_2D(cmprType, &tmpByteData, oriData, r2, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
 					else 
 					{
-						tmpByteData = SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(oriData, r2, r1, realPrecision, &tmpOutSize);
-						if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
-							SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
+						tmpByteData = SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(oriData, r2, r1, realPrecision, &tmpOutSize); // jwang
+						//if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
+						//	SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
 					}
 				}
 		}
@@ -2632,9 +2632,9 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 						SZ_compress_args_double_NoCkRngeNoGzip_3D(cmprType, &tmpByteData, oriData, r3, r2, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
 					else 
 					{
-						tmpByteData = SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(oriData, r3, r2, r1, realPrecision, &tmpOutSize);
-						if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
-							SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
+						tmpByteData = SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(oriData, r3, r2, r1, realPrecision, &tmpOutSize); // jwang
+						//if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
+						//	SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
 					}
 				}
 					
@@ -5754,7 +5754,7 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
 
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
-	// total size 										metadata		  # elements   real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements
+	// total size=metadata+elements+real precision+intervals+nodeCount+huffman+block index+unpredicatable count+mean+unpred size + elements
 	unsigned char * result = (unsigned char *) calloc(meta_data_offset + exe_params->SZ_SIZE_TYPE + sizeof(double) + sizeof(int) + sizeof(int) + 5*treeByteSize + 3*num_blocks*sizeof(int) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(double) + total_unpred * sizeof(double) + num_elements * sizeof(int), 1);
 	unsigned char * result_pos = result;
 	initRandomAccessBytes(result_pos);
@@ -5833,6 +5833,12 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	result_pos += typeArray_size;
 
 	size_t totalEncodeSize = result_pos - result;
+	printf("miss=%lu\n", total_unpred);
+	printf("nodeCount=%lu\n", nodeCount);
+	printf("treeByteSize=%u\n", treeByteSize);
+	printf("encodeSize=%lu\n", typeArray_size);
+	printf("outlierSize=%lu\n", total_unpred * sizeof(double));
+	printf("totalEncodeSize=%lu\n", totalEncodeSize);
 	free(indicator);
 	free(result_unpredictable_data);
 	free(result_type);
@@ -6791,6 +6797,12 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 	free(result_type);
 	free(reg_params);
 
+	printf("miss=%lu\n", total_unpred);
+	printf("nodeCount=%lu\n", nodeCount);
+	printf("treeByteSize=%u\n", treeByteSize);
+	printf("encodeSize=%lu\n", typeArray_size);
+	printf("outlierSize=%lu\n", total_unpred * sizeof(double));
+	printf("totalEncodeSize=%lu\n", totalEncodeSize);
 	
 	SZ_ReleaseHuffman(huffmanTree);
 	*comp_size = totalEncodeSize;

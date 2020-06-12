@@ -328,21 +328,19 @@ int main(int argc, char* argv[])
 			{			
 				n = nbEle - 1; n |= n >> 1; n |= n >> 2; n |= n >> 4;
 				n |= n >> 8; n |= n >> 16; n++;
-				//fprintf(stderr, "nbEle=%lu\n", nbEle);
-				//fprintf(stderr, "n=%lu\n", n);
 
 				double *dwtdata = malloc(n * sizeof (double));
 				gsl_wavelet *w;
 				gsl_wavelet_workspace *work;
 
-				w = gsl_wavelet_alloc(gsl_wavelet_daubechies, 4);
+				w = gsl_wavelet_alloc (gsl_wavelet_daubechies, 4);
 				work = gsl_wavelet_workspace_alloc (n);
 
 				for (i = 0; i < nbEle; i++)
 				  dwtdata[i] = (double)data[i];
 				memset(dwtdata+r1, 0, sizeof(double)*(n-nbEle));
 
-				status = gsl_wavelet_transform_forward(w, dwtdata, 1, n, work);
+				status = gsl_wavelet_transform_forward (w, dwtdata, 1, n, work);
 
 				if (status != GSL_SUCCESS)
 				{
@@ -350,14 +348,13 @@ int main(int argc, char* argv[])
 					exit(0);
 				}
 
-				//memcpy(data, dwtdata, sizeof(float)*nbEle);
-				for (i = 0; i < nbEle; i++)
+				for (i = 0; i < r1; i++)
 				  data[i] = (float)dwtdata[i];
 
 				gsl_wavelet_free (w);
 				gsl_wavelet_workspace_free (work);
-				//sprintf(outputFilePath, "%s.dwt", inPath);
-				//writeFloatData_inBytes(data, nbEle, outputFilePath, &status);
+				sprintf(outputFilePath, "%s.dwt", inPath);
+				writeByteData(dwtdata, sizeof(float)*nbEle, outputFilePath, &status);
 				free (dwtdata);
 			}
 			cost_start();	
@@ -365,19 +362,19 @@ int main(int argc, char* argv[])
 			printf("outputsize=%lu\n", outSize);
 			printf("compressionratio=%f\n", (float)nbEle*4/outSize);
 			cost_end();
-			//if(cmpPath == NULL)
-			//	sprintf(outputFilePath, "%s.sz", inPath);
-			//else
-			//	strcpy(outputFilePath, cmpPath);
-			//writeByteData(bytes, outSize, outputFilePath, &status);	
+			if(cmpPath == NULL)
+				sprintf(outputFilePath, "%s.sz", inPath);
+			else
+				strcpy(outputFilePath, cmpPath);
+			writeByteData(bytes, outSize, outputFilePath, &status);	
 			free(data);
-			//if(status != SZ_SCES)
-			//{
-			//	printf("Error: data file %s cannot be written!\n", outputFilePath);
-			//	exit(0);
-			//}
-			////printf("compression time = %f\n", totalCost);
-			////printf("compressed data file: %s\n", outputFilePath);			
+			if(status != SZ_SCES)
+			{
+				printf("Error: data file %s cannot be written!\n", outputFilePath);
+				exit(0);
+			}
+			//printf("compression time = %f\n", totalCost);
+			//printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
 		{
@@ -440,9 +437,6 @@ int main(int argc, char* argv[])
 					n = nbEle - 1; n |= n >> 1; n |= n >> 2; n |= n >> 4;
 					n |= n >> 8; n |= n >> 16; n++;
 					
-					//fprintf(stderr, "nbEle=%lu\n", nbEle);
-					//fprintf(stderr, "n=%lu\n", n);
-					
 					double *dwtdata = malloc(n * sizeof (double));
 					gsl_wavelet *w;
 					gsl_wavelet_workspace *work;
@@ -465,9 +459,8 @@ int main(int argc, char* argv[])
 
 					gsl_wavelet_free (w);
 					gsl_wavelet_workspace_free (work);
-					//sprintf(outputFilePath, "%s.dwt", inPath);
-					//writeDoubleData_inBytes(data, nbEle, outputFilePath, &status);
-					//writeDoubleData(dwtdata, nbEle, outputFilePath, &status);
+					sprintf(outputFilePath, "%s.dwt", inPath);
+					writeByteData(dwtdata, sizeof(double)*nbEle, outputFilePath, &status);
 
 					free (dwtdata);
 				}
@@ -475,20 +468,23 @@ int main(int argc, char* argv[])
 				bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
 				printf("outputsize=%lu\n", outSize);
 				printf("compressionratio=%f\n", (float)nbEle*8/outSize);
-				//cost_end();
-				//if(cmpPath == NULL)
-				//	sprintf(outputFilePath, "%s.sz", inPath);
-				//else
-				//	strcpy(outputFilePath, cmpPath);
-				//writeByteData(bytes, outSize, outputFilePath, &status);		
+
+				double compressionRatio = 1.0*nbEle*sizeof(float)/byteLength;
+
+				cost_end();
+				if(cmpPath == NULL)
+					sprintf(outputFilePath, "%s.sz", inPath);
+				else
+					strcpy(outputFilePath, cmpPath);
+				writeByteData(bytes, outSize, outputFilePath, &status);		
 				free(data);
-				//if(status != SZ_SCES)
-				//{
-				//	printf("Error: data file %s cannot be written!\n", outputFilePath);
-				//	exit(0);
-				//}		
-				////printf("compression time = %f\n", totalCost);
-				////printf("compressed data file: %s\n", outputFilePath);
+				if(status != SZ_SCES)
+				{
+					printf("Error: data file %s cannot be written!\n", outputFilePath);
+					exit(0);
+				}		
+				//printf("compression time = %f\n", totalCost);
+				//printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
 

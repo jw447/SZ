@@ -783,8 +783,8 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	free(treeBytes);
 	size_t enCodeSize = 0;
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
-	//fprintf(stderr, "nodecount=%d\n", nodeCount);
-	//printf("treeByteSize=%u\nencodesize=%lu\n", treeByteSize, enCodeSize);
+	fprintf(stderr, "nodeCount=%d\n", nodeCount);
+	printf("treeByteSize=%u\nencodesize=%lu\n", treeByteSize, enCodeSize);
 	*outSize = 8+treeByteSize+enCodeSize;
 }
 

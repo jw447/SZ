@@ -489,8 +489,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 #endif	
 		
 	}//end of for
-	//printf("miss=%lu\n", miss);
-	//printf("medianValue=%lf\nreqLength=%d\nreqBytesLength=%d\nresiBitsLength=%d\n", medianValue, reqLength, reqBytesLength, resiBitsLength);
+	printf("miss=%lu\n", miss);
+	printf("medianValue=%lf\nreqLength=%d\nreqBytesLength=%d\nresiBitsLength=%d\n", medianValue, reqLength, reqBytesLength, resiBitsLength);
 		
 //	char* expSegmentsInBytes;
 //	int expSegmentsInBytes_size = convertESCToBytes(esc, &expSegmentsInBytes);
@@ -2898,9 +2898,9 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 							SZ_compress_args_float_NoCkRngeNoGzip_2D(cmprType, &tmpByteData, oriData, r2, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
 						else 
 						{
-							tmpByteData = SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(oriData, r2, r1, realPrecision, &tmpOutSize);					
-							if(tmpOutSize>=dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
-								SZ_compress_args_float_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);						
+							tmpByteData = SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(oriData, r2, r1, realPrecision, &tmpOutSize);	// jwang
+							//if(tmpOutSize>=dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
+							//	SZ_compress_args_float_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);						
 						}
 #ifdef HAVE_RANDOMACCESS							
 					}					
@@ -2934,9 +2934,9 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 							SZ_compress_args_float_NoCkRngeNoGzip_3D(cmprType, &tmpByteData, oriData, r3, r2, r1, realPrecision, &tmpOutSize, valueRangeSize, medianValue);
 						else 
 						{
-							tmpByteData = SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(oriData, r3, r2, r1, realPrecision, &tmpOutSize);
-							if(tmpOutSize>=dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
-								SZ_compress_args_float_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);		
+							tmpByteData = SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(oriData, r3, r2, r1, realPrecision, &tmpOutSize); // jwang
+							//if(tmpOutSize>=dataLength*sizeof(float) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
+							//	SZ_compress_args_float_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);		
 						}
 #ifdef HAVE_RANDOMACCESS							
 					}					
@@ -6248,7 +6248,7 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
 	// total size 										metadata		  # elements   real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements
 	unsigned char * result = (unsigned char *) calloc(meta_data_offset + exe_params->SZ_SIZE_TYPE + sizeof(float) + sizeof(int) + sizeof(int) + 5*treeByteSize + 3*num_blocks*sizeof(int) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(float) + total_unpred * sizeof(float) + num_elements * sizeof(int), 1);
-	unsigned char * result_pos = result;
+	unsigned char * result_pos = result; //
 	initRandomAccessBytes(result_pos);
 	result_pos += meta_data_offset;
 
@@ -6325,6 +6325,12 @@ unsigned char * SZ_compress_float_2D_MDQ_nonblocked_with_blocked_regression(floa
 	result_pos += typeArray_size;
 
 	size_t totalEncodeSize = result_pos - result;
+	printf("miss=%lu\n", total_unpred);
+	printf("nodeCount=%lu\n", nodeCount);
+	printf("treeByteSize=%u\n", treeByteSize);
+	printf("encodeSize=%lu\n", typeArray_size);
+	printf("outlierSize=%lu\n", total_unpred * sizeof(float));
+	printf("totalEncodeSize=%lu\n", totalEncodeSize);
 	free(indicator);
 	free(result_unpredictable_data);
 	free(result_type);
@@ -7409,6 +7415,12 @@ unsigned char * SZ_compress_float_3D_MDQ_nonblocked_with_blocked_regression(floa
 	encode(huffmanTree, result_type, num_elements, result_pos, &typeArray_size);
 	result_pos += typeArray_size;
 	size_t totalEncodeSize = result_pos - result;
+	printf("miss=%lu\n", total_unpred);
+	printf("nodeCount=%lu\n", nodeCount);
+	printf("treeByteSize=%u\n", treeByteSize);
+	printf("encodeSize=%lu\n", typeArray_size);
+	printf("outlierSize=%lu\n", total_unpred * sizeof(float));
+	printf("totalEncodeSize=%lu\n", totalEncodeSize);
 	free(indicator);
 	free(result_unpredictable_data);
 	free(result_type);
