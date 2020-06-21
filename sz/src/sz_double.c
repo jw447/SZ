@@ -344,7 +344,8 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	//jwang
 	//printf("valueRangeSize=%lf\n",valueRangeSize);
 	//printf("checkradius=%lf\n", checkRadius);
-	//printf("intvCapacity=%d\n",exe_params->intvCapacity);
+	//printf("intvCapacity=%d\n",exe_params->intvCapacity); 65536
+	//printf("exe_params->intvRadius=%d\n", exe_params->intvRadius); 32768
 
 	int count_hit = 0;
 	int count_missed = 2;
@@ -378,7 +379,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			//fprintf(stderr,"%d\n", type[i]);
+			fprintf(stderr,"%d\n", type[i]);
 			//listAdd_double(last3CmprsData, pred);
 #ifdef HAVE_TIMECMPR					
 			if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
