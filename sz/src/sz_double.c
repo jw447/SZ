@@ -257,6 +257,7 @@ TightDataPointStorageD* SZ_compress_double_1D_MDQ(double *oriData,
 size_t dataLength, double realPrecision, double valueRangeSize, double medianValue_d, CPU_timing* cpu_timing)
 {
 	FuncName;
+	printf("SZ_compress_double_1D_MDQ\n");
 	//printf("%f,%f\n", valueRangeSize, realPrecision);
 	(*cpu_timing).count_hit = 0;
         (*cpu_timing).count_missed = 2;

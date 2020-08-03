@@ -379,6 +379,7 @@ int main(int argc, char* argv[])
 				printf("outliersize=%lu\n", outSize - (*cpu_timing).treesize - (*cpu_timing).encodesize);
 				printf("cratio=%f\n", (float)nbEle*4/outSize);
 				*/
+				printf("cratio=%f\n", (float)nbEle*4/outSize);
 				
 			}
 			else if(parallelMode==1) //openMP
@@ -529,6 +530,7 @@ int main(int argc, char* argv[])
 				        printf("outputsize=%lu\n", outSize);
 				        printf("cratio=%f\n", (float)nbEle*8/outSize);
 					*/
+				        printf("cratio=%f\n", (float)nbEle*8/outSize);
 				}
 				else if(parallelMode==1)//openMP
 				{
