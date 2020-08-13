@@ -1248,3 +1248,22 @@ void* SZ_decompress_customize(const char* cmprName, void* userPara, int dataType
 	}
 	return result;	
 }
+
+/* definition of rle function */
+int rle(int* s, size_t len, int* elem, int* count){
+    size_t i, count_;
+    int index = 0;
+    for (i = 0; i < len; i++){
+        count_ = 1;
+        while (i < len-1 && s[i] == s[i+1]){
+            count_++;
+            i++;
+        }
+
+        count[index] = count_;
+        elem[index] = s[i];
+        index++;
+    }
+    return index;
+}
+

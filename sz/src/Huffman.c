@@ -79,10 +79,8 @@ void qinsert(HuffmanTree *huffmanTree, node n)
 {
 	//FuncName;
 	int j, i = huffmanTree->qend++;
-	//printf("i=%d, qend=%d\n", i, huffmanTree->qend);
 	while ((j = (i>>1)))  //j=i/2
 	{
-		//printf("i=%d, j=%d\n", i, j);
 		if (huffmanTree->qq[j]->freq <= n->freq) break;
 		huffmanTree->qq[i] = huffmanTree->qq[j], i = j;
 	}
@@ -114,8 +112,6 @@ node qremove(HuffmanTree* huffmanTree)
 void build_code(HuffmanTree *huffmanTree, node n, int len, unsigned long out1, unsigned long out2)
 {
 	//FuncName;
-	//printf("build_code\n");
-	//printf("n->t=%d, len=%d\n", n->t, len);
 	if (n->t) {
 		huffmanTree->code[n->c] = (unsigned long*)malloc(2*sizeof(unsigned long));
 		if(len<=64)
@@ -133,7 +129,6 @@ void build_code(HuffmanTree *huffmanTree, node n, int len, unsigned long out1, u
 		return;
 	}
 	int index = len >> 6; //=len/64
-	//printf("index=%d\n", index);
 	if(index == 0)
 	{
 		out1 = out1 << 1;
@@ -170,48 +165,19 @@ void init(HuffmanTree* huffmanTree, int *s, size_t length)
 	for(i = 0;i < length;i++)
 	{
 		index = s[i];
-		//printf("s[%lu]=%d\n", i, s[i]);
 		freq[index]++;
 	}
-	//printf("huffmanTree->allNodes=%lu\n", huffmanTree->allNodes);
-	//printf("qend=%d\n", huffmanTree->qend);
 	for (i = 0; i < huffmanTree->allNodes; i++)
 		if (freq[i])
 		{
 			node n = new_node(huffmanTree, freq[i], i, 0, 0);
 			qinsert(huffmanTree, n);
-	                //for (jj = 1; jj < huffmanTree->qend; jj++)
-			//	printf("%lu ", huffmanTree->qq[jj]->freq);
-	                //printf("\n");
 		}
-	//printf("huffmanTree->qend=%d\n", huffmanTree->qend);
-	//printf("huffmanTree->n_nodes=%d\n", huffmanTree->n_nodes);
-
-	// for(i = 0; i < huffmanTree->n_nodes; i++)
-	// {
-	// 	// try to extract node from pool. pool is the pointer to the first node.
-	// 	node nc = huffmanTree->pool + i;
-	// 	printf("%lu, %u, %d \n", nc->freq, nc->c, nc->t);
-	// }
 	while (huffmanTree->qend > 2)
 	{
 		qinsert(huffmanTree, new_node(huffmanTree, 0, 0, qremove(huffmanTree), qremove(huffmanTree)));
-	        //for (jj = 1; jj < huffmanTree->qend; jj++)
-		//	printf("%lu ", huffmanTree->qq[jj]->freq);
-		//printf("\n");
-		//printf("number of nodes=%d\n", huffmanTree->n_nodes);
 	}
-	//printf("huffmanTree->n_nodes=%d\n", huffmanTree->n_nodes);
-	//printf("huffmanTree->qend=%d\n", huffmanTree->qend);
-
-	//printf("build_code\n");
-	//printf("qq1->t = %d\n", huffmanTree->qq[1]->t);
 	build_code(huffmanTree, huffmanTree->qq[1], 0, 0, 0);
-	//printf("finished build_code\n");
-	// jwang - print the huffman code of tree nodes
-	//for(i = 0; i < huffmanTree->stateNum; i++)
-	//	if(huffmanTree->code[i] != 0)
-	//		printf("code->%d\n", huffmanTree->cout[i]);
 	
 	free(freq);
 }
@@ -798,12 +764,8 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	int nodeCount = 0;
 	unsigned char *treeBytes, buffer[4];
 	
-	gettimeofday(&buildTCostS, NULL);
-	//printf("init\n");
 	init(huffmanTree, s, length);
-	gettimeofday(&buildTCostE, NULL);
-	(*cpu_timing).buildTCost = ((buildTCostE.tv_sec*1000000+buildTCostE.tv_usec)-(buildTCostS.tv_sec*1000000+buildTCostS.tv_usec))/1000000.0;
-	
+
 	for (i = 0; i < huffmanTree->stateNum; i++){
 		if (huffmanTree->code[i]) nodeCount++;
 	}
@@ -820,23 +782,13 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 	free(treeBytes);
 	size_t enCodeSize = 0;
 
-	gettimeofday(&encodeTCostS, NULL);
-	//printf("encode\n");
 	encode(huffmanTree, s, length, *out+8+treeByteSize, &enCodeSize);
-	gettimeofday(&encodeTCostE, NULL);
-	(*cpu_timing).encodeTCost = ((encodeTCostE.tv_sec*1000000+encodeTCostE.tv_usec)-(encodeTCostS.tv_sec*1000000+encodeTCostS.tv_usec))/1000000.0;
 
 	*outSize = 8+treeByteSize+enCodeSize;
-
-	(*cpu_timing).node_count = nodeCount;
-	(*cpu_timing).treesize = treeByteSize;
-	(*cpu_timing).encodesize = enCodeSize;
 }
 
 int encode_withTree_MSST19(HuffmanTree* huffmanTree, int *s, size_t length, unsigned char **out, size_t *outSize)
 {
-	//struct ClockPoint clockPointInit;
-	//TimeDurationStart("init", &clockPointInit);
 	size_t i;
 	int nodeCount = 0;
 	unsigned char *treeBytes, buffer[4];

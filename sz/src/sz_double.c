@@ -253,16 +253,31 @@ unsigned int optimize_intervals_double_4D(double *oriData, size_t r1, size_t r2,
 	return powerOf2;
 }
 
+/* definition of rle function 
+int rle(int* s, size_t len, int* elem, int* count){
+    size_t i, count_;
+    int index = 0;
+    for (i = 0; i < len; i++){
+        count_ = 1;
+        while (i < len-1 && s[i] == s[i+1]){
+            count_++;
+            i++;
+        }
+
+        count[index] = count_;
+        elem[index] = s[i];
+        index++;
+    }
+    return index;
+}
+*/
+
 TightDataPointStorageD* SZ_compress_double_1D_MDQ(double *oriData, 
 size_t dataLength, double realPrecision, double valueRangeSize, double medianValue_d, CPU_timing* cpu_timing)
 {
 	FuncName;
-	printf("SZ_compress_double_1D_MDQ\n");
-	//printf("%f,%f\n", valueRangeSize, realPrecision);
-	(*cpu_timing).count_hit = 0;
-        (*cpu_timing).count_missed = 2;
+	//printf("SZ_compress_double_1D_MDQ\n");
 
-	gettimeofday(&compCostS, NULL);
 #ifdef HAVE_TIMECMPR
 	double* decData = NULL;	
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -339,11 +354,6 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double interval = 2*realPrecision;
 	double recip_realPrecision = 1/realPrecision;
 
-	struct timespec tpstart;
-        struct timespec tpend;
-	//printf("checkRadius=%f\n", checkRadius);
-	//printf("exe_params->intvRadius=%d\n", exe_params->intvRadius);
-        gettimeofday(&cfCostS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
 		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
@@ -351,67 +361,40 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 		if(predAbsErr<checkRadius)
 		{
-			(*cpu_timing).count_hit += 1;
-			//gettimeofday(&hitCostS, NULL);
-			clock_gettime(CLOCK_MONOTONIC, &tpstart);
 			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
 			{
 				type[i] = exe_params->intvRadius+state;
-				//printf("%d\n", type[i]);
 				pred = pred + state*interval;
 			}
 			else //curData<pred
 			{
 				type[i] = exe_params->intvRadius-state;
-				//printf("%d\n", type[i]);
 				pred = pred - state*interval;
 			}
-			clock_gettime(CLOCK_MONOTONIC, &tpend);
-			uint64_t diff = BILLION * (tpend.tv_sec - tpstart.tv_sec) + tpend.tv_nsec - tpstart.tv_nsec;
-			//printf("hitcost=%llu\n", (long long unsigned int)diff);
-			//gettimeofday(&hitCostE, NULL);
-			//(*cpu_timing).hitCost += ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0;
-			//printf("hitcost=%f\n", ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0);
 		}
 		else{
 			type[i] = 0;
-			(*cpu_timing).count_missed += 1;
-			//gettimeofday(&misCostS, NULL);
-
-			clock_gettime(CLOCK_MONOTONIC, &tpstart);
-			//gettimeofday(&cSDVCostS, NULL);
 			compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
-			//gettimeofday(&cSDVCostE, NULL);
-
-			//gettimeofday(&uLCECostS, NULL);
 			updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce); //
 			memcpy(preDataBytes,vce->curBytes,8);
-			//gettimeofday(&uLCECostE, NULL);
-
-			//gettimeofday(&aEDCostS, NULL);
 			addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
-			//pred = vce->data; 
-			//gettimeofday(&aEDCostE, NULL);
-
-			//gettimeofday(&misCostE, NULL);
-			(*cpu_timing).misCost += ((misCostE.tv_sec*1000000+misCostE.tv_usec)-(misCostS.tv_sec*1000000+misCostS.tv_usec))/1000000.0;	
-			//printf("miscost=%f\n", ((misCostE.tv_sec*1000000+misCostE.tv_usec)-(misCostS.tv_sec*1000000+misCostS.tv_usec))/1000000.0);
-			clock_gettime(CLOCK_MONOTONIC, &tpend);
-			uint64_t diff = BILLION * (tpend.tv_sec - tpstart.tv_sec) + tpend.tv_nsec - tpstart.tv_nsec;
-			//printf("miscost=%llu\n", (long long unsigned int)diff);
-
-			//(*cpu_timing).cSDVCost += ((cSDVCostE.tv_sec*1000000+cSDVCostE.tv_usec)-(cSDVCostS.tv_sec*1000000+cSDVCostS.tv_usec))/1000000.0;	
-			//(*cpu_timing).uLCECost += ((uLCECostE.tv_sec*1000000+uLCECostE.tv_usec)-(uLCECostS.tv_sec*1000000+uLCECostS.tv_usec))/1000000.0;	
-			//(*cpu_timing).aEDCost += ((aEDCostE.tv_sec*1000000+aEDCostE.tv_usec)-(aEDCostS.tv_sec*1000000+aEDCostS.tv_usec))/1000000.0;	
 		}
-		//printf("%d\n", type[i]);
 		
 	}//end of for
-	gettimeofday(&cfCostE, NULL);
-
-	size_t exactDataNum = exactLeadNumArray->size;
 	
+	/* run-length encoding */
+	int elem[dataLength];
+	int count[dataLength];
+	int index = rle(type, dataLength, elem, count);
+	//for (int i = 0; i < index; i++) printf("index=%d, si=%d, count=%d\n", i, elem[i], count[i]);
+	int outputsize_rle = sizeof(int)*index*2;
+	printf("indexlen=%d\n", index);
+	printf("rle_size=%d\n", outputsize_rle);
+
+	/* huffman encoding */
+	size_t exactDataNum = exactLeadNumArray->size;
+
 	TightDataPointStorageD* tdps;
 	new_TightDataPointStorageD(&tdps, dataLength, exactDataNum, 
 			type, exactMidByteArray->array, exactMidByteArray->size,  
@@ -420,13 +403,6 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 			resiBitsLength, 
 			realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0, cpu_timing);
 	
-	gettimeofday(&compCostE, NULL);
-	(*cpu_timing).compCost = ((compCostE.tv_sec*1000000+compCostE.tv_usec)-(compCostS.tv_sec*1000000+compCostS.tv_usec))/1000000.0;
-	(*cpu_timing).cfCost = ((cfCostE.tv_sec*1000000+cfCostE.tv_usec)-(cfCostS.tv_sec*1000000+cfCostS.tv_usec))/1000000.0;
-
-	(*cpu_timing).hit_ratio = (double)(*cpu_timing).count_hit/((*cpu_timing).count_hit + (*cpu_timing).count_missed);
-	(*cpu_timing).qf = quantization_intervals;
-	(*cpu_timing).Nelements = dataLength;	
 	//free memory
 	free_DIA(exactLeadNumArray);
 	free_DIA(resiBitArray);
@@ -435,8 +411,11 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	free(lce);	
 	free(exactMidByteArray); //exactMidByteArray->array has been released in free_TightDataPointStorageF(tdps);	
 	
-	return tdps;	
+
+	return tdps;
 }
+
+
 
 void SZ_compress_args_double_StoreOriData(double* oriData, size_t dataLength, unsigned char** newByteData, size_t *outSize)
 {	

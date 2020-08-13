@@ -327,6 +327,8 @@ unsigned char* SZ_compress_customize(const char* appName, void* userPara, int da
 
 void* SZ_decompress_customize(const char* appName, void* userPara, int dataType, unsigned char* bytes, size_t byteLength, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, int* status);
 
+int rle(int* s, size_t len, int* elem, int* count);
+
 #ifdef __cplusplus
 }
 

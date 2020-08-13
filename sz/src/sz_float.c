@@ -347,13 +347,29 @@ unsigned int optimize_intervals_float_4D(float *oriData, size_t r1, size_t r2, s
 	return powerOf2;
 }
 
+/* definition of rle function
+int rle(int* s, size_t len, int* elem, int* count){
+    size_t i, count_;
+    int index = 0;
+    for (i = 0; i < len; i++){
+        count_ = 1;
+        while (i < len-1 && s[i] == s[i+1]){
+            count_++;
+            i++;
+        }
+
+        count[index] = count_;
+        elem[index] = s[i];
+        index++;
+    }
+    return index;
+}
+*/
+
 TightDataPointStorageF* SZ_compress_float_1D_MDQ(float *oriData, 
 size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_f, CPU_timing *cpu_timing)
 {
-	(*cpu_timing).count_hit = 0;
-        (*cpu_timing).count_missed = 2;
 
-	gettimeofday(&compCostS, NULL);
 #ifdef HAVE_TIMECMPR	
 	float* decData = NULL;
 	if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -434,13 +450,9 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	float pred = last3CmprsData[0];
 	float predAbsErr;
 	checkRadius = (exe_params->intvCapacity-1)*realPrecision;
-	//printf("checkRadius=%f\n", checkRadius);
-	//printf("%f,%f\n", valueRangeSize, realPrecision);
 	float interval = 2*realPrecision;
-	
 	float recip_precision = 1/realPrecision;
 
-	gettimeofday(&cfCostS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
 		curData = spaceFillingValue[i];
@@ -448,71 +460,48 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 
 		if(predAbsErr<checkRadius)
 		{
-			(*cpu_timing).count_hit += 1;
-                        gettimeofday(&hitCostS, NULL);
 			state = ((int)(predAbsErr*recip_precision+1))>>1;
 			if(curData>=pred)
 			{
 				type[i] = exe_params->intvRadius+state;
-				//printf("%d\n", type[i]);
 				pred = pred + state*interval;
 			}
 			else //curData<pred
 			{
 				type[i] = exe_params->intvRadius-state;
-				//printf("%d\n", type[i]);
 				pred = pred - state*interval;
 			}
-			gettimeofday(&hitCostE, NULL);
-                        (*cpu_timing).hitCost += ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0;
 		}
 		else{	
-			(*cpu_timing).count_missed += 1;
-                        gettimeofday(&misCostS, NULL);
 			type[i] = 0;
-			gettimeofday(&cSDVCostS, NULL);
 			compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
-			gettimeofday(&cSDVCostE, NULL);
-
-			gettimeofday(&uLCECostS, NULL);
 			updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 			memcpy(preDataBytes,vce->curBytes,4);
-			gettimeofday(&uLCECostE, NULL);
-
-			gettimeofday(&aEDCostS, NULL);
 			addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 			pred = vce->data;
-			gettimeofday(&aEDCostE, NULL);
 
-			gettimeofday(&misCostE, NULL);
-                        (*cpu_timing).misCost += ((misCostE.tv_sec*1000000+misCostE.tv_usec)-(misCostS.tv_sec*1000000+misCostS.tv_usec))/1000000.0;
-
-                        (*cpu_timing).cSDVCost += ((cSDVCostE.tv_sec*1000000+cSDVCostE.tv_usec)-(cSDVCostS.tv_sec*1000000+cSDVCostS.tv_usec))/1000000.0;
-                        (*cpu_timing).uLCECost += ((uLCECostE.tv_sec*1000000+uLCECostE.tv_usec)-(uLCECostS.tv_sec*1000000+uLCECostS.tv_usec))/1000000.0;
-                        (*cpu_timing).aEDCost += ((aEDCostE.tv_sec*1000000+aEDCostE.tv_usec)-(aEDCostS.tv_sec*1000000+aEDCostS.tv_usec))/1000000.0;
 		}
-		//printf("%d\n", type[i]);
 	}//end of for
-	gettimeofday(&cfCostE, NULL);
-	
+
+        /* run-length encoding */
+        int elem[dataLength];
+        int count[dataLength];
+        int index = rle(type, dataLength, elem, count);
+        //for (int i = 0; i < index; i++) printf("index=%d, si=%d, count=%d\n", i, elem[i], count[i]);
+        int outputsize_rle = sizeof(int)*index*2;
+        printf("indexlen=%d\n", index);
+        printf("rle_size=%d\n", outputsize_rle);
+
+	/* huffman encoding */
 	size_t exactDataNum = exactLeadNumArray->size;
 	
 	TightDataPointStorageF* tdps;
-			
 	new_TightDataPointStorageF(&tdps, dataLength, exactDataNum, 
 			type, exactMidByteArray->array, exactMidByteArray->size,  
 			exactLeadNumArray->array,  
 			resiBitArray->array, resiBitArray->size, 
 			resiBitsLength,
 			realPrecision, medianValue, (char)reqLength, quantization_intervals, NULL, 0, 0, cpu_timing);
-
-	gettimeofday(&compCostE, NULL);
-        (*cpu_timing).compCost = ((compCostE.tv_sec*1000000+compCostE.tv_usec)-(compCostS.tv_sec*1000000+compCostS.tv_usec))/1000000.0;
-        (*cpu_timing).cfCost = ((cfCostE.tv_sec*1000000+cfCostE.tv_usec)-(cfCostS.tv_sec*1000000+cfCostS.tv_usec))/1000000.0;
-
-	(*cpu_timing).hit_ratio = (double)(*cpu_timing).count_hit/((*cpu_timing).count_hit + (*cpu_timing).count_missed);
-        (*cpu_timing).qf = quantization_intervals;
-        (*cpu_timing).Nelements = dataLength;
 
 	//free memory
 	free_DIA(exactLeadNumArray);
