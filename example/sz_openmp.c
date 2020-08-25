@@ -345,6 +345,7 @@ int main(int argc, char* argv[])
 				cost_start();
 				bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
 				cost_end();				
+				printf("cratio=%f\n", (float)nbEle*4/outSize);
 			}
 			else if(parallelMode==1) //openMP
 			{
@@ -380,8 +381,8 @@ int main(int argc, char* argv[])
 				printf("Error: data file %s cannot be written!\n", outputFilePath);
 				exit(0);
 			}
-			printf("compression time = %f\n", totalCost);
-			printf("compressed data file: %s\n", outputFilePath);			
+			//printf("compression time = %f\n", totalCost);
+			//printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
 		{
@@ -449,7 +450,7 @@ int main(int argc, char* argv[])
 				{
 					cost_start();
 					bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
-					cost_end();				
+					cost_end();
 				}
 				else if(parallelMode==1)//openMP
 				{
@@ -485,8 +486,9 @@ int main(int argc, char* argv[])
 					printf("Error: data file %s cannot be written!\n", outputFilePath);
 					exit(0);
 				}		
-				printf("compression time = %f\n", totalCost);
-				printf("compressed data file: %s\n", outputFilePath);
+				printf("cratio=%f\n", (float)nbEle*8/outSize);
+				//printf("compression time = %f\n", totalCost);
+				//printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
 

@@ -379,7 +379,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			fprintf(stderr,"%d\n", type[i]);
+			//fprintf(stderr,"%d\n", type[i]);
 			//listAdd_double(last3CmprsData, pred);
 #ifdef HAVE_TIMECMPR					
 			if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
@@ -432,7 +432,6 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	free(vce);
 	free(lce);	
 	free(exactMidByteArray); //exactMidByteArray->array has been released in free_TightDataPointStorageF(tdps);	
-	
 	return tdps;	
 }
 
