@@ -380,6 +380,7 @@ int main(int argc, char* argv[])
 				printf("cratio=%f\n", (float)nbEle*4/outSize);
 				*/
 				printf("cratio=%f\n", (float)nbEle*4/outSize);
+				printf("totalCost=%f\n", totalCost);
 				
 			}
 			else if(parallelMode==1) //openMP
@@ -531,6 +532,7 @@ int main(int argc, char* argv[])
 				        printf("cratio=%f\n", (float)nbEle*8/outSize);
 					*/
 				        printf("cratio=%f\n", (float)nbEle*8/outSize);
+					printf("totalCost=%f\n", totalCost);
 				}
 				else if(parallelMode==1)//openMP
 				{
