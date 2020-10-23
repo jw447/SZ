@@ -294,10 +294,10 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->medianValue = medianValue;
 
 	(*this)->reqLength = reqLength;
-	//printf("reqLength=%d\n",reqLength);
+	printf("reqLength=%d\n",reqLength);
 
 	(*this)->dataSeriesLength = dataSeriesLength;
-	//printf("dataSeriesLength=%lu\n", dataSeriesLength);
+	printf("dataSeriesLength=%lu\n", dataSeriesLength);
 
 	(*this)->exactDataNum = exactDataNum;
 	//printf("exactDataNum=%lu\n", exactDataNum);
@@ -325,13 +325,13 @@ void new_TightDataPointStorageD(TightDataPointStorageD **this,
 	(*this)->exactMidBytes = exactMidBytes;
 
 	(*this)->exactMidBytes_size = exactMidBytes_size;
-	//printf("exactMidBytes_size=%lu\n", exactMidBytes_size);
+	printf("exactMidBytes_size=%lu\n", exactMidBytes_size);
 
 	(*this)->leadNumArray_size = convertIntArray2ByteArray_fast_2b(leadNumIntArray, exactDataNum, &((*this)->leadNumArray));
-	//printf("leadNumArray_size=%lu\n", (*this)->leadNumArray_size);
+	printf("leadNumArray_size=%lu\n", (*this)->leadNumArray_size);
 
 	(*this)->residualMidBits_size = convertIntArray2ByteArray_fast_dynamic(resiMidBits, resiBitLength, exactDataNum, &((*this)->residualMidBits));
-	//printf("residualMidBits_size=%lu\n", (*this)->residualMidBits_size);
+	printf("residualMidBits_size=%lu\n", (*this)->residualMidBits_size);
 	
 	(*this)->intervals = intervals;
 	

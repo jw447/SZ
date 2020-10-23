@@ -204,7 +204,8 @@ void encode(HuffmanTree *huffmanTree, int *s, size_t length, unsigned char *out,
 	for (i = 0;i<length;i++) 
 	{
 		state = s[i];
-		bitSize = huffmanTree->cout[state];	
+		bitSize = huffmanTree->cout[state];
+		//printf("%d, %u\n", state, bitSize);
 		
 		//printf("%d %d : %d %u\n",i, state, bitSize, (code[state])[0] >> (64-cout[state])); 
 		//debug: compute the average bitSize and the count that is over 32... 	

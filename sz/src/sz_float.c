@@ -444,7 +444,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 				type[i] = exe_params->intvRadius-state;
 				pred = pred - state*interval;
 			}
-			fprintf(stderr, "%d\n", type[i]);
+			//fprintf(stderr, "%d\n", type[i]);
 			//double-check the prediction error in case of machine-epsilon impact	
 			if(fabs(curData-pred)>realPrecision)
 			{	
