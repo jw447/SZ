@@ -62,7 +62,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		// quantization_intervals = optimize_intervals_float_3D(oriData, r1, realPrecision);
 		quantization_intervals = optimize_intervals_float_3D_opt(oriData, r1, r2, r3, realPrecision);
 		//quantization_intervals = 32768;
-		printf("3D number of bins: %d\nerror bound %.20f\n", quantization_intervals, realPrecision);
+		//printf("3D number of bins: %d\nerror bound %.20f\n", quantization_intervals, realPrecision);
 		// exit(0);		
 		updateQuantizationInfo(quantization_intervals);
 	}	
@@ -168,7 +168,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	}
 	elapsed_time += sz_wtime();
 	//printf("number of blocks: %zu %zu %zu\n", num_x, num_y, num_z);
-	printf("compression and quantization time: %.4f\n", elapsed_time);
+	//printf("compression and quantization time: %.4f\n", elapsed_time);
 
 	elapsed_time = -sz_wtime();
 	size_t nodeCount = 0;
@@ -225,7 +225,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	result_pos += total_unpred * sizeof(float);
 
 	elapsed_time += sz_wtime();
-	printf("write misc time: %.4f\n", elapsed_time);
+	//printf("write misc time: %.4f\n", elapsed_time);
 	
 	elapsed_time = -sz_wtime();
 	size_t * block_pos = (size_t *) result_pos;
@@ -251,7 +251,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 		block_pos[id] = enCodeSize;
 	}
 	elapsed_time += sz_wtime();
-	printf("Parallel Huffman encoding elapsed time: %.4f\n", elapsed_time);
+	//printf("Parallel Huffman encoding elapsed time: %.4f\n", elapsed_time);
 
 	elapsed_time = -sz_wtime();
 	block_offset[0] = 0;
@@ -266,12 +266,12 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 	result_pos += block_offset[thread_num - 1] + block_pos[thread_num - 1];
 
 	elapsed_time += sz_wtime();
-	printf("Final copy elapsed time: %.4f\n", elapsed_time);
+	//printf("Final copy elapsed time: %.4f\n", elapsed_time);
 	// 
 	result_pos += enCodeSize;
 	size_t totalEncodeSize = 0;
 	totalEncodeSize = result_pos - result;
-	printf("Total size %ld\n", totalEncodeSize);
+	//printf("Total size %ld\n", totalEncodeSize);
 	
 	elapsed_time = -sz_wtime();
 	free(freq);
@@ -289,7 +289,7 @@ unsigned char * SZ_compress_float_3D_MDQ_openmp(float *oriData, size_t r1, size_
 
 	*comp_size = totalEncodeSize;
 	elapsed_time += sz_wtime();
-	printf("cleanup time: %.4f\n", elapsed_time);
+	//printf("cleanup time: %.4f\n", elapsed_time);
 	return result;
 }
 
@@ -505,7 +505,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		// quantization_intervals = optimize_intervals_float_3D(oriData, r1, realPrecision);
 		quantization_intervals = optimize_intervals_double_3D_opt(oriData, r1, r2, r3, realPrecision);
 		//quantization_intervals = 32768;
-		printf("3D number of bins: %d\nerror bound %.20f\n", quantization_intervals, realPrecision);
+		//printf("3D number of bins: %d\nerror bound %.20f\n", quantization_intervals, realPrecision);
 		// exit(0);		
 		updateQuantizationInfo(quantization_intervals);
 	}	
@@ -513,7 +513,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		quantization_intervals = exe_params->intvCapacity;
 	}
 	elapsed_time += sz_wtime();
-	printf("opt interval time: %.4f\n", elapsed_time);
+	//printf("opt interval time: %.4f\n", elapsed_time);
 
 	elapsed_time = -sz_wtime();
 	int thread_num = sz_get_max_threads();
@@ -545,7 +545,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	}
 	sz_set_num_threads(thread_num);
 	// calculate block dims
-	printf("number of blocks: %zu %zu %zu\n", num_x, num_y, num_z);
+	//printf("number of blocks: %zu %zu %zu\n", num_x, num_y, num_z);
 
 	size_t split_index_x, split_index_y, split_index_z;
 	size_t early_blockcount_x, early_blockcount_y, early_blockcount_z;
@@ -611,7 +611,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		unpredictable_count[id] = SZ_compress_double_3D_MDQ_RA_block(data_pos, mean + id, r1, r2, r3, current_blockcount_x, current_blockcount_y, current_blockcount_z, realPrecision, P0, P1, type, unpredictable_data);
 	}
 	elapsed_time += sz_wtime();
-	printf("compression and quantization time: %.4f\n", elapsed_time);
+	//printf("compression and quantization time: %.4f\n", elapsed_time);
 	elapsed_time = -sz_wtime();
 	// printf("unpred count:\n");
 	// for(int i=0; i<num_blocks; i++){
@@ -625,7 +625,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	size_t nodeCount = 0;
 	Huffman_init_openmp(huffmanTree, result_type, num_elements, thread_num, freq);
 	elapsed_time += sz_wtime();
-	printf("Build Huffman: %.4f\n", elapsed_time);
+	//printf("Build Huffman: %.4f\n", elapsed_time);
 	elapsed_time = -sz_wtime();
 	for (size_t i = 0; i < stateNum; i++)
 		if (huffmanTree->code[i]) nodeCount++;
@@ -677,7 +677,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	result_pos += total_unpred * sizeof(double);
 
 	elapsed_time += sz_wtime();
-	printf("write misc time: %.4f\n", elapsed_time);
+	//printf("write misc time: %.4f\n", elapsed_time);
 	elapsed_time = -sz_wtime();
 
 	size_t * block_pos = (size_t *) result_pos;
@@ -703,7 +703,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 		block_pos[id] = enCodeSize;
 	}
 	elapsed_time += sz_wtime();
-	printf("Parallel Huffman encoding elapsed time: %.4f\n", elapsed_time);
+	//printf("Parallel Huffman encoding elapsed time: %.4f\n", elapsed_time);
 	elapsed_time = -sz_wtime();
 	// for(int t=0; t<thread_num; t++){
 	// 	memcpy(result_pos, encoding_buffer + t * max_num_block_elements * sizeof(int), block_pos[t]);
@@ -721,7 +721,7 @@ unsigned char * SZ_compress_double_3D_MDQ_openmp(double *oriData, size_t r1, siz
 	result_pos += block_offset[thread_num - 1] + block_pos[thread_num - 1];
 
 	elapsed_time += sz_wtime();
-	printf("Final copy elapsed time: %.4f\n", elapsed_time);
+	//printf("Final copy elapsed time: %.4f\n", elapsed_time);
 	// {
 	// 	int status;
 	// 	writeIntData_inBytes(result_type, num_elements, "/Users/LiangXin/github/SZ-develop/example/openmp/comp001_type.dat", &status);

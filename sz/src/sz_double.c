@@ -2637,8 +2637,11 @@ int errBoundMode, double absErr_Bound, double relBoundRatio, double pwRelBoundRa
 					else 
 					{
 						gettimeofday(&compCostS, NULL);
+						//printf("Compressing 2D with regression-enabled.\n");
 						tmpByteData = SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(oriData, r2, r1, realPrecision, &tmpOutSize); // jwang
 						gettimeofday(&compCostE, NULL);
+						float comp_time = ((compCostE.tv_sec*1000000+compCostE.tv_usec)-(compCostS.tv_sec*1000000+compCostS.tv_usec))/1000000.0; 
+						printf("compression time = %f\n", comp_time);
 						//if(tmpOutSize>=dataLength*sizeof(double) + 3 + MetaDataByteLength + exe_params->SZ_SIZE_TYPE + 1)
 						//	SZ_compress_args_double_StoreOriData(oriData, dataLength, &tmpByteData, &tmpOutSize);
 					}
@@ -5023,6 +5026,10 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	double mean_flush_freq;
 	unsigned char use_mean = 0;
 
+	// measurements used for modeling 
+	struct timeval costS, costE;
+	float stime;
+
 	if(exe_params->optQuantMode==1)
 	{
 		quantization_intervals = optimize_intervals_double_2D_with_freq_and_dense_pos(oriData, r1, r2, realPrecision, &dense_pos, &sz_sample_correct_freq, &mean_flush_freq);
@@ -5032,10 +5039,11 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	else{
 		quantization_intervals = exe_params->intvCapacity;
 	}
-
+	//printf("qf=%u\n", quantization_intervals);
 	// calculate block dims
 	size_t num_x, num_y;
-	size_t block_size = 16;
+	//size_t block_size = 512;
+	size_t block_size = 4; // 4, 8, 16, 32, 64, 128
 
 	SZ_COMPUTE_2D_NUMBER_OF_BLOCKS(r1, num_x, block_size);
 	SZ_COMPUTE_2D_NUMBER_OF_BLOCKS(r2, num_y, block_size);
@@ -5052,6 +5060,16 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 
 	size_t dim0_offset = r2;	
 
+	// printf("block_size=%lu, num_x=%lu, num_y=%lu\n", block_size, num_x, num_y);
+	//
+	// printf("early_blockcount_x=%lu, early_blockcount_y=%lu, late_blockcount_x=%lu, late_blockcount_x=%lu\n",
+	//		early_blockcount_x, early_blockcount_y, late_blockcount_x, late_blockcount_y);
+
+	// printf("max_num_block_elements=%lu, num_blocks=%lu, num_elements=%lu\n",
+	// 		max_num_block_elements, num_blocks, num_elements);
+
+	// printf("dim0_offset=%lu\n", dim0_offset);
+
 	int * result_type = (int *) malloc(num_elements * sizeof(int));
 	size_t unpred_data_max_size = max_num_block_elements;
 	double * result_unpredictable_data = (double *) malloc(unpred_data_max_size * sizeof(double) * num_blocks);
@@ -5067,47 +5085,47 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	// move regression part out
 	size_t params_offset_b = num_blocks;
 	size_t params_offset_c = 2*num_blocks;
-	for(size_t i=0; i<num_x; i++){
-		for(size_t j=0; j<num_y; j++){
-			current_blockcount_x = (i < split_index_x) ? early_blockcount_x : late_blockcount_x;
-			current_blockcount_y = (j < split_index_y) ? early_blockcount_y : late_blockcount_y;
-			offset_x = (i < split_index_x) ? i * early_blockcount_x : i * late_blockcount_x + split_index_x;
-			offset_y = (j < split_index_y) ? j * early_blockcount_y : j * late_blockcount_y + split_index_y;
+	//for(size_t i=0; i<num_x; i++){
+	//	for(size_t j=0; j<num_y; j++){
+	//		current_blockcount_x = (i < split_index_x) ? early_blockcount_x : late_blockcount_x;
+	//		current_blockcount_y = (j < split_index_y) ? early_blockcount_y : late_blockcount_y;
+	//		offset_x = (i < split_index_x) ? i * early_blockcount_x : i * late_blockcount_x + split_index_x;
+	//		offset_y = (j < split_index_y) ? j * early_blockcount_y : j * late_blockcount_y + split_index_y;
 
-			data_pos = oriData + offset_x * dim0_offset + offset_y;
+	//		data_pos = oriData + offset_x * dim0_offset + offset_y;
 
-			{
-				double * cur_data_pos = data_pos;
-				double fx = 0.0;
-				double fy = 0.0;
-				double f = 0;
-				double sum_x; 
-				double curData;
-				for(size_t i=0; i<current_blockcount_x; i++){
-					sum_x = 0;
-					for(size_t j=0; j<current_blockcount_y; j++){
-						curData = *cur_data_pos;
-						sum_x += curData;
-						fy += curData * j;
-						cur_data_pos ++;
-					}
-					fx += sum_x * i;
-					f += sum_x;
-					cur_data_pos += dim0_offset - current_blockcount_y;
-				}
-				double coeff = 1.0 / (current_blockcount_x * current_blockcount_y);
-				reg_params_pos[0] = (2 * fx / (current_blockcount_x - 1) - f) * 6 * coeff / (current_blockcount_x + 1);
-				reg_params_pos[params_offset_b] = (2 * fy / (current_blockcount_y - 1) - f) * 6 * coeff / (current_blockcount_y + 1);
-				reg_params_pos[params_offset_c] = f * coeff - ((current_blockcount_x - 1) * reg_params_pos[0] / 2 + (current_blockcount_y - 1) * reg_params_pos[params_offset_b] / 2);
-			}
+	//		{
+	//			double * cur_data_pos = data_pos;
+	//			double fx = 0.0;
+	//			double fy = 0.0;
+	//			double f = 0;
+	//			double sum_x; 
+	//			double curData;
+	//			for(size_t i=0; i<current_blockcount_x; i++){
+	//				sum_x = 0;
+	//				for(size_t j=0; j<current_blockcount_y; j++){
+	//					curData = *cur_data_pos;
+	//					sum_x += curData;
+	//					fy += curData * j;
+	//					cur_data_pos ++;
+	//				}
+	//				fx += sum_x * i;
+	//				f += sum_x;
+	//				cur_data_pos += dim0_offset - current_blockcount_y;
+	//			}
+	//			double coeff = 1.0 / (current_blockcount_x * current_blockcount_y);
+	//			reg_params_pos[0] = (2 * fx / (current_blockcount_x - 1) - f) * 6 * coeff / (current_blockcount_x + 1);
+	//			reg_params_pos[params_offset_b] = (2 * fy / (current_blockcount_y - 1) - f) * 6 * coeff / (current_blockcount_y + 1);
+	//			reg_params_pos[params_offset_c] = f * coeff - ((current_blockcount_x - 1) * reg_params_pos[0] / 2 + (current_blockcount_y - 1) * reg_params_pos[params_offset_b] / 2);
+	//		}
 
-			reg_params_pos ++;
-		}
-	}
+	//		reg_params_pos ++;
+	//	}
+	//}
 
 	//Compress coefficient arrays
 	double precision_a, precision_b, precision_c;
-	double rel_param_err = 0.15/3;
+	double rel_param_err = 0.15/3; // 0.15/3
 	precision_a = rel_param_err * realPrecision / late_blockcount_x;
 	precision_b = rel_param_err * realPrecision / late_blockcount_y;
 	precision_c = rel_param_err * realPrecision;
@@ -5169,318 +5187,10 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	int coeff_index = 0;
 	unsigned int coeff_unpredictable_count[3] = {0};
 	double noise = realPrecision * 0.81;
-	//if(use_mean){
-	//	type = result_type;
-	//	int intvCapacity_sz = intvCapacity - 2;
-	//	for(size_t i=0; i<num_x; i++){
-	//		current_blockcount_x = (i < split_index_x) ? early_blockcount_x : late_blockcount_x;
-	//		offset_x = (i < split_index_x) ? i * early_blockcount_x : i * late_blockcount_x + split_index_x;
-	//		data_pos = oriData + offset_x * dim0_offset;
-
-	//		cur_pb_buf_pos = cur_pb_buf + strip_dim0_offset + 1;
-	//		next_pb_buf_pos = next_pb_buf + 1;
-	//		double * pb_pos = cur_pb_buf_pos;
-	//		double * next_pb_pos = next_pb_buf_pos;
-
-	//		for(size_t j=0; j<num_y; j++){
-	//			offset_y = (j < split_index_y) ? j * early_blockcount_y : j * late_blockcount_y + split_index_y;
-	//			current_blockcount_y = (j < split_index_y) ? early_blockcount_y : late_blockcount_y;
-	//			
-	//			/*sampling: decide which predictor to use (regression or lorenzo)*/
-	//			{
-	//				double * cur_data_pos;
-	//				double curData;
-	//				double pred_reg, pred_sz;
-	//				double err_sz = 0.0, err_reg = 0.0;
-	//				// [1, 1] [3, 3] [5, 5] [7, 7] [9, 9]
-	//				// [1, 9] [3, 7]		[7, 3] [9, 1]
-	//				int bmi = 0;
-	//				int block_size = MIN(current_blockcount_x, current_blockcount_y);
-	//				for(int i=1; i<block_size; i++){
-	//					cur_data_pos = data_pos + i * dim0_offset + i;
-	//					curData = *cur_data_pos;
-	//					pred_sz = cur_data_pos[-1] + cur_data_pos[-dim0_offset] - cur_data_pos[-dim0_offset - 1];
-	//					pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * i + reg_params_pos[params_offset_c];							
-	//					err_sz += MIN(fabs(pred_sz - curData) + noise, fabs(mean - curData));
-	//					err_reg += fabs(pred_reg - curData);
-
-	//					bmi = block_size - i;
-	//					cur_data_pos = data_pos + i*dim0_offset + bmi;
-	//					curData = *cur_data_pos;
-	//					pred_sz = cur_data_pos[-1] + cur_data_pos[-dim0_offset] - cur_data_pos[-dim0_offset - 1];
-	//					pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * bmi + reg_params_pos[params_offset_c];							
-	//					err_sz += MIN(fabs(pred_sz - curData) + noise, fabs(mean - curData));
-	//					err_reg += fabs(pred_reg - curData);								
-	//				}
-	//				use_reg = (err_reg < err_sz);
-	//			}
-	//			if(use_reg)
-	//			{
-	//				{
-	//					/*predict coefficients in current block via previous reg_block*/
-	//					double cur_coeff;
-	//					double diff, itvNum;
-	//					for(int e=0; e<3; e++){
-	//						cur_coeff = reg_params_pos[e*num_blocks];
-	//						diff = cur_coeff - last_coeffcients[e];
-	//						itvNum = fabs(diff)*recip_precision[e] + 1;
-	//						if (itvNum < coeff_intvCapacity_sz){
-	//							if (diff < 0) itvNum = -itvNum;
-	//							coeff_type[e][coeff_index] = (int) (itvNum/2) + coeff_intvRadius;
-	//							last_coeffcients[e] = last_coeffcients[e] + 2 * (coeff_type[e][coeff_index] - coeff_intvRadius) * precision[e];
-	//							//ganrantee comporession error against the case of machine-epsilon
-	//							if(fabs(cur_coeff - last_coeffcients[e])>precision[e]){	
-	//								coeff_type[e][coeff_index] = 0;
-	//								last_coeffcients[e] = cur_coeff;	
-	//								coeff_unpred_data[e][coeff_unpredictable_count[e] ++] = cur_coeff;
-	//							}					
-	//						}
-	//						else{
-	//							coeff_type[e][coeff_index] = 0;
-	//							last_coeffcients[e] = cur_coeff;
-	//							coeff_unpred_data[e][coeff_unpredictable_count[e] ++] = cur_coeff;
-	//						}
-	//					}
-	//					coeff_index ++;
-	//				}
-	//				double curData;
-	//				double pred;
-	//				double itvNum;
-	//				double diff;
-	//				size_t index = 0;
-	//				size_t block_unpredictable_count = 0;
-	//				double * cur_data_pos = data_pos;
-	//				for(size_t ii=0; ii<current_blockcount_x - 1; ii++){
-	//					for(size_t jj=0; jj<current_blockcount_y - 1; jj++){
-	//						curData = *cur_data_pos;
-	//						pred = last_coeffcients[0] * ii + last_coeffcients[1] * jj + last_coeffcients[2];
-	//						diff = curData - pred;
-	//						itvNum = fabs(diff)*recip_realPrecision + 1;
-	//						if (itvNum < intvCapacity){
-	//							if (diff < 0) itvNum = -itvNum;
-	//							type[index] = (int) (itvNum/2) + intvRadius;
-	//							pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
-	//							//ganrantee comporession error against the case of machine-epsilon
-	//							if(fabs(curData - pred)>realPrecision){	
-	//								type[index] = 0;
-	//								pred = curData;
-	//								unpredictable_data[block_unpredictable_count ++] = curData;
-	//							}		
-	//						}
-	//						else{
-	//							type[index] = 0;
-	//							pred = curData;
-	//							unpredictable_data[block_unpredictable_count ++] = curData;
-	//						}
-	//						index ++;	
-	//						cur_data_pos ++;
-	//					}
-	//					/*dealing with the last jj (boundary)*/
-	//					{
-	//						size_t jj = current_blockcount_y - 1;
-	//						curData = *cur_data_pos;
-	//						pred = last_coeffcients[0] * ii + last_coeffcients[1] * jj + last_coeffcients[2];
-	//						diff = curData - pred;
-	//						itvNum = fabs(diff)*recip_realPrecision + 1;
-	//						if (itvNum < intvCapacity){
-	//							if (diff < 0) itvNum = -itvNum;
-	//							type[index] = (int) (itvNum/2) + intvRadius;
-	//							pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
-	//							//ganrantee comporession error against the case of machine-epsilon
-	//							if(fabs(curData - pred)>realPrecision){	
-	//								type[index] = 0;
-	//								pred = curData;
-	//								unpredictable_data[block_unpredictable_count ++] = curData;
-	//							}		
-	//						}
-	//						else{
-	//							type[index] = 0;
-	//							pred = curData;
-	//							unpredictable_data[block_unpredictable_count ++] = curData;
-	//						}
-
-	//						// assign value to block surfaces
-	//						pb_pos[ii * strip_dim0_offset + jj] = pred;
-	//						index ++;	
-	//						cur_data_pos ++;
-	//					}
-	//					cur_data_pos += dim0_offset - current_blockcount_y;
-	//				}
-	//				/*dealing with the last ii (boundary)*/
-	//				{
-	//					size_t ii = current_blockcount_x - 1;
-	//					for(size_t jj=0; jj<current_blockcount_y - 1; jj++){
-	//						curData = *cur_data_pos;
-	//						pred = last_coeffcients[0] * ii + last_coeffcients[1] * jj + last_coeffcients[2];
-	//						diff = curData - pred;
-	//						itvNum = fabs(diff)*recip_realPrecision + 1;
-	//						if (itvNum < intvCapacity){
-	//							if (diff < 0) itvNum = -itvNum;
-	//							type[index] = (int) (itvNum/2) + intvRadius;
-	//							pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
-	//							//ganrantee comporession error against the case of machine-epsilon
-	//							if(fabs(curData - pred)>realPrecision){	
-	//								type[index] = 0;
-	//								pred = curData;
-	//								unpredictable_data[block_unpredictable_count ++] = curData;
-	//							}		
-	//						}
-	//						else{
-	//							type[index] = 0;
-	//							pred = curData;
-	//							unpredictable_data[block_unpredictable_count ++] = curData;
-	//						}
-	//						// assign value to next prediction buffer
-	//						next_pb_pos[jj] = pred;
-	//						index ++;	
-	//						cur_data_pos ++;
-	//					}
-	//					/*dealing with the last jj (boundary)*/
-	//					{
-	//						size_t jj = current_blockcount_y - 1;
-	//						curData = *cur_data_pos;
-	//						pred = last_coeffcients[0] * ii + last_coeffcients[1] * jj + last_coeffcients[2];
-	//						diff = curData - pred;
-	//						itvNum = fabs(diff)*recip_realPrecision + 1;
-	//						if (itvNum < intvCapacity){
-	//							if (diff < 0) itvNum = -itvNum;
-	//							type[index] = (int) (itvNum/2) + intvRadius;
-	//							pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
-	//							//ganrantee comporession error against the case of machine-epsilon
-	//							if(fabs(curData - pred)>realPrecision){	
-	//								type[index] = 0;
-	//								pred = curData;
-	//								unpredictable_data[block_unpredictable_count ++] = curData;
-	//							}		
-	//						}
-	//						else{
-	//							type[index] = 0;
-	//							pred = curData;
-	//							unpredictable_data[block_unpredictable_count ++] = curData;
-	//						}
-
-	//						// assign value to block surfaces
-	//						pb_pos[ii * strip_dim0_offset + jj] = pred;
-	//						// assign value to next prediction buffer
-	//						next_pb_pos[jj] = pred;
-
-	//						index ++;	
-	//						cur_data_pos ++;
-	//					}
-	//				} // end ii == -1
-	//				unpredictable_count = block_unpredictable_count;
-	//				total_unpred += unpredictable_count;
-	//				unpredictable_data += unpredictable_count;					
-	//				reg_count ++;
-	//			}// end use_reg
-	//			else{
-	//				// use SZ
-	//				// SZ predication
-	//				unpredictable_count = 0;
-	//				double * cur_pb_pos = pb_pos;
-	//				double * cur_data_pos = data_pos;
-	//				double curData;
-	//				double pred2D;
-	//				double itvNum, diff;
-	//				size_t index = 0;
-	//				for(size_t ii=0; ii<current_blockcount_x - 1; ii++){
-	//					for(size_t jj=0; jj<current_blockcount_y; jj++){
-	//						curData = *cur_data_pos;
-	//						if(fabs(curData - mean) <= realPrecision){
-	//							// adjust type[index] to intvRadius for coherence with freq in reg
-	//							type[index] = intvRadius;
-	//							*cur_pb_pos = mean;
-	//						}
-	//						else
-	//						{
-	//							pred2D = cur_pb_pos[-1] + cur_pb_pos[-strip_dim0_offset] - cur_pb_pos[-strip_dim0_offset - 1];
-	//							diff = curData - pred2D;
-	//							itvNum = fabs(diff)*recip_realPrecision + 1;
-	//							if (itvNum < intvCapacity_sz){
-	//								if (diff < 0) itvNum = -itvNum;
-	//								type[index] = (int) (itvNum/2) + intvRadius;
-	//								*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * realPrecision;
-	//								if(type[index] <= intvRadius) type[index] -= 1;
-	//								//ganrantee comporession error against the case of machine-epsilon
-	//								if(fabs(curData - *cur_pb_pos)>realPrecision){	
-	//									type[index] = 0;
-	//									*cur_pb_pos = curData;	
-	//									unpredictable_data[unpredictable_count ++] = curData;
-	//								}					
-	//							}
-	//							else{
-	//								type[index] = 0;
-	//								*cur_pb_pos = curData;
-	//								unpredictable_data[unpredictable_count ++] = curData;
-	//							}
-	//						}
-	//						index ++;
-	//						cur_pb_pos ++;
-	//						cur_data_pos ++;
-	//					}
-	//					cur_pb_pos += strip_dim0_offset - current_blockcount_y;
-	//					cur_data_pos += dim0_offset - current_blockcount_y;
-	//				}
-	//				/*dealing with the last ii (boundary)*/
-	//				{
-	//					// ii == current_blockcount_x - 1
-	//					for(size_t jj=0; jj<current_blockcount_y; jj++){
-	//						curData = *cur_data_pos;
-	//						if(fabs(curData - mean) <= realPrecision){
-	//							// adjust type[index] to intvRadius for coherence with freq in reg
-	//							type[index] = intvRadius;
-	//							*cur_pb_pos = mean;
-	//						}
-	//						else
-	//						{
-	//							pred2D = cur_pb_pos[-1] + cur_pb_pos[-strip_dim0_offset] - cur_pb_pos[-strip_dim0_offset - 1];
-	//							diff = curData - pred2D;
-	//							itvNum = fabs(diff)*recip_realPrecision + 1;
-	//							if (itvNum < intvCapacity_sz){
-	//								if (diff < 0) itvNum = -itvNum;
-	//								type[index] = (int) (itvNum/2) + intvRadius;
-	//								*cur_pb_pos = pred2D + 2 * (type[index] - intvRadius) * realPrecision;
-	//								if(type[index] <= intvRadius) type[index] -= 1;
-	//								//ganrantee comporession error against the case of machine-epsilon
-	//								if(fabs(curData - *cur_pb_pos)>realPrecision){	
-	//									type[index] = 0;
-	//									*cur_pb_pos = curData;	
-	//									unpredictable_data[unpredictable_count ++] = curData;
-	//								}					
-	//							}
-	//							else{
-	//								type[index] = 0;
-	//								*cur_pb_pos = curData;
-	//								unpredictable_data[unpredictable_count ++] = curData;
-	//							}
-	//						}
-	//						next_pb_pos[jj] = *cur_pb_pos;
-	//						index ++;
-	//						cur_pb_pos ++;
-	//						cur_data_pos ++;
-	//					}
-	//				}
-	//				total_unpred += unpredictable_count;
-	//				unpredictable_data += unpredictable_count;
-	//				// change indicator
-	//				indicator_pos[j] = 1;
-	//			}// end SZ
-	//			reg_params_pos ++;
-	//			data_pos += current_blockcount_y;
-	//			pb_pos += current_blockcount_y;
-	//			next_pb_pos += current_blockcount_y;
-	//			type += current_blockcount_x * current_blockcount_y;
-	//		}// end j
-	//		indicator_pos += num_y;
-	//		double * tmp;
-	//		tmp = cur_pb_buf;
-	//		cur_pb_buf = next_pb_buf;
-	//		next_pb_buf = tmp;
-	//	}// end i
-	//}// end use mean
-	//use_reg=1;
+	// printf("use_mean=%u\n", use_mean);
+	// use_mean section deleted;
+	// not using mean;
 	{
-		//int count = 0;
 		type = result_type;
 		int intvCapacity_sz = intvCapacity - 2;
 		for(size_t i=0; i<num_x; i++){
@@ -5497,38 +5207,50 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 				offset_y = (j < split_index_y) ? j * early_blockcount_y : j * late_blockcount_y + split_index_y;
 				current_blockcount_y = (j < split_index_y) ? early_blockcount_y : late_blockcount_y;
 				/*sampling*/
-				//gettimeofday(&samplingS, NULL);
-				{
-					// sample [2i + 1, 2i + 1] [2i + 1, bs - 2i]
-					double * cur_data_pos;
-					double curData;
-					double pred_reg, pred_sz;
-					double err_sz = 0.0, err_reg = 0.0;
-					// [1, 1] [3, 3] [5, 5] [7, 7] [9, 9]
-					// [1, 9] [3, 7]		[7, 3] [9, 1]
-					int bmi = 0;
-					int block_size = MIN(current_blockcount_x, current_blockcount_y);
-					for(int i=1; i<block_size; i++){
-						cur_data_pos = data_pos + i * dim0_offset + i;
-						curData = *cur_data_pos;
-						pred_sz = cur_data_pos[-1] + cur_data_pos[-dim0_offset] - cur_data_pos[-dim0_offset - 1];
-						pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * i + reg_params_pos[params_offset_c];							
-						err_sz += fabs(pred_sz - curData) + noise;
-						err_reg += fabs(pred_reg - curData);
+				// gettimeofday(&costS, NULL);
+				//{
+				//	// sample [2i + 1, 2i + 1] [2i + 1, bs - 2i]
+				//	double * cur_data_pos;
+				//	double curData;
+				//	double pred_reg, pred_sz;
+				//	double err_sz = 0.0, err_reg = 0.0;
+				//	double _err_sz = 0.0, _err_reg = 0.0;
+				//	// [1, 1] [3, 3] [5, 5] [7, 7] [9, 9]
+				//	// [1, 9] [3, 7]		[7, 3] [9, 1]
+				//	int bmi = 0;
+				//	int block_size = MIN(current_blockcount_x, current_blockcount_y);
+				//	for(int i=1; i<block_size; i++){
+				//		cur_data_pos = data_pos + i * dim0_offset + i;
+				//		curData = *cur_data_pos;
+				//		pred_sz = cur_data_pos[-1] + cur_data_pos[-dim0_offset] - cur_data_pos[-dim0_offset - 1];
+				//		pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * i + reg_params_pos[params_offset_c];
+				//
+				//		_err_sz = fabs(pred_sz - curData) + noise;
+                                //                _err_reg = fabs(pred_reg - curData);
 
-						bmi = block_size - i;
-						cur_data_pos = data_pos + i*dim0_offset + bmi;
-						curData = *cur_data_pos;
-						pred_sz = cur_data_pos[-1] + cur_data_pos[-dim0_offset] - cur_data_pos[-dim0_offset - 1];
-						pred_reg = reg_params_pos[0] * (i-1) + reg_params_pos[params_offset_b] * bmi + reg_params_pos[params_offset_c];							
-						err_sz += fabs(pred_sz - curData) + noise;
-						err_reg += fabs(pred_reg - curData);								
-					}
-					use_reg = (err_reg < err_sz);
-					//count += 1;
-				}
-				//gettimeofday(&samplingE, NULL);
-				//printf("%dms ", ((samplingE.tv_sec*1000000+samplingE.tv_usec)-(samplingS.tv_sec*1000000+samplingS.tv_usec)));
+				//		err_sz += fabs(pred_sz - curData) + noise;
+				//		err_reg += fabs(pred_reg - curData);
+				//
+				//		bmi = block_size - i;
+				//		cur_data_pos = data_pos + i*dim0_offset + bmi;
+				//		curData = *cur_data_pos;
+				//		pred_sz = cur_data_pos[-1] + cur_data_pos[-dim0_offset] - cur_data_pos[-dim0_offset - 1];
+				//		pred_reg = reg_params_pos[0] * (i-1) + reg_params_pos[params_offset_b] * bmi + reg_params_pos[params_offset_c];
+
+                                //                _err_sz += fabsf(pred_sz - curData) + noise;
+                                //                _err_reg += fabsf(pred_reg - curData);
+				//
+				//		err_sz += fabs(pred_sz - curData) + noise;
+				//		err_reg += fabs(pred_reg - curData);
+
+				//		//printf("err_sz:%f, err_reg:%f\n", _err_sz, _err_reg);
+				//	}
+				//	use_reg = (err_reg < err_sz);
+				//}
+				// gettimeofday(&costE, NULL);
+				// stime = ((costE.tv_sec*1000000+costE.tv_usec)-(costS.tv_sec*1000000+costS.tv_usec))/1000000.0;
+				// printf("sampling time = %f\n", stime);
+				use_reg=0;
 				if(use_reg)
 				{
 					{
@@ -5556,8 +5278,8 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 								coeff_unpred_data[e][coeff_unpredictable_count[e] ++] = cur_coeff;
 							}
 						}
-						coeff_index ++;
 					}
+					coeff_index ++;
 					double curData;
 					double pred;
 					double itvNum;
@@ -5779,7 +5501,6 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 			cur_pb_buf = next_pb_buf;
 			next_pb_buf = tmp;
 		}// end i
-		//printf("count=%d\n", count);
 	}
 	free(prediction_buffer_1);
 	free(prediction_buffer_2);
@@ -5798,8 +5519,24 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree, nodeCount, &treeBytes);
 
 	unsigned int meta_data_offset = 3 + 1 + MetaDataByteLength;
-	// total size 										metadata		  # elements   real precision		intervals	nodeCount		huffman 	 	block index 						unpredicatable count						mean 					 	unpred size 				elements
+	// total size, metadata, # elements, real precision, intervals, nodeCount, huffman, block index, unpredicatable count, mean, unpred size, elements
+	int totalsize = meta_data_offset +                    // metadata 
+		        exe_params->SZ_SIZE_TYPE +            // 
+			sizeof(double) + 
+			sizeof(int) + 
+		        sizeof(int) + 
+			5*treeByteSize + 
+			3*num_blocks * sizeof(int) + 
+			num_blocks * sizeof(unsigned short) + 
+			num_blocks * sizeof(unsigned short) + 
+		        num_blocks * sizeof(double) + 
+			total_unpred * sizeof(double) + 
+			num_elements * sizeof(int);
+	// printf("nodeCount=%lu, treeByteSize=%u\n", nodeCount, treeByteSize);
+	// printf("_reg_count=%lu\n", reg_count);
+
 	unsigned char * result = (unsigned char *) calloc(meta_data_offset + exe_params->SZ_SIZE_TYPE + sizeof(double) + sizeof(int) + sizeof(int) + 5*treeByteSize + 3*num_blocks*sizeof(int) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(unsigned short) + num_blocks * sizeof(double) + total_unpred * sizeof(double) + num_elements * sizeof(int), 1);
+	
 	unsigned char * result_pos = result;
 	initRandomAccessBytes(result_pos);
 	result_pos += meta_data_offset;
@@ -5872,8 +5609,10 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	result_pos += sizeof(size_t);
 	memcpy(result_pos, result_unpredictable_data, total_unpred * sizeof(double));
 	result_pos += total_unpred * sizeof(double);
+	// printf("total_unpred=%ld\n", total_unpred);
 	size_t typeArray_size = 0;
 	encode(huffmanTree, result_type, num_elements, result_pos, &typeArray_size);
+	// printf("encodeSize=%lu\n", typeArray_size);
 	result_pos += typeArray_size;
 
 	size_t totalEncodeSize = result_pos - result;
@@ -5885,6 +5624,7 @@ unsigned char * SZ_compress_double_2D_MDQ_nonblocked_with_blocked_regression(dou
 	SZ_ReleaseHuffman(huffmanTree);
 	*comp_size = totalEncodeSize;
 
+	// printf("totalEncodeSize=%lu\n", totalEncodeSize); // compressed output size
 	return result;
 }
 
@@ -5905,7 +5645,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 
 	// calculate block dims
 	size_t num_x, num_y, num_z;
-	size_t block_size = 6;
+	size_t block_size = 4; // 4, 8, 16, 32, 64, 128
 	SZ_COMPUTE_3D_NUMBER_OF_BLOCKS(r1, num_x, block_size);
 	SZ_COMPUTE_3D_NUMBER_OF_BLOCKS(r2, num_y, block_size);
 	SZ_COMPUTE_3D_NUMBER_OF_BLOCKS(r3, num_z, block_size);
@@ -6073,346 +5813,7 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 	}
 	int coeff_index = 0;
 	unsigned int coeff_unpredictable_count[4] = {0};
-
-	//if(use_mean){
-	//	int intvCapacity_sz = intvCapacity - 2;
-	//	for(size_t i=0; i<num_x; i++){
-	//		current_blockcount_x = (i < split_index_x) ? early_blockcount_x : late_blockcount_x;
-	//		offset_x = (i < split_index_x) ? i * early_blockcount_x : i * late_blockcount_x + split_index_x;
-	//		for(size_t j=0; j<num_y; j++){
-	//			offset_y = (j < split_index_y) ? j * early_blockcount_y : j * late_blockcount_y + split_index_y;
-	//			current_blockcount_y = (j < split_index_y) ? early_blockcount_y : late_blockcount_y;
-	//			data_pos = oriData + offset_x * dim0_offset + offset_y * dim1_offset;
-	//			type_offset = offset_x * dim0_offset +  offset_y * current_blockcount_x * dim1_offset;
-	//			type = result_type + type_offset;
-
-	//			// prediction buffer is (current_block_count_x + 1) * (current_block_count_y + 1) * (current_block_count_z + 1)
-	//			cur_pb_buf_pos = cur_pb_buf + offset_y * strip_dim1_offset + strip_dim0_offset + strip_dim1_offset + 1;
-	//			next_pb_buf_pos = next_pb_buf + offset_y * strip_dim1_offset + strip_dim1_offset + 1;
-
-	//			size_t current_blockcount_z;
-	//			double * pb_pos = cur_pb_buf_pos;
-	//			double * next_pb_pos = next_pb_buf_pos;
-	//			size_t strip_unpredictable_count = 0;
-	//			for(size_t k=0; k<num_z; k++){
-	//				current_blockcount_z = (k < split_index_z) ? early_blockcount_z : late_blockcount_z;
-
-#ifdef H//AVE_TIMECMPR
-	//				size_t offset_z = 0;
-	//				offset_z = (k < split_index_z) ? k * early_blockcount_z : k * late_blockcount_z + split_index_z;
-	//				size_t block_offset = offset_x * dim0_offset + offset_y * dim1_offset + offset_z;
-#endif
-
-	//				/*sampling and decide which predictor*/
-	//				{
-	//					// sample point [1, 1, 1] [1, 1, 4] [1, 4, 1] [1, 4, 4] [4, 1, 1] [4, 1, 4] [4, 4, 1] [4, 4, 4]
-	//					double * cur_data_pos;
-	//					double curData;
-	//					double pred_reg, pred_sz;
-	//					double err_sz = 0.0, err_reg = 0.0;
-	//					int bmi = 0;
-	//					int block_size = MIN(current_blockcount_x, (MIN(current_blockcount_y, current_blockcount_z)));
-	//					for(int i=1; i<block_size; i++){
-	//						cur_data_pos = data_pos + i*dim0_offset + i*dim1_offset + i;
-	//						curData = *cur_data_pos;
-	//						pred_sz = cur_data_pos[-1] + cur_data_pos[-dim1_offset]+ cur_data_pos[-dim0_offset] - cur_data_pos[-dim1_offset - 1] - cur_data_pos[-dim0_offset - 1] - cur_data_pos[-dim0_offset - dim1_offset] + cur_data_pos[-dim0_offset - dim1_offset - 1];
-	//						pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * i + reg_params_pos[params_offset_c] * i + reg_params_pos[params_offset_d];							
-	//						err_sz += MIN(fabs(pred_sz - curData) + noise, fabs(mean - curData));
-	//						err_reg += fabs(pred_reg - curData);
-
-	//						bmi = block_size - i;
-	//						cur_data_pos = data_pos + i*dim0_offset + i*dim1_offset + bmi;
-	//						curData = *cur_data_pos;
-	//						pred_sz = cur_data_pos[-1] + cur_data_pos[-dim1_offset]+ cur_data_pos[-dim0_offset] - cur_data_pos[-dim1_offset - 1] - cur_data_pos[-dim0_offset - 1] - cur_data_pos[-dim0_offset - dim1_offset] + cur_data_pos[-dim0_offset - dim1_offset - 1];
-	//						pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * i + reg_params_pos[params_offset_c] * bmi + reg_params_pos[params_offset_d];							
-	//						err_sz += MIN(fabs(pred_sz - curData) + noise, fabs(mean - curData));
-	//						err_reg += fabs(pred_reg - curData);								
-
-	//						cur_data_pos = data_pos + i*dim0_offset + bmi*dim1_offset + i;
-	//						curData = *cur_data_pos;
-	//						pred_sz = cur_data_pos[-1] + cur_data_pos[-dim1_offset]+ cur_data_pos[-dim0_offset] - cur_data_pos[-dim1_offset - 1] - cur_data_pos[-dim0_offset - 1] - cur_data_pos[-dim0_offset - dim1_offset] + cur_data_pos[-dim0_offset - dim1_offset - 1];
-	//						pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * bmi + reg_params_pos[params_offset_c] * i + reg_params_pos[params_offset_d];							
-	//						err_sz += MIN(fabs(pred_sz - curData) + noise, fabs(mean - curData));
-	//						err_reg += fabs(pred_reg - curData);								
-
-	//						cur_data_pos = data_pos + i*dim0_offset + bmi*dim1_offset + bmi;
-	//						curData = *cur_data_pos;
-	//						pred_sz = cur_data_pos[-1] + cur_data_pos[-dim1_offset]+ cur_data_pos[-dim0_offset] - cur_data_pos[-dim1_offset - 1] - cur_data_pos[-dim0_offset - 1] - cur_data_pos[-dim0_offset - dim1_offset] + cur_data_pos[-dim0_offset - dim1_offset - 1];
-	//						pred_reg = reg_params_pos[0] * i + reg_params_pos[params_offset_b] * bmi + reg_params_pos[params_offset_c] * bmi + reg_params_pos[params_offset_d];							
-	//						err_sz += MIN(fabs(pred_sz - curData) + noise, fabs(mean - curData));
-	//						err_reg += fabs(pred_reg - curData);
-	//					}
-	//					use_reg = (err_reg < err_sz);
-	//				}
-	//				if(use_reg){
-	//					{
-	//						/*predict coefficients in current block via previous reg_block*/
-	//						double cur_coeff;
-	//						double diff, itvNum;
-	//						for(int e=0; e<4; e++){
-	//							cur_coeff = reg_params_pos[e*num_blocks];
-	//							diff = cur_coeff - last_coeffcients[e];
-	//							itvNum = fabs(diff)*recip_precision[e] + 1;
-	//							if (itvNum < coeff_intvCapacity_sz){
-	//								if (diff < 0) itvNum = -itvNum;
-	//								coeff_type[e][coeff_index] = (int) (itvNum/2) + coeff_intvRadius;
-	//								last_coeffcients[e] = last_coeffcients[e] + 2 * (coeff_type[e][coeff_index] - coeff_intvRadius) * precision[e];
-	//								//ganrantee comporession error against the case of machine-epsilon
-	//								if(fabs(cur_coeff - last_coeffcients[e])>precision[e]){	
-	//									coeff_type[e][coeff_index] = 0;
-	//									last_coeffcients[e] = cur_coeff;	
-	//									coeff_unpred_data[e][coeff_unpredictable_count[e] ++] = cur_coeff;
-	//								}					
-	//							}
-	//							else{
-	//								coeff_type[e][coeff_index] = 0;
-	//								last_coeffcients[e] = cur_coeff;
-	//								coeff_unpred_data[e][coeff_unpredictable_count[e] ++] = cur_coeff;
-	//							}
-	//						}
-	//						coeff_index ++;
-	//					}
-	//					double curData;
-	//					double pred;
-	//					double itvNum;
-	//					double diff;
-	//					size_t index = 0;
-	//					size_t block_unpredictable_count = 0;
-	//					double * cur_data_pos = data_pos;
-	//					for(size_t ii=0; ii<current_blockcount_x - 1; ii++){
-	//						for(size_t jj=0; jj<current_blockcount_y; jj++){
-	//							for(size_t kk=0; kk<current_blockcount_z; kk++){
-	//								curData = *cur_data_pos;
-	//								pred = last_coeffcients[0] * ii + last_coeffcients[1] * jj + last_coeffcients[2] * kk + last_coeffcients[3];									
-	//								diff = curData - pred;
-	//								itvNum = fabs(diff)*recip_realPrecision + 1;
-	//								if (itvNum < intvCapacity){
-	//									if (diff < 0) itvNum = -itvNum;
-	//									type[index] = (int) (itvNum/2) + intvRadius;
-	//									pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
-	//									//ganrantee comporession error against the case of machine-epsilon
-	//									if(fabs(curData - pred)>realPrecision){	
-	//										type[index] = 0;
-	//										pred = curData;
-	//										unpredictable_data[block_unpredictable_count ++] = curData;
-	//									}		
-	//								}
-	//								else{
-	//									type[index] = 0;
-	//									pred = curData;
-	//									unpredictable_data[block_unpredictable_count ++] = curData;
-	//								}
-	//								
-#ifdef H//AVE_TIMECMPR
-	//								size_t point_offset = ii*dim0_offset + jj*dim1_offset + kk;
-	//								if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
-	//									decData[block_offset + point_offset] = pred;
-#endif	//								
-	//								
-	//								if((jj == current_blockcount_y - 1) || (kk == current_blockcount_z - 1)){
-	//									// assign value to block surfaces
-	//									pb_pos[ii * strip_dim0_offset + jj * strip_dim1_offset + kk] = pred;
-	//								}
-	//								index ++;	
-	//								cur_data_pos ++;
-	//							}
-	//							cur_data_pos += dim1_offset - current_blockcount_z;
-	//						}
-	//						cur_data_pos += dim0_offset - current_blockcount_y * dim1_offset;
-	//					}
-	//					/*dealing with the last ii (boundary)*/
-	//					{
-	//						// ii == current_blockcount_x - 1
-	//						size_t ii = current_blockcount_x - 1;
-	//						for(size_t jj=0; jj<current_blockcount_y; jj++){
-	//							for(size_t kk=0; kk<current_blockcount_z; kk++){
-	//								curData = *cur_data_pos;
-	//								pred = last_coeffcients[0] * ii + last_coeffcients[1] * jj + last_coeffcients[2] * kk + last_coeffcients[3];									
-	//								diff = curData - pred;
-	//								itvNum = fabs(diff)*recip_realPrecision + 1;
-	//								if (itvNum < intvCapacity){
-	//									if (diff < 0) itvNum = -itvNum;
-	//									type[index] = (int) (itvNum/2) + intvRadius;
-	//									pred = pred + 2 * (type[index] - intvRadius) * realPrecision;
-	//									//ganrantee comporession error against the case of machine-epsilon
-	//									if(fabs(curData - pred)>realPrecision){	
-	//										type[index] = 0;
-	//										pred = curData;
-	//										unpredictable_data[block_unpredictable_count ++] = curData;
-	//									}		
-	//								}
-	//								else{
-	//									type[index] = 0;
-	//									pred = curData;
-	//									unpredictable_data[block_unpredictable_count ++] = curData;
-	//								}
-
-#ifdef H//AVE_TIMECMPR
-	//								size_t point_offset = ii*dim0_offset + jj*dim1_offset + kk;
-	//								if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
-	//									decData[block_offset + point_offset] = pred;
-#endif	//	
-
-	//								if((jj == current_blockcount_y - 1) || (kk == current_blockcount_z - 1)){
-	//									// assign value to block surfaces
-	//									pb_pos[ii * strip_dim0_offset + jj * strip_dim1_offset + kk] = pred;
-	//								}
-	//								// assign value to next prediction buffer
-	//								next_pb_pos[jj * strip_dim1_offset + kk] = pred;
-	//								index ++;
-	//								cur_data_pos ++;
-	//							}
-	//							cur_data_pos += dim1_offset - current_blockcount_z;
-	//						}
-	//					}
-	//					unpredictable_count = block_unpredictable_count;
-	//					strip_unpredictable_count += unpredictable_count;
-	//					unpredictable_data += unpredictable_count;
-	//					
-	//					reg_count ++;
-	//				}
-	//				else{
-	//					// use SZ
-	//					// SZ predication
-	//					unpredictable_count = 0;
-	//					double * cur_pb_pos = pb_pos;
-	//					double * cur_data_pos = data_pos;
-	//					double curData;
-	//					double pred3D;
-	//					double itvNum, diff;
-	//					size_t index = 0;
-	//					for(size_t ii=0; ii<current_blockcount_x - 1; ii++){
-	//						for(size_t jj=0; jj<current_blockcount_y; jj++){
-	//							for(size_t kk=0; kk<current_blockcount_z; kk++){
-
-	//								curData = *cur_data_pos;
-	//								if(fabs(curData - mean) <= realPrecision){
-	//									// adjust type[index] to intvRadius for coherence with freq in reg
-	//									type[index] = intvRadius;
-	//									*cur_pb_pos = mean;
-	//								}
-	//								else
-	//								{
-	//									pred3D = cur_pb_pos[-1] + cur_pb_pos[-strip_dim1_offset]+ cur_pb_pos[-strip_dim0_offset] - cur_pb_pos[-strip_dim1_offset - 1]
-	//											 - cur_pb_pos[-strip_dim0_offset - 1] - cur_pb_pos[-strip_dim0_offset - strip_dim1_offset] + cur_pb_pos[-strip_dim0_offset - strip_dim1_offset - 1];
-	//									diff = curData - pred3D;
-	//									itvNum = fabs(diff)*recip_realPrecision + 1;
-	//									if (itvNum < intvCapacity_sz){
-	//										if (diff < 0) itvNum = -itvNum;
-	//										type[index] = (int) (itvNum/2) + intvRadius;
-	//										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;
-	//										if(type[index] <= intvRadius) type[index] -= 1;
-	//										//ganrantee comporession error against the case of machine-epsilon
-	//										if(fabs(curData - *cur_pb_pos)>realPrecision){	
-	//											type[index] = 0;
-	//											*cur_pb_pos = curData;	
-	//											unpredictable_data[unpredictable_count ++] = curData;
-	//										}					
-	//									}
-	//									else{
-	//										type[index] = 0;
-	//										*cur_pb_pos = curData;
-	//										unpredictable_data[unpredictable_count ++] = curData;
-	//									}
-	//								}
-	//								
-#ifdef H//AVE_TIMECMPR
-	//								size_t point_offset = ii*dim0_offset + jj*dim1_offset + kk;
-	//								if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
-	//									decData[block_offset + point_offset] = *cur_pb_pos;
-#endif	//										
-	//								
-	//								index ++;
-	//								cur_pb_pos ++;
-	//								cur_data_pos ++;
-	//							}
-	//							cur_pb_pos += strip_dim1_offset - current_blockcount_z;
-	//							cur_data_pos += dim1_offset - current_blockcount_z;
-	//						}
-	//						cur_pb_pos += strip_dim0_offset - current_blockcount_y * strip_dim1_offset;
-	//						cur_data_pos += dim0_offset - current_blockcount_y * dim1_offset;
-	//					}
-	//					/*dealing with the last ii (boundary)*/
-	//					{
-	//						// ii == current_blockcount_x - 1
-	//						for(size_t jj=0; jj<current_blockcount_y; jj++){
-	//							for(size_t kk=0; kk<current_blockcount_z; kk++){
-
-	//								curData = *cur_data_pos;
-	//								if(fabs(curData - mean) <= realPrecision){
-	//									// adjust type[index] to intvRadius for coherence with freq in reg
-	//									type[index] = intvRadius;
-	//									*cur_pb_pos = mean;
-	//								}
-	//								else
-	//								{
-	//									pred3D = cur_pb_pos[-1] + cur_pb_pos[-strip_dim1_offset]+ cur_pb_pos[-strip_dim0_offset] - cur_pb_pos[-strip_dim1_offset - 1]
-	//											 - cur_pb_pos[-strip_dim0_offset - 1] - cur_pb_pos[-strip_dim0_offset - strip_dim1_offset] + cur_pb_pos[-strip_dim0_offset - strip_dim1_offset - 1];
-	//									diff = curData - pred3D;
-	//									itvNum = fabs(diff)*recip_realPrecision + 1;
-	//									if (itvNum < intvCapacity_sz){
-	//										if (diff < 0) itvNum = -itvNum;
-	//										type[index] = (int) (itvNum/2) + intvRadius;
-	//										*cur_pb_pos = pred3D + 2 * (type[index] - intvRadius) * realPrecision;
-	//										if(type[index] <= intvRadius) type[index] -= 1;
-	//										//ganrantee comporession error against the case of machine-epsilon
-	//										if(fabs(curData - *cur_pb_pos)>realPrecision){	
-	//											type[index] = 0;
-	//											*cur_pb_pos = curData;	
-	//											unpredictable_data[unpredictable_count ++] = curData;
-	//										}					
-	//									}
-	//									else{
-	//										type[index] = 0;
-	//										*cur_pb_pos = curData;
-	//										unpredictable_data[unpredictable_count ++] = curData;
-	//									}
-	//								}
-	//								
-#ifdef H//AVE_TIMECMPR
-	//								size_t ii = current_blockcount_x - 1;
-	//								size_t point_offset = ii*dim0_offset + jj*dim1_offset + kk;
-	//								if(confparams_cpr->szMode == SZ_TEMPORAL_COMPRESSION)
-	//									decData[block_offset + point_offset] = *cur_pb_pos;
-#endif	//									
-	//								
-	//								next_pb_pos[jj * strip_dim1_offset + kk] = *cur_pb_pos;
-	//								index ++;
-	//								cur_pb_pos ++;
-	//								cur_data_pos ++;
-	//							}
-	//							cur_pb_pos += strip_dim1_offset - current_blockcount_z;
-	//							cur_data_pos += dim1_offset - current_blockcount_z;
-	//						}
-	//					}
-	//					strip_unpredictable_count += unpredictable_count;
-	//					unpredictable_data += unpredictable_count;
-	//					// change indicator
-	//					indicator_pos[k] = 1;
-	//				}// end SZ
-	//				
-	//				reg_params_pos ++;
-	//				data_pos += current_blockcount_z;
-	//				pb_pos += current_blockcount_z;
-	//				next_pb_pos += current_blockcount_z;
-	//				type += current_blockcount_x * current_blockcount_y * current_blockcount_z;
-
-	//			} // end k
-
-	//			if(strip_unpredictable_count > max_unpred_count){
-	//				max_unpred_count = strip_unpredictable_count;
-	//			}
-	//			total_unpred += strip_unpredictable_count;
-	//			indicator_pos += num_z;
-	//		}// end j
-	//		double * tmp;
-	//		tmp = cur_pb_buf;
-	//		cur_pb_buf = next_pb_buf;
-	//		next_pb_buf = tmp;
-	//	}// end i
-	//}
-	////use_reg=1;
-	//int count=0;
+	// without using mean
 	{
 		int intvCapacity_sz = intvCapacity - 2;
 		for(size_t i=0; i<num_x; i++){
@@ -6737,7 +6138,6 @@ unsigned char * SZ_compress_double_3D_MDQ_nonblocked_with_blocked_regression(dou
 			cur_pb_buf = next_pb_buf;
 			next_pb_buf = tmp;
 		}
-		//printf("count=%d\n", count);
 	}
 
 	free(prediction_buffer_1);

@@ -345,7 +345,8 @@ int main(int argc, char* argv[])
 				cost_start();
 				bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
 				cost_end();				
-				printf("cratio=%f\n", (float)nbEle*4/outSize);
+				//printf("outSize=%zu\n", outSize);
+				//printf("cratio=%f\n", (float)nbEle*4/outSize);
 			}
 			else if(parallelMode==1) //openMP
 			{
@@ -366,7 +367,7 @@ int main(int argc, char* argv[])
 					bytes = SZ_compress_float_2D_MDQ_openmp(data, r2, r1, confparams_cpr->absErrBound, &outSize);
 				else //3d
 					bytes = SZ_compress_float_3D_MDQ_openmp(data, r3, r2, r1, confparams_cpr->absErrBound, &outSize);
-				printf("outSize=%zu\n", outSize);
+				//printf("outSize=%zu\n", outSize);
 				cost_end_omp();	
 			}
 
@@ -381,7 +382,8 @@ int main(int argc, char* argv[])
 				printf("Error: data file %s cannot be written!\n", outputFilePath);
 				exit(0);
 			}
-			printf("compression time = %f\n", totalCost);
+			printf("cratio=%f\n", (float)nbEle*4/outSize);
+			//printf("compression time = %f\n", totalCost);
 			//printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
@@ -451,6 +453,7 @@ int main(int argc, char* argv[])
 					cost_start();
 					bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
 					cost_end();
+				        //printf("outSize=%zu\n", outSize);
 				}
 				else if(parallelMode==1)//openMP
 				{
@@ -471,7 +474,7 @@ int main(int argc, char* argv[])
 						bytes = SZ_compress_double_2D_MDQ_openmp(data, r2, r1, confparams_cpr->absErrBound, &outSize);
 					else //3d
 						bytes = SZ_compress_double_3D_MDQ_openmp(data, r3, r2, r1, confparams_cpr->absErrBound, &outSize);
-					printf("outSize=%zu\n", outSize);
+					//printf("outSize=%zu\n", outSize);
 					cost_end_omp();	
 				}
 
@@ -487,7 +490,7 @@ int main(int argc, char* argv[])
 					exit(0);
 				}		
 				printf("cratio=%f\n", (float)nbEle*8/outSize);
-				printf("compression time = %f\n", totalCost);
+				//printf("compression time = %f\n", totalCost);
 				//printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}
