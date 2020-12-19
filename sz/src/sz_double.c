@@ -380,6 +380,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 			memcpy(preDataBytes,vce->curBytes,8);
 			addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
 		}
+		//printf("%d\n", type[i]);
 		
 	}//end of for
 	

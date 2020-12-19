@@ -479,8 +479,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 			memcpy(preDataBytes,vce->curBytes,4);
 			addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 			pred = vce->data;
-
 		}
+		//printf("%d\n", type[i]);
 	}//end of for
 
         /* run-length encoding */
