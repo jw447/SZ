@@ -383,7 +383,7 @@ int main(int argc, char* argv[])
 				exit(0);
 			}
 			printf("cratio=%f\n", (float)nbEle*4/outSize);
-			//printf("compression time = %f\n", totalCost);
+			printf("compression time = %f\n", totalCost);
 			//printf("compressed data file: %s\n", outputFilePath);			
 		}
 		else //dataType == 1: double precision
@@ -490,7 +490,7 @@ int main(int argc, char* argv[])
 					exit(0);
 				}		
 				printf("cratio=%f\n", (float)nbEle*8/outSize);
-				//printf("compression time = %f\n", totalCost);
+				printf("compression time = %f\n", totalCost);
 				//printf("compressed data file: %s\n", outputFilePath);
 			}	
 		}

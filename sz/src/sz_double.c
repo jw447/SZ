@@ -272,7 +272,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		quantization_intervals = exe_params->intvCapacity;
 	updateQuantizationInfo(quantization_intervals);	
 	//jwang
-	//printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
+	printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
 	size_t i;
 	int reqLength;
 	double medianValue = medianValue_d;
@@ -362,6 +362,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		//prediction error
 		//pred is the compressed value appended from last iteration.
 		predAbsErr = fabs(curData - pred);
+		//predAbsErr = fabs(curData - spaceFillingValue[i-1]);
 		//jwang
 		//error bound
 		if(predAbsErr<checkRadius)

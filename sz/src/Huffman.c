@@ -781,11 +781,11 @@ void encode_withTree(HuffmanTree* huffmanTree, int *s, size_t length, unsigned c
 		//printf("huffmanTree->code[i]=%lu\n",huffmanTree->code[i]);
 	}
 	//printf("This nodecount=%d\n",huffmanTree->allNodes);
-	//printf("This nodecount=%d\n",huffmanTree->n_nodes);
+	printf("tree leaves=%d\n", nodeCount);
 	nodeCount = nodeCount*2-1;
 	unsigned int treeByteSize = convert_HuffTree_to_bytes_anyStates(huffmanTree,nodeCount, &treeBytes);
 
-	//printf("this nodecount = %d\n",nodeCount);
+	//printf("nodecount = %d\n",nodeCount);
 	*out = (unsigned char*)malloc(length*sizeof(int)+treeByteSize);
 	intToBytes_bigEndian(buffer, nodeCount);
 	memcpy(*out, buffer, 4);
