@@ -200,6 +200,7 @@ void updateLossyCompElement_Double(unsigned char* curBytes, unsigned char* preBy
 {
 	int resiIndex, intMidBytes_Length = 0;
 	int leadingNum = compIdenticalLeadingBytesCount_double(preBytes, curBytes); //in fact, float is enough for both single-precision and double-precisiond ata.
+	//printf("leadingNum=%d\n", leadingNum);
 	int fromByteIndex = leadingNum;
 	int toByteIndex = reqBytesLength; //later on: should use "< toByteIndex" to tarverse....
 	if(fromByteIndex < toByteIndex)

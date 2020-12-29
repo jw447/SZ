@@ -440,7 +440,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	
 	float recip_precision = 1/realPrecision;
 
-	gettimeofday(&cfCostS, NULL);
+	//gettimeofday(&cfCostS, NULL);
 	for(i=2;i<dataLength;i++)
 	{
 		curData = spaceFillingValue[i];
@@ -448,8 +448,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 
 		if(predAbsErr<checkRadius)
 		{
-			(*cpu_timing).count_hit += 1;
-                        gettimeofday(&hitCostS, NULL);
+			//(*cpu_timing).count_hit += 1;
+                        //gettimeofday(&hitCostS, NULL);
 			state = ((int)(predAbsErr*recip_precision+1))>>1;
 			if(curData>=pred)
 			{
@@ -463,37 +463,38 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 				//printf("%d\n", type[i]);
 				pred = pred - state*interval;
 			}
-			gettimeofday(&hitCostE, NULL);
-                        (*cpu_timing).hitCost += ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0;
+			//gettimeofday(&hitCostE, NULL);
+                        //(*cpu_timing).hitCost += ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0;
 		}
 		else{	
 			(*cpu_timing).count_missed += 1;
                         gettimeofday(&misCostS, NULL);
 			type[i] = 0;
-			gettimeofday(&cSDVCostS, NULL);
+			//gettimeofday(&cSDVCostS, NULL);
 			compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
-			gettimeofday(&cSDVCostE, NULL);
+			//gettimeofday(&cSDVCostE, NULL);
 
-			gettimeofday(&uLCECostS, NULL);
+			//gettimeofday(&uLCECostS, NULL);
 			updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 			memcpy(preDataBytes,vce->curBytes,4);
-			gettimeofday(&uLCECostE, NULL);
+			//gettimeofday(&uLCECostE, NULL);
 
-			gettimeofday(&aEDCostS, NULL);
+			//gettimeofday(&aEDCostS, NULL);
 			addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
 			pred = vce->data;
-			gettimeofday(&aEDCostE, NULL);
+			//gettimeofday(&aEDCostE, NULL);
 
 			gettimeofday(&misCostE, NULL);
                         (*cpu_timing).misCost += ((misCostE.tv_sec*1000000+misCostE.tv_usec)-(misCostS.tv_sec*1000000+misCostS.tv_usec))/1000000.0;
 
-                        (*cpu_timing).cSDVCost += ((cSDVCostE.tv_sec*1000000+cSDVCostE.tv_usec)-(cSDVCostS.tv_sec*1000000+cSDVCostS.tv_usec))/1000000.0;
-                        (*cpu_timing).uLCECost += ((uLCECostE.tv_sec*1000000+uLCECostE.tv_usec)-(uLCECostS.tv_sec*1000000+uLCECostS.tv_usec))/1000000.0;
-                        (*cpu_timing).aEDCost += ((aEDCostE.tv_sec*1000000+aEDCostE.tv_usec)-(aEDCostS.tv_sec*1000000+aEDCostS.tv_usec))/1000000.0;
+                        //(*cpu_timing).cSDVCost += ((cSDVCostE.tv_sec*1000000+cSDVCostE.tv_usec)-(cSDVCostS.tv_sec*1000000+cSDVCostS.tv_usec))/1000000.0;
+                        //(*cpu_timing).uLCECost += ((uLCECostE.tv_sec*1000000+uLCECostE.tv_usec)-(uLCECostS.tv_sec*1000000+uLCECostS.tv_usec))/1000000.0;
+                        //(*cpu_timing).aEDCost += ((aEDCostE.tv_sec*1000000+aEDCostE.tv_usec)-(aEDCostS.tv_sec*1000000+aEDCostS.tv_usec))/1000000.0;
 		}
 		//printf("%d\n", type[i]);
 	}//end of for
-	gettimeofday(&cfCostE, NULL);
+	//gettimeofday(&cfCostE, NULL);
+	printf("curve-missed=%d\n", (*cpu_timing).count_missed);
 	
 	size_t exactDataNum = exactLeadNumArray->size;
 	

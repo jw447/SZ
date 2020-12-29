@@ -338,21 +338,22 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	double interval = 2*realPrecision;
 	double recip_realPrecision = 1/realPrecision;
 
-	struct timespec tpstart;
-        struct timespec tpend;
+	//struct timespec tpstart;
+        //struct timespec tpend;
 	//printf("checkRadius=%f\n", checkRadius);
 	//printf("exe_params->intvRadius=%d\n", exe_params->intvRadius);
-        gettimeofday(&cfCostS, NULL);
+        //gettimeofday(&cfCostS, NULL);
 	for(i=2;i<dataLength;i++)
+	//for(int i = 1342200; i<4156200; i++) // to measure the avaergae time of r2
 	{
 		curData = spaceFillingValue[i]; // curData, currentData, is from original data.
 		predAbsErr = fabs(curData - pred);
 
 		if(predAbsErr<checkRadius)
 		{
-			(*cpu_timing).count_hit += 1;
+			//(*cpu_timing).count_hit += 1;
 			//gettimeofday(&hitCostS, NULL);
-			clock_gettime(CLOCK_MONOTONIC, &tpstart);
+			//clock_gettime(CLOCK_MONOTONIC, &tpstart);
 			state = (predAbsErr*recip_realPrecision+1)*0.5;
 			if(curData>=pred)
 			{
@@ -366,19 +367,19 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 				//printf("%d\n", type[i]);
 				pred = pred - state*interval;
 			}
-			clock_gettime(CLOCK_MONOTONIC, &tpend);
-			uint64_t diff = BILLION * (tpend.tv_sec - tpstart.tv_sec) + tpend.tv_nsec - tpstart.tv_nsec;
+			//clock_gettime(CLOCK_MONOTONIC, &tpend);
+			//uint64_t diff = BILLION * (tpend.tv_sec - tpstart.tv_sec) + tpend.tv_nsec - tpstart.tv_nsec;
 			//printf("hitcost=%llu\n", (long long unsigned int)diff);
 			//gettimeofday(&hitCostE, NULL);
 			//(*cpu_timing).hitCost += ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0;
 			//printf("hitcost=%f\n", ((hitCostE.tv_sec*1000000+hitCostE.tv_usec)-(hitCostS.tv_sec*1000000+hitCostS.tv_usec))/1000000.0);
 		}
 		else{
+			//printf("i=%d, ", i);
 			type[i] = 0;
-			(*cpu_timing).count_missed += 1;
-			//gettimeofday(&misCostS, NULL);
+			//(*cpu_timing).count_missed += 1;
+			gettimeofday(&misCostS, NULL);
 
-			clock_gettime(CLOCK_MONOTONIC, &tpstart);
 			//gettimeofday(&cSDVCostS, NULL);
 			compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength); //
 			//gettimeofday(&cSDVCostE, NULL);
@@ -390,15 +391,11 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 			//gettimeofday(&aEDCostS, NULL);
 			addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce); //
-			//pred = vce->data; 
+			pred = vce->data; 
 			//gettimeofday(&aEDCostE, NULL);
 
-			//gettimeofday(&misCostE, NULL);
+			gettimeofday(&misCostE, NULL);
 			(*cpu_timing).misCost += ((misCostE.tv_sec*1000000+misCostE.tv_usec)-(misCostS.tv_sec*1000000+misCostS.tv_usec))/1000000.0;	
-			//printf("miscost=%f\n", ((misCostE.tv_sec*1000000+misCostE.tv_usec)-(misCostS.tv_sec*1000000+misCostS.tv_usec))/1000000.0);
-			clock_gettime(CLOCK_MONOTONIC, &tpend);
-			uint64_t diff = BILLION * (tpend.tv_sec - tpstart.tv_sec) + tpend.tv_nsec - tpstart.tv_nsec;
-			//printf("miscost=%llu\n", (long long unsigned int)diff);
 
 			//(*cpu_timing).cSDVCost += ((cSDVCostE.tv_sec*1000000+cSDVCostE.tv_usec)-(cSDVCostS.tv_sec*1000000+cSDVCostS.tv_usec))/1000000.0;	
 			//(*cpu_timing).uLCECost += ((uLCECostE.tv_sec*1000000+uLCECostE.tv_usec)-(uLCECostS.tv_sec*1000000+uLCECostS.tv_usec))/1000000.0;	
@@ -407,7 +404,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		//printf("%d\n", type[i]);
 		
 	}//end of for
-	gettimeofday(&cfCostE, NULL);
+	//gettimeofday(&cfCostE, NULL);
 
 	size_t exactDataNum = exactLeadNumArray->size;
 	

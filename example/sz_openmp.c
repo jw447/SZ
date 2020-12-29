@@ -353,10 +353,12 @@ int main(int argc, char* argv[])
 				printf("compCost=%f\n", (*cpu_timing).compCost);
                                 printf("cfCost=%f\n", (*cpu_timing).cfCost);
                                 printf("hitCost=%f\n", (*cpu_timing).hitCost);
+				*/
                                 printf("misCost=%f\n", (*cpu_timing).misCost);
-				printf("cSDVCost=%f\n", (*cpu_timing).cSDVCost);
-				printf("uLCECost=%f\n", (*cpu_timing).uLCECost);
-				printf("aEDCost=%f\n", (*cpu_timing).aEDCost);
+				//printf("cSDVCost=%f\n", (*cpu_timing).cSDVCost);
+				//printf("uLCECost=%f\n", (*cpu_timing).uLCECost);
+				//printf("aEDCost=%f\n", (*cpu_timing).aEDCost);
+				/*
 				printf("treeCost=%f\n", (*cpu_timing).treeCost);
 				printf("createTCost=%f\n", (*cpu_timing).createTCost);
 				printf("buildTCost=%f\n", (*cpu_timing).buildTCost);
@@ -379,7 +381,7 @@ int main(int argc, char* argv[])
 				printf("outliersize=%lu\n", outSize - (*cpu_timing).treesize - (*cpu_timing).encodesize);
 				printf("cratio=%f\n", (float)nbEle*4/outSize);
 				*/
-				printf("cratio=%f\n", (float)nbEle*4/outSize);
+				//printf("cratio=%f\n", (float)nbEle*4/outSize);
 				printf("totalCost=%f\n", totalCost);
 				
 			}
@@ -505,10 +507,6 @@ int main(int argc, char* argv[])
 					printf("compCost=%f\n", (*cpu_timing).compCost);
 					printf("cfCost=%f\n", (*cpu_timing).cfCost);
 					printf("hitCost=%f\n", (*cpu_timing).hitCost);
-					printf("misCost=%f\n", (*cpu_timing).misCost);
-					printf("cSDVCost=%f\n", (*cpu_timing).cSDVCost);
-					printf("uLCECost=%f\n", (*cpu_timing).uLCECost);
-					printf("aEDCost=%f\n", (*cpu_timing).aEDCost);
 					printf("treeCost=%f\n", (*cpu_timing).treeCost);
 					printf("createTCost=%f\n", (*cpu_timing).createTCost);
 					printf("buildTCost=%f\n", (*cpu_timing).buildTCost);
@@ -520,6 +518,10 @@ int main(int argc, char* argv[])
 					printf("Nelements=%d\n", (*cpu_timing).Nelements);
 					printf("qf=%d\n", (*cpu_timing).qf);
 					*/
+					printf("misCost=%f\n", (*cpu_timing).misCost);
+					//printf("cSDVCost=%f\n", (*cpu_timing).cSDVCost);
+					//printf("uLCECost=%f\n", (*cpu_timing).uLCECost);
+					//printf("aEDCost=%f\n", (*cpu_timing).aEDCost);
 					/*
 				        printf("inputsize=%lu\n", (long unsigned)nbEle*8);
 				        printf("qf=%d\n", (*cpu_timing).qf);
@@ -531,7 +533,7 @@ int main(int argc, char* argv[])
 				        printf("outputsize=%lu\n", outSize);
 				        printf("cratio=%f\n", (float)nbEle*8/outSize);
 					*/
-				        printf("cratio=%f\n", (float)nbEle*8/outSize);
+				        //printf("cratio=%f\n", (float)nbEle*8/outSize);
 					printf("totalCost=%f\n", totalCost);
 				}
 				else if(parallelMode==1)//openMP
