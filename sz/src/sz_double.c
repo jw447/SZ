@@ -272,7 +272,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		quantization_intervals = exe_params->intvCapacity;
 	updateQuantizationInfo(quantization_intervals);	
 	//jwang
-	printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
+	//printf("(optimized) quantization_intervals=%d\n", quantization_intervals);
 	size_t i;
 	int reqLength;
 	double medianValue = medianValue_d;
@@ -351,6 +351,9 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 	int count_missed = 2;
 
 	double recip_realPrecision = 1/realPrecision;
+	struct timeval missS;
+	struct timeval missE;
+	float miss = 0;
 	for(i=2;i<dataLength;i++)
 	{			
 		//printf("%.30G\n",last3CmprsData[0]);
@@ -394,13 +397,17 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 		//jwang
 		count_missed += 1;
-		//fprintf(stderr, "%d\n", type[i]);
-
+		//fprintf(stderr, "%d\n", type[i])
+		
+		gettimeofday(&missS, NULL);
 		compressSingleDoubleValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 		updateLossyCompElement_Double(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
 		memcpy(preDataBytes,vce->curBytes,8);
 		addExactData(exactMidByteArray, exactLeadNumArray, resiBitArray, lce);
-							
+		gettimeofday(&missE, NULL);
+
+		miss += ((missE.tv_sec*1000000+missE.tv_usec)-(missS.tv_sec*1000000+missS.tv_usec))/1000000.0;
+		//
 		//listAdd_double(last3CmprsData, vce->data);
 		pred = vce->data;
 		
@@ -412,11 +419,9 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 	//jwang
 	//fclose(fptr);
-	//printf("count_hit=%d\n", count_hit);
-	//printf("count_missed=%d\n", count_missed);	
-
-	size_t exactDataNum = exactLeadNumArray->size;
+	printf("count_hit=%d, count_missed=%d, miss time=%f, r2=%.10f\n", count_hit, count_missed, miss, (double)miss/(double)count_missed);
 	
+	size_t exactDataNum = exactLeadNumArray->size;
 	TightDataPointStorageD* tdps;
 			
 	new_TightDataPointStorageD(&tdps, dataLength, exactDataNum, 

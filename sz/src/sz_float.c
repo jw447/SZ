@@ -424,6 +424,8 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 	float interval = 2*realPrecision;
 	
 	float recip_precision = 1/realPrecision;
+	int count_missed = 2;
+	int count_hit = 0;
 	
 	for(i=2;i<dataLength;i++)
 	{	
@@ -433,6 +435,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 		predAbsErr = fabsf(curData - pred);	
 		if(predAbsErr<checkRadius)
 		{
+			count_hit ++;
 			state = ((int)(predAbsErr*recip_precision+1))>>1;
 			if(curData>=pred)
 			{
@@ -448,6 +451,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 			//double-check the prediction error in case of machine-epsilon impact	
 			if(fabs(curData-pred)>realPrecision)
 			{	
+				count_missed ++;
 				type[i] = 0;				
 				compressSingleFloatValue(vce, curData, realPrecision, medianValue, reqLength, reqBytesLength, resiBitsLength);
 				updateLossyCompElement_Float(vce->curBytes, preDataBytes, reqBytesLength, resiBitsLength, lce);
@@ -487,6 +491,7 @@ size_t dataLength, float realPrecision, float valueRangeSize, float medianValue_
 #endif	
 		
 	}//end of for
+	//printf("hit = %d, missed = %d\n", count_hit, count_missed);
 		
 //	char* expSegmentsInBytes;
 //	int expSegmentsInBytes_size = convertESCToBytes(esc, &expSegmentsInBytes);
