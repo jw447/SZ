@@ -351,7 +351,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 
 		if(predAbsErr<checkRadius)
 		{
-			//(*cpu_timing).count_hit += 1;
+			(*cpu_timing).count_hit += 1;
 			//gettimeofday(&hitCostS, NULL);
 			//clock_gettime(CLOCK_MONOTONIC, &tpstart);
 			state = (predAbsErr*recip_realPrecision+1)*0.5;
@@ -377,7 +377,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		else{
 			//printf("i=%d, ", i);
 			type[i] = 0;
-			//(*cpu_timing).count_missed += 1;
+			(*cpu_timing).count_missed += 1;
 			gettimeofday(&misCostS, NULL);
 
 			//gettimeofday(&cSDVCostS, NULL);
@@ -405,6 +405,7 @@ size_t dataLength, double realPrecision, double valueRangeSize, double medianVal
 		
 	}//end of for
 	//gettimeofday(&cfCostE, NULL);
+	printf("count_hit=%d, count_missed=%d, miss time=%f, r2=%.10f\n", (*cpu_timing).count_hit, (*cpu_timing).count_missed, (*cpu_timing).misCost, (double)(*cpu_timing).misCost/(double)(*cpu_timing).count_missed);
 
 	size_t exactDataNum = exactLeadNumArray->size;
 	
